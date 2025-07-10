@@ -1,32 +1,31 @@
-Project Name: student Result Management System
+****How to run the User Registration & Login and User Management System With admin panel Project****
 
-How to run this Project
+1. Download the  zip file
 
-1. Download and Unzip file on your local system copy srms folder.
+2. Extract the file and copy loginsystem folder
 
-2. Put srms folder inside root directory
+3.Paste inside root directory(for xampp xampp/htdocs, for wamp wamp/www, for lamp var/www/html)
 
-Database Configuration
+4. Open PHPMyAdmin (http://localhost/phpmyadmin)
 
-Open phpmyadmin
-Create Database srms
-Import database srms.sql (available inside zip package)
+5. Create a database with name loginsystem
 
-For User
+6. Import loginsystem.sql file(given inside the zip package in SQL file folder)
 
-Open Your browser put inside browser http://localhost/srms
+7.Run the script http://localhost/loginsystem (frontend)
 
-*********************Details of student**********************
+8. For admin Panel http://localhost/loginsystem/admin
 
-Student name-- Anuj Kumar 
-Roll id--10861
-Student Class: Fourth(C)
+*********************************Credential for admin panel*********************************
 
-********************For Admin Panel************************
+Username: admin
+Password: Test@12345
 
-Open Your browser put inside browser http://localhost/srms
-Username : admin
-Password : Test@123
+*********************************Credential for user panel*********************************
 
+Username: johndoe12@gamil.com
+Password : Test@12345
 
-For More Details --- https://phpgurukul.com/student-result-management-system/
+For more details visit this url https://phpgurukul.com/user-registration-login-and-user-management-system-with-admin-panel/
+
+You can also drop a mail at phpgurukulteam@gmail.com
