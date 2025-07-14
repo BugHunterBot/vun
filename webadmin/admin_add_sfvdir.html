@@ -1,0 +1,29 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local sfvdir = _POST["sfvdir"]
+	local sfvdirs = json.decode(sfvdir)
+	local enable_sfv = _POST["enable_sfv"]
+	local create_missing = _POST["create_missing"]
+	local bad_file = _POST["bad_file"]
+	local create_progress = _POST["create_progress"]
+	local send_result = _POST["send_result"]
+
+	local domain_sfvdirs = {}
+	if type(sfvdirs) == "table" then
+		for _,sfvdir in pairs(sfvdirs) do
+			local temp = {}
+			table.insert(temp,sfvdir.dir)
+			table.insert(domain_sfvdirs,temp)
+		end
+	end
+
+	c_SetSfvDirList(domain,domain_sfvdirs)
+
+	c_SetOptionInt(domain,DOPTION_ENABLE_SFVCHECK_INT,enable_sfv)
+	c_SetOptionInt(domain,DOPTION_SFVCHECK_CREATMISSING_INT,create_missing)
+	c_SetOptionInt(domain,DOPTION_SFVCHECK_BADFILE_INT,bad_file)
+	c_SetOptionInt(domain,DOPTION_SFVCHECK_PROGRESS_INT,create_progress)
+	c_SetOptionInt(domain,DOPTION_SFVCHECK_SENDRESULT_INT,send_result)
+end
+%>

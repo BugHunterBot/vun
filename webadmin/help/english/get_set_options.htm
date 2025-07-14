@@ -1,0 +1,304 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Advanced Features &gt; Server Lua API &gt; Get/Set Options</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="">
+   <meta name="description" content="Get/Set Options">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?get_set_options.htm"; }
+  else { parent.quicksync('a6.3.4'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Advanced Features &gt; <a href="server_lua_api.htm">Server Lua API</a>&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Get/Set Options</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="global_function.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="server_lua_api.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="miscellaneous2.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetOptionInt</span>(string strDomain,int nKey,int nValue)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the key of domain option</p>
+<p>[3]int &nbsp;the integer value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set the integer value of a domain option.</p>
+<p><span style="font-weight: bold;">Example</span>: <span style="font-style: italic;">c_SetOptionInt("domain", </span><span style="font-style: italic; font-weight: bold;">DOPTION_DATA_ACCESS_INTERFACE_INT</span><span style="font-style: italic;">, 1)</span></p>
+<p><span style="font-style: italic; font-weight: bold;">DOPTION_DATA_ACCESS_INTERFACE_INT</span> is a macro definition of domain options.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetOptionStr</span>(string strDomain,int nKey,string strValue)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the key of domain option</p>
+<p>[3]string &nbsp;the string value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is similar to c_SetOptionInt(), it is used for setting the string value of a domain option.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetOptionInt</span>(string strDomain,int nKey)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the key of domain option</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the integer value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the integer value of a domain option.</p>
+<p><span style="font-weight: bold;">Example</span>: <span style="font-style: italic;">local interface = c_GetOptionInt("domain", DOPTION_DATA_ACCESS_INTERFACE_INT)</span></p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetOptionStr</span>(string strDomain,int nKey)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the key of domain option</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp;the string value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the string value of a domain option.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetGlobalOptionInt</span>(int nKey,int nValue)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of global option</p>
+<p>[2]int &nbsp;the integer value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set the integer value of a global option.</p>
+<p><span style="font-weight: bold;">Example</span>: <span style="font-style: italic;">c_SetGlobalOptionInt(</span><span style="font-style: italic; font-weight: bold;">GOPTION_SYSTEM_LOGFILE_ENABLE_INT</span><span style="font-style: italic;">, 1)</span></p>
+<p><span style="font-style: italic; font-weight: bold;">GOPTION_SYSTEM_LOGFILE_ENABLE_INT</span> is a macro definition of global options.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetGlobalOptionStr</span>(int nKey,string strValue)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of global option</p>
+<p>[2]string &nbsp;the string value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is similar to c_SetGlobalOptionInt(), it is used for setting the string value of a global option.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGlobalOptionInt</span>(int nKey)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of global option</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the integer value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the integer value of a global option.</p>
+<p><span style="font-weight: bold;">Example</span>: <span style="font-style: italic;">local enable_systemlog = c_GetGlobalOptionInt(GOPTION_SYSTEM_LOGFILE_ENABLE_INT)</span></p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGlobalOptionStr</span>(int nKey)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of global option</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp;the string value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the string value of a global option.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetAdminOptionInt</span>(int nKey,int nValue)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of admin option</p>
+<p>[2]int &nbsp;the integer value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set the integer value of admin option.</p>
+<p><span style="font-weight: bold;">Example</span>: <span style="font-style: italic;">c_SetAdminOptionInt(</span><span style="font-style: italic; font-weight: bold;">ADMIN_OPTION_LOGFILE_ENABLE_INT</span><span style="font-style: italic;">, 1)</span></p>
+<p><span style="font-style: italic; font-weight: bold;">ADMIN_OPTION_LOGFILE_ENABLE_INT</span> is a macro definition of admin options.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetAdminOptionStr</span>(int nKey,string strValue)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of admin option</p>
+<p>[2]string &nbsp;the string value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is similar to c_SetAdminOptionInt(), it is used for setting the string value of an admin option.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAdminOptionInt</span>(int nKey)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of admin option</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the integer value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the integer value of an admin option.</p>
+<p><span style="font-weight: bold;">Example</span>: <span style="font-style: italic;">local enable_adminlog = c_GetAdminOptionInt(ADMIN_OPTION_LOGFILE_ENABLE_INT)</span></p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAdminOptionStr</span>(int nKey)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;the key of admin option</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp;the string value</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the string value of an admin option.</p>
+<p>&nbsp;</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

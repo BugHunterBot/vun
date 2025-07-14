@@ -1,0 +1,399 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>File Selector</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html, body {height: 98%;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:11px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:18px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:18px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+.selectHead{margin:0;padding:0;padding:2px 0;background:url('images/selectback.jpg') no-repeat;width:120px;padding-left:5px;height:14px;cursor:pointer;font-size:9pt;}
+.selectContent{margin:0;padding:0;position:absolute;background:#eee;top:40px;left:0px;border:1px solid #333;border-top:none;width:125px;overflow:hidden;color:#999;}
+.selectContent ul{margin:0;padding:0;border:0;background:none;cursor:pointer;padding:0;color:#666}
+.selectContent ul li{margin:0;padding:0;padding:0 5px;line-height:20px;}
+.optionSelected{background:#666;color:#eef}
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var ajaxlock = false;
+var now_path = "/";
+var selectedRow = null;
+var lastObj = null;
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+		if(page != "")
+			$("waitingdiv").style.display = "";
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	if (xmlhttp.readyState == 4)
+	{
+		ajaxlock = false;
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_get_filelist':	getFilelist();break;
+					case 'admin_mkdir':			changeDir(now_path);break;
+					case 'admin_chkfile':		chkfileResult();break;
+					case 'admin_chkdir':		chkdirResult();break;
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+			finally
+			{
+				$("waitingdiv").style.display = "none";
+			}
+		}
+		else
+		{
+			$("waitingdiv").style.display = "none";
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+function getFilelist()
+{
+	$("waitingdiv").style.display = "";
+	try
+	{
+		var xmldoc = xmlhttp.responseXML;
+		now_path = xmlFieldValue(xmldoc,"nowpath");
+		$("nowpath").value = now_path;
+		var row = xmldoc.getElementsByTagName("rowdata");
+		var rownum = row.length;
+
+		var headcell = $("listhead").rows[0].cells;
+		var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='3' cellspacing='0' style='table-layout:fixed;'><thead><tr height='0'><td width='"+headcell[0].width+"'></td><td width='"+headcell[1].width+"'></td><td></td></tr></thead><tbody id='maintable'>";
+		for(var i=0; i < rownum; i++)
+		{
+			var myrow = row[i];
+			var isdir = xmlFieldValue(myrow,"isdir");
+			var dir = xmlFieldValue(myrow,"dir");
+			var dirname = dir;
+			if(dir.substring(0,1) == "/")
+				dirname = dir.substring(1);
+			var filetype = " <%=LANG['title_directory']%>";
+			if(isdir == "true")
+			{
+				htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td isdir='"+isdir+"' dirpath='"+htmlencode(dir)+"'  myname='"+htmlencode(dirname.toLowerCase())+"'><img src='images/folder16.png'> "+htmlencode(dirname)+"</td><td>"+htmlencode(filetype)+"</td><td></td></tr>";
+			}
+			else
+			{
+				var file_ext = getExtention(dir);
+				filetype = file_ext + "<%=LANG['title_filetype']%>";
+				htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td isdir='"+isdir+"' dirpath='"+htmlencode(dir)+"' myname='"+htmlencode(dirname.toLowerCase())+"'><img src='icons/"+ file_ext +".gif' onerror=\"src='icons/default.gif';\"> "+htmlencode(dirname)+"</td><td>"+htmlencode(filetype)+"</td><td></td></tr>";
+			}
+		}
+		htmltext += "</tbody></table>";
+		clear("listview_div");
+		write("listview_div",htmltext);
+
+		if(now_path != "/")
+			sortTable(null,"listtable", 1);
+		selectedRow = null;
+		lastsortcol = -1;
+	}
+	catch(e){}
+	$("waitingdiv").style.display = "none";
+	if(lastArrow != null)
+		lastArrow.style.backgroundImage="";
+}
+
+
+function changeDir(dirname)
+{
+	ajaxRequest("admin_get_filelist","dir="+encodeURIComponent(trim(dirname)));
+}
+
+
+function goUp()
+{
+	var dirname = now_path.substr(0,now_path.lastIndexOf("/"));
+	if(dirname.lastIndexOf("/") != -1)
+		ajaxRequest("admin_get_filelist","dir="+encodeURIComponent(dirname));
+	else
+		ajaxRequest("admin_get_filelist","dir="+encodeURIComponent("/"));
+}
+
+
+function checkFile()
+{
+	<%if _GET["checkfile"] ~= nil and _GET["checkfile"] == "0" then%>
+		ajaxRequest("admin_chkdir","dir="+encodeURIComponent($("nowpath").value));
+	<%else%>
+		ajaxRequest("admin_chkfile","file="+encodeURIComponent($("nowpath").value));
+	<%end%>
+}
+
+function chkfileResult()
+{
+	var result = xmlhttp.responseText;
+	if(result == "1")
+	{
+		try
+		{
+			//top.closewindow($("nowpath").value.replace("//","/"));
+			top.closewindow($("nowpath").value);
+		}
+		catch(e){}
+	}
+	else
+	{
+		alert("<%=LANG['error_invalid_file']%>");
+	}
+}
+
+function chkdirResult()
+{
+	var result = xmlhttp.responseText;
+	if(result == "1")
+	{
+		alert("<%=LANG['error_invalid_file']%>");
+	}
+	else
+	{
+		try
+		{
+			//top.closewindow($("nowpath").value.replace("//","/"));
+			top.closewindow($("nowpath").value);
+		}
+		catch(e){}
+	}
+}
+
+function do_list_click(obj)
+{
+	var row_index = obj.rowIndex-1;
+	if(selectedRow != $("maintable").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("maintable").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+
+		if(now_path != "/")
+			$("nowpath").value = now_path+selectedRow.cells[0].getAttribute("dirpath");
+		else
+			$("nowpath").value = selectedRow.cells[0].getAttribute("dirpath");
+	}
+	else
+	{
+		var isdir = selectedRow.cells[0].getAttribute("isdir");
+		if(isdir == "true")
+		{
+			if(now_path != "/")
+			{
+				var tempdir = now_path+selectedRow.cells[0].getAttribute("dirpath");
+				changeDir(tempdir);
+			}
+			else
+			{
+				var tempdir = selectedRow.cells[0].getAttribute("dirpath");
+				changeDir(tempdir);
+			}
+		}
+		else
+		{
+			checkFile();
+		}
+	}
+
+	return false;
+}
+
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="background-color:#E6E6E6;">
+<div style="height:100%;">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#777; filter:alpha(opacity=60); -moz-opacity: 0.60; opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:30%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:2px; margin-bottom:2px;">
+	<tr><td style="padding:5px;">
+	<img src="images/ico_parent.png" title="<%=LANG["title_goup"]%>" onclick="goUp();" style="cursor:pointer" /><%=LANG["title_goup"]%>&nbsp;
+	<img src="images/ico_refresh.png" title="<%=LANG["title_refresh"]%>" onclick="changeDir(now_path);" style="cursor:pointer" /><%=LANG["title_refresh"]%>
+	</td></tr>
+</table>
+
+<input type="text" value="<%=LANG["title_rootdir"]%>" id="selectHead" class="selectHead" onclick="drawSelect('selectHead','selectContent',changeDir)" readonly="true">
+<div id="selectContent" class="selectContent" style="display:none;">
+	<ul>
+	<%
+		for _,root in pairs(c_GetRootDir()) do
+			if root ~= nil and root["isdir"] == true then
+				print("<li title='"..specialhtml_encode(root["dir"]).."'>"..specialhtml_encode(root["dir"]).."</li>")
+			end
+		end
+	%>
+	</ul>
+</div>
+
+<div style="padding-top:2px; overflow-x:hidden;">
+	<table id="listhead" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+	<tr style="background-color: #EFEFEF;">
+	<td class="listhead" width="360" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 0, 'myname')"><div class="resizeblock" onmousedown="dragStart(this,'listview_div','listhead','listtable');">&nbsp;</div><%=LANG["title_name"]%></td>
+	<td class="listhead" width="120" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 1);"><div class="resizeblock" onmousedown="dragStart(this,'listview_div','listhead','listtable');">&nbsp;</div><%=LANG["title_type"]%></td>
+	<td class="listhead">&nbsp;</td>
+	</tr>
+	</table>
+</div>
+
+
+<div id="listview_div" style="height: 350px; width: 100%; overflow:scroll; overflow-x:hidden;background-color:#FFF;">
+	<table id="listtable" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;">
+	<thead><tr height="0">
+	<td width="360"></td>
+	<td width="120"></td>
+	<td></td>
+	</tr></thead>
+	<tbody id="maintable"></tbody>
+	</table>
+</div>
+
+<input id="nowpath" type="text" value="/" style="width:95%; margin:3px;"><br>
+
+<div style="margin-left:5px;">
+<button type='submit' onclick='checkFile();'><span><em><%=LANG["button_submit"]%></em></span></button>&nbsp;
+<button onclick='top.closewindow();'><span><em><%=LANG["button_cancel"]%></em></span></button>
+</div>
+</div>
+</body>
+</html>
+<script>
+ajaxRequest("admin_get_filelist","");
+</script>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

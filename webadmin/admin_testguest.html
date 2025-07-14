@@ -1,0 +1,12 @@
+<%
+if _SESSION["logined"] ~= nil then
+
+	local retval = c_GuestAccountEnabled()
+	if retval == true then
+		print("1")
+	else
+		print("0")
+	end
+
+end
+%>

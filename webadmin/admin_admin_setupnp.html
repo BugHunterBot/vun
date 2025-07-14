@@ -1,0 +1,6 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local enable_upnp = _POST["enable_upnp"]
+	c_SetAdminOptionInt(ADMIN_OPTION_ENABLE_UPNP_INT,enable_upnp)
+end
+%>

@@ -1,0 +1,307 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+
+local all_langs = {"english","french","german","italian","dutch","portuguese","spanish","schinese","tchinese","japanese","czech","romanian","turkish","korean","polish"}
+local my_lang = nil
+if _COOKIE["admin_lang"] ~= nil then
+	for _,val in pairs(all_langs) do
+		if _COOKIE["admin_lang"] == val then
+			my_lang = val
+			break
+		end
+	end
+
+	if my_lang == nil then
+		my_lang = "english"
+	end
+else
+	my_lang = "english"
+end
+
+local nType,strVersion,strUserName,strCopyNumber,strOS,nLeftDay = c_GetLicenseInfo()
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>License</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+fieldset {  
+    border-color: #999;  
+    border-style: solid;  
+    border-width: 1px;  
+}
+
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var ajaxlock = false;
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	if (xmlhttp.readyState == 4)
+	{
+		ajaxlock = false;
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_add_regcode':	Register_result();break;
+					case 'admin_get_lastversion':	Lastversion_result();break;
+				}
+			}
+			catch(e)
+			{
+			}
+		}
+		else
+		{
+		}
+	}
+}
+
+
+function Register()
+{
+	showMessagebox("<%=LANG['str_register']%>","<table width='100%' border='0' cellpadding='0' cellspacing='0' style='background-color:#E6E6E6;padding-left:10px;padding-top:5px;'><tr><td align=left><%=LANG['str_enter_regcode']%>:<br><textarea style='width:355px;height:150px;' id='regcode'></textarea></td></tr><tr><td height=50><button id='btn_submit' type='submit' onclick='return Register_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",null,380,250);
+	top.$("regcode").focus();
+
+	top.$("btn_submit").onclick = function(){return Register_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+
+}
+
+function Register_submit()
+{
+	var strCode = trim(top.$("regcode").value);
+	if(strCode == "")
+	{
+		alert("<%=LANG['str_invalid_regcode']%>");
+		return;
+	}
+	ajaxRequest("admin_add_regcode","regcode="+encodeURIComponent(strCode)+"&r="+Math.random());
+}
+
+function Register_result()
+{
+	var result = trim(xmlhttp.responseText);
+	if(result == "true")
+	{
+		alert("<%=LANG['str_register_success']%>");
+		top.window.location.reload();
+	}
+	else
+	{
+		alert("<%=LANG['str_register_failed']%>");
+	}
+}
+
+function gotoUrl(url) 
+{
+	try
+	{
+		window.open(url);
+	}
+	catch(e)
+	{
+		showMessagebox("Info","<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0' style='background-color:#E6E6E6;padding:8px;'><tr><td align=left><div style='clear:none; word-break:keep-all;'><div style='float: left;'><img src='images/vista_info.gif' align='absmiddle'>&nbsp;&nbsp;</div><%=LANG['str_exception_tips']%><br><input type='text' readonly  style='width:280px;border:0;background-color:#E6E6E6;' value='"+url+"'></div></td></tr><tr><td><button id='btn_submit' type='submit' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",null,380,240);
+	}
+}
+
+function Purchase()
+{
+	<% if my_lang == "schinese" then %>
+	gotoUrl("https://www.wftpserver.com/zh/order.htm");
+	<% elseif my_lang == "german" then %>
+	gotoUrl("https://www.wftpserver.com/de/order.htm");
+	<% else %>
+	gotoUrl("https://www.wftpserver.com/order.htm");
+	<% end %>
+}
+
+function Update()
+{
+	<% if my_lang == "schinese" then %>
+	gotoUrl("https://www.wftpserver.com/zh/download.htm");
+	<% elseif my_lang == "german" then %>
+	gotoUrl("https://www.wftpserver.com/de/download.htm");
+	<% else %>
+	gotoUrl("https://www.wftpserver.com/download.htm");
+	<% end %>
+}
+
+function Comparison()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_version_comparison']%>","<iframe src='admin_comparison.html' width=760 height=600 border=0 frameborder=0 id='modify"+frametag+"' scrolling='no'></iframe>",null,760,600);
+}
+
+function Lastversion_result()
+{
+	var result = trim(xmlhttp.responseText);
+	if(result == "")
+		result = "Unknown";
+	$("last_version").innerHTML = result;
+}
+
+</script>
+</head>
+<body style="background-color:#E6E6E6;" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+	<div id="listview_div" style="margin:10px; width:97%; border:1px solid #919B9C;  height:460px; overflow:auto; overflow-x:hidden;background-color:#FFF;">
+	<div id="license_div" style="padding:5px;">
+		<fieldset>
+		<legend><b><%=LANG["str_registration_info"]%></b></legend>
+			<div style="padding:5px;line-height:25px;">
+			<div id="license_info">
+			<span style="color:#0000FF">Wing FTP Server <%=c_GetVersion()%></span><br>
+			<span style="color:#0000FF">Copyright 2025 by wftpserver.com (support@wftpserver.com)</span><br>
+			<span style="color:#009900"><%=LANG["str_os_type"]%>:  <%=c_GetOsType()%></span><br>
+			<%if nType <= LICENSE_CORPORATE then%>
+			<span style="color:#009900"><%=LANG["str_edition"]%>: 
+			<%
+			if nType == LICENSE_STANDARD then 
+				print(LANG["str_version_standard"])
+			elseif nType == LICENSE_SECURE then 
+				print(LANG["str_version_secure"])
+			elseif nType == LICENSE_CORPORATE then 
+				print(LANG["str_version_corporate"])
+			elseif nType == LICENSE_FREE then 
+				print(LANG["str_version_free"])
+			end
+			%>
+			</span><br>
+			<span style="color:#009900"><%=LANG["str_copies"]%>:  <%=strCopyNumber%></span><br>
+			<span style="color:#009900"><%=LANG["str_registered_to"]%>:  <%=strUserName%></span><br>
+			<%elseif nType == LICENSE_FREE then%>
+			<span style="color:#009900"><%=LANG["str_edition"]%>:  <%=LANG["str_version_free"]%></span><br>
+			<%elseif nType == LICENSE_TRIAL then%>
+			<span style="color:#009900"><%=LANG["str_edition"]%>:  <%=LANG["str_trial_version"]%></span><br>
+			<span style="color:#009900"><%=LANG["str_left_days"]%>:  <%=nLeftDay%></span><br>
+			<%elseif nType == LICENSE_EXPIRE then%>
+			<span style="color:#FF0000"><%=LANG["str_evaluation_expired"]%></span><br>
+			<%elseif nType == LICENSE_FAILED then%>
+			<span style="color:#FF0000"><%=LANG["str_invalid_license"]%></span><br>
+			<%end%>
+			<div>
+			<br>
+			<button id="btn_register" onclick="Register();"><span><em><%=LANG["button_register"]%></em></span></button>
+			<button onclick="Purchase();"><span><em><%=LANG["button_purchase"]%></em></span></button>
+			<button onclick="Comparison();"><span><em><%=LANG["button_comparison"]%></em></span></button><br>
+			</div>
+		</fieldset>
+	</div>
+	<div id="version_div" style="padding:5px;margin-top:10px;">
+		<fieldset>
+		<legend><b><%=LANG["str_version_info"]%></b></legend>
+			<div style="padding:5px;line-height:25px;">
+			<%=LANG["str_installed_version"]%>:  <b><%=c_GetVersion()%></b><br>
+			<%=LANG["str_last_versions"]%>:  <span id="last_version" style="font-weight:bold;"><img src="images/loading.gif"></span><br><br>
+			<button onclick="Update();"><span><em><%=LANG["button_update"]%></em></span></button><br>
+			</div>
+		</fieldset>
+	</div>
+
+	</div>
+</td></tr>
+</table>
+
+
+</body>
+</html>
+<script>
+ajaxRequest("admin_get_lastversion", "");
+</script>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

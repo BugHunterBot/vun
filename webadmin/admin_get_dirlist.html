@@ -1,0 +1,64 @@
+<%
+if _SESSION["logined"] ~= nil then
+
+	local admin_nowpath = "/"
+	if _SESSION["admin_basefolder"] ~= nil and _SESSION["admin_basefolder"] ~= "" then
+		admin_nowpath = _SESSION["admin_basefolder"]
+	end
+
+	if _SESSION["admin_nowpath"] ~= nil and _SESSION["admin_nowpath"] ~= "" then
+		admin_nowpath = _SESSION["admin_nowpath"]
+	end
+
+	local changedir = _POST["dir"] or ""
+	local CanChangedir = true
+	if _SESSION["admin_basefolder"] ~= nil and _SESSION["admin_basefolder"] ~= "" then
+		if c_StringLength(changedir) < c_StringLength(_SESSION["admin_basefolder"]) then
+			CanChangedir = false
+		end
+	end
+
+	if changedir ~= "" and c_IsDir(changedir) == true and CanChangedir == true and c_GetDir(changedir) ~= nil then
+		if _SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1 then
+		else
+			local old_nowpath = admin_nowpath
+			admin_nowpath = changedir
+			if _SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1 then
+				if c_StringFind(changedir.gsub(changedir,"//", "/").."/", c_GetAppPath() ) > -1 then
+					admin_nowpath = old_nowpath
+				end
+			end
+			rawset(_SESSION,"admin_nowpath",admin_nowpath)
+			SessionModule.save(_SESSION_ID)
+		end
+	end
+
+	setContentType("text/xml; charset=UTF-8")
+	local strResult = "<?xml version='1.0' encoding='UTF-8'?>\r\n"
+	strResult = strResult.."<alldata><nowdir><![CDATA["
+	strResult = strResult..admin_nowpath
+	strResult = strResult.."]]></nowdir>\r\n"
+	strResult = strResult.."<dirdata>\r\n"
+
+	if admin_nowpath == "/" then
+		for _,root in pairs(c_GetRootDir()) do
+			if root ~= nil and root["isdir"] == true then
+				strResult = strResult.."<dir><![CDATA["..root["dir"].."]]></dir>"
+			end
+		end
+	else
+		if _SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1 then
+		else
+			for child in c_GetDir(admin_nowpath) do
+				if child ~= nil and child ~= "." and child ~= ".." then
+					strResult = strResult.."<dir><![CDATA[/"..child.."]]></dir>"
+				end
+			end
+		end
+	end
+
+	strResult = strResult.."</dirdata></alldata>\r\n"
+	print(strResult)
+
+end
+%>

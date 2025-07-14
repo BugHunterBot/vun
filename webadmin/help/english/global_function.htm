@@ -1,0 +1,641 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Advanced Features &gt; Server Lua API &gt; System Function</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="">
+   <meta name="description" content="System Function">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?global_function.htm"; }
+  else { parent.quicksync('a6.3.3'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Advanced Features &gt; <a href="server_lua_api.htm">Server Lua API</a>&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">System Function</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="domain_function.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="server_lua_api.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="get_set_options.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ExitServer</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Safely shut down the WingFTP service.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_StartServer</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Put all the domains online.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_StopServer</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Put all the domains offline.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ReplaceGlobalVar</span>(string strSource)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the source string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; the string with replaced values.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Replace all the global variables of the source string and return it.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SendMail</span>(string strTo,string strSubject,string strPlainText,string strAttach,string strSmtpName,bool bHTML)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the receiver's email addresses, multiple email addresses can be separated by a comma</p>
+<p>[2]string &nbsp; mail subject</p>
+<p>[3]string &nbsp; mail content</p>
+<p>[4]string &nbsp; attach file path</p>
+<p>[5]string &nbsp; the SMTP configuration name</p>
+<p>[6]bool &nbsp;mail content is HTML?, true=yes, false=no.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if email is sent successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Send an email with a few options.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SendMailComplete</span>(string strTo,string strSubject,string strPlainText,string strAttach,string strSenderEmail,string strSenderName,</p>
+<p>string strSmtpServer,int nSmtpPort,string strSmtpUserName,string strSmtpPassword,bool bSmtpNeedAuth,bool bUseSsl,bool bHTML)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the receiver's email addresses, multiple email addresses can be separated by a comma</p>
+<p>[2]string &nbsp; mail subject</p>
+<p>[3]string &nbsp; mail content</p>
+<p>[4]string &nbsp; attachment file path</p>
+<p>[5]string &nbsp; the sender's email address</p>
+<p>[6]string &nbsp; the sender's name</p>
+<p>[7]string &nbsp; the server address</p>
+<p>[8]int &nbsp;the smtp server's port</p>
+<p>[9]string &nbsp; the login username</p>
+<p>[10]string &nbsp; the login password</p>
+<p>[11]bool &nbsp;need auth?, true=yes, false=no.</p>
+<p>[12]bool &nbsp;need SSL?, true=yes, false=no.</p>
+<p>[13]bool &nbsp;content is HTML?, true=yes, false=no.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if email is sent successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Send an email with full options.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetVersion</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; the installed version of Wing FTP Server, such as "3.0.0"</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the installed version of Wing FTP Server.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetLastVersion</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; the latest version of Wing FTP Server, such as "3.0.0"</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the latest version of Wing FTP Server.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetOsType</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; the current operating system type, such as "Windows"</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the current operating system type.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ClearThumbCache</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Clear all the thumbnail images cache.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CreateCustomLogo</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the image path of your company logo.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Create a custom logo for all domains.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ResetDefaultLogo</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Reset to the default logo for all domains.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGlobalIPMaskList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the domain IPmask(formatted as {ip,refuse}) list table.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return entire server's IP mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGlobalFileMaskList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the domain Filemask(formatted as {filename,refuse}) list table.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return entire server's file mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetGlobalIPMaskList</span>(table tabIpMask)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]table &nbsp; the IPmask list table (formatted as {ip,refuse})</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set entire server's IP mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetGlobalFileMaskList</span>(table tabFileMask)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]table &nbsp; the Filemask list table (formatted as {filename,refuse})</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set entire server's file mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSystemLog</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp;system log text</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get all the system logs.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddSystemLog</span>(string strLog,int nType)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the system log text</p>
+<p>[2]int &nbsp;the system log type: 1=normal log, 2=error log</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add a system log.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetServerStatistic</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; server statistics table formatted as {running_time,current_session,max_session,last24hour_session,session_averagesec,session_maxsec,total_session, down_speed,down_averagespeed,down_bytes,down_files,up_speed,up_averagespeed,up_bytes,up_files}.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the server statistics.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CreateSSLCertificate</span>(string strFileName,string strFilePath,int nKeySize,string strCountry,string strState,string strLocality,string strOrganization,string strDomainName,string strPassword)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the certificate file name</p>
+<p>[2]string &nbsp;the output directory</p>
+<p>[3]int &nbsp;key size</p>
+<p>[4]string &nbsp;2-digit country code</p>
+<p>[5]string &nbsp;full state or province</p>
+<p>[6]string &nbsp;locality(city)</p>
+<p>[7]string &nbsp;organization</p>
+<p>[8]string domain name/common name</p>
+<p>[9]string &nbsp;SSL key password</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if SSL certificate is created successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is used for creating a self-signed SSL certificate file.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSSLCertList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a table list of all the SSL configuration (formatted as {name,state})</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return all the SSL certificate configurations.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSSLCertificate</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the certificate configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a table formatted as {ssl_certpath,ssl_keypath,ssl_password}.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get an SSL certificate configuration on success, or nil on error.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CheckSSLCertificate</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the certificate configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if SSL certificate is valid, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the specified SSL certificate is valid.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddSSLCertificate</span>(string strName,string strCertPath,string strKeyPath,string strPassword)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the certificate configuration name</p>
+<p>[2]string &nbsp; the certificate file path</p>
+<p>[3]string &nbsp; the key file path</p>
+<p>[4]string &nbsp; the key password</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if successfully added an SSL certificate configuration, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add or modify an SSL certificate configuration.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteSSLCertificate</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the certificate configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if successfully deleted an SSL certificate configuration, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete an SSL certificate configuration.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CreateSSHKey</span>(string strFileName,string strFilePath,string strKeyPassword,int nKeySize,int nKeyType)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the host key filename</p>
+<p>[2]string &nbsp;the output directory</p>
+<p>[3]int &nbsp;the host key password</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if SSH host key is created successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is used for creating an SSH host key file .</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSSHKeyList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the table list of all SSH host keys (formated as {name,state})</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return all the SSH host keys.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSSHKey</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the SSH configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a table formated as {ssh_keypath,ssh_password}.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get an SSH configuration on success, or nil on error.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CheckSSHKey</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the SSH configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if SSH host key is valid, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the specified SSH host key is valid.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddSSHKey</span>(string strName,string strKeyPath,string strPassword)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the SSH configuration name</p>
+<p>[2]string &nbsp; the key file path</p>
+<p>[3]string &nbsp; the host key password</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if an SSH configuration is added successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add or modify an SSH configuration.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteSSHKey</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the SSH configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if SSH configuration is deleted successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete an SSH configuration.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSMTPList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; SMTP configuration list.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return all the SMTP configurations, the configuration name string is separated with a carriage return.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSMTP</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the smtp configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a table formatted as {sender_name,sender_email,need_auth,smtp_server,smtp_port,smtp_username,smtp_password,use_ssl}.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get an SMTP configuration on success, or nil on error.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddSMTP</span>(string strName,string strSenderName,string strSenderEmail,bool bSmtpNeedAuth,string strSmtpServer,int nSmtpPort,string strSmtpUserName,string strSmtpPassword,bool bUseSsl)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the smtp configure name</p>
+<p>[2]string &nbsp; the sender's name</p>
+<p>[3]string &nbsp; the sender's email address</p>
+<p>[4]bool &nbsp;need auth?, true=yes,false=no.</p>
+<p>[5]string &nbsp; the smtp server's address</p>
+<p>[6]int &nbsp;the smtp server's port</p>
+<p>[7]string &nbsp; the smtp server's username</p>
+<p>[8]string &nbsp; the smtp server's password</p>
+<p>[9]bool &nbsp;need SSL?, true=yes,false=no.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add or modify an SMTP configuration.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteSMTP</span>(string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the smtp configuration name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if deleted an SMTP configuration successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete an SMTP configuration.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetTaskList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the system task(formatted as {taskname,type,day,executed,datefrom,timefrom}) list table</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return all the system tasks.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetTask</span>(string strTaskName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the task scheduler name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a table formatted as {taskname,type,day,executed,datefrom,timefrom,script}.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get a task scheduler on success, or nil on error.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddTask</span>(string strTaskName,int nType,int nDay,string strDatefrom,string strTimefrom,string strScript,bool bReset)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the task scheduler name</p>
+<p>[2]int &nbsp;the task scheduler type,0=one time task,1=hourly task,2=daily task,3=weekly task,4=monthly task</p>
+<p>[3]int &nbsp;means the day number when you select weekly task or monthly task.</p>
+<p>[4]string &nbsp; the date string of first starting task, such as 2009-9-9</p>
+<p>[5]string &nbsp; the time string of first starting task, such as 09:09:09</p>
+<p>[6]string &nbsp; the lua script text for the task.</p>
+<p>[7]bool &nbsp;whether to reset the task, true=yes, false=no.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add or modify a system task scheduler.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteTask</span>(string strTaskName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the task scheduler name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if deleted system task scheduler successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete a system task scheduler.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_TaskExist</span>(string strTaskName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the task scheduler name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if the specified task scheduler exists, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the specified task scheduler exists.</p>
+<p>&nbsp;</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

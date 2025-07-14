@@ -1,0 +1,24 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local group = _POST["group"]
+
+	if group ~= nil then
+		group = json.decode(group)
+
+		local result = c_GroupExist(domain,group.groupname)
+		if result == true then
+			print("0")
+		else
+			AddGroup(domain,group)
+			if c_GroupExist(domain,group.groupname) == true then
+				print("1")
+			else
+				print("2")
+			end
+		end
+	end
+else
+	print("-1")
+end
+%>

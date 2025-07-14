@@ -1,0 +1,7 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local liststr = ""
+	liststr = c_GetSMTPList()
+	print(liststr)
+end
+%>

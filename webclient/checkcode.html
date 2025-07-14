@@ -1,0 +1,74 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+<meta http-equiv="Expires" content="0" />
+<body>
+<%
+include("language.html")
+
+if _SESSION["username"] ~= nil then
+	local secretcode = _POST["secretcode"] or nil
+	local digitalcode = _POST["digitalcode"] or nil
+	local mainpage = "main.html"
+	local loginpage = "login.html"
+
+	local isSmartPhone = false
+	local strUserAgent = string.match(strHead,"User%-Agent:%s?(%s[^\r\n]*)")
+	if strUserAgent ~= nil then
+		strUserAgent = string.lower(strUserAgent)
+		if string.find(strUserAgent, "android") or string.find(strUserAgent, "iphone") then
+			isSmartPhone = true
+		end
+	end
+
+	if isSmartPhone == true then
+		mainpage = "main_m.html"
+	end
+
+	if _SESSION["currentpath"] ~= nil then
+		print("<script>top.location='"..mainpage.."';</script>")
+	else
+		if secretcode ~= nil and digitalcode~= nil then
+			local enableTwoFactor, twoFactorCode = c_GetSecretCode(_SESSION["username"])
+			if secretcode == "" then
+				if enableTwoFactor ~= nil and enableTwoFactor == true then
+					if twoFactorCode ~= nil and twoFactorCode ~= "" and c_TotpCode(twoFactorCode) == digitalcode and _SESSION["logintime"] ~= nil and (os.time() - tonumber(_SESSION["logintime"])) >= 2 then
+						rawset(_SESSION,"currentpath","/")
+						SessionModule.save(_SESSION_ID)
+						c_AddConnection(_SESSION["username"],"/",_REMOTE_IP,_SESSION_ID,"LOGIN OK")
+						c_AddWebLog("User '".._SESSION["username"].."' logged in ok! (IP:".._REMOTE_IP..")",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+						c_DoWebEvent(WEB_USER_LOGIN_EVENT,_SESSION_ID)
+						print("<script>top.location='"..mainpage.."';</script>")
+					else
+						print("<script>alert('"..LANG["wrong_totp_tip1"].."'); top.location='"..loginpage.."';</script>")
+					end
+				else
+					print("<script>top.location='"..mainpage.."';</script>")
+				end
+			else
+				if enableTwoFactor ~= nil and enableTwoFactor == true and twoFactorCode ~= nil and twoFactorCode == "" then
+					local totp_randomkey = _SESSION["totp_randomkey"] or secretcode
+					if c_TotpCode(totp_randomkey) == digitalcode and _SESSION["logintime"] ~= nil and string.len(totp_randomkey) == 16 and (os.time() - tonumber(_SESSION["logintime"])) >= 2 then
+						c_ChangeSecretCode(_SESSION["username"], totp_randomkey)
+						rawset(_SESSION,"currentpath","/")
+						rawset(_SESSION,"totp_randomkey","")
+						SessionModule.save(_SESSION_ID)
+						c_AddConnection(_SESSION["username"],"/",_REMOTE_IP,_SESSION_ID,"LOGIN OK")
+						c_AddWebLog("User '".._SESSION["username"].."' logged in ok! (IP:".._REMOTE_IP..")",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+						c_AddWebLog("User '".._SESSION["username"].."' updated the TOTP secret code.",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+						c_DoWebEvent(WEB_USER_LOGIN_EVENT,_SESSION_ID)
+						print("<script>top.location='"..mainpage.."';</script>")
+					else
+						print("<script>alert('"..LANG["wrong_totp_tip2"].."'); top.location='"..loginpage.."';</script>")
+					end
+				end
+			end
+		end
+	end
+else
+	print("<script>top.location='login.html';</script>")
+end
+%>
+</body>
+</html>

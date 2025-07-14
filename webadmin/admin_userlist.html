@@ -1,0 +1,930 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+
+local nType = c_GetLicenseInfo()
+local domain = _GET["domain"] or _POST["domain"]
+local accessway = c_AccessDataWay(domain)
+local totalrecords = 0
+local totalpages = 0
+if accessway == 2 or accessway == 3 then
+	totalrecords,totalpages = c_GetUserPageCount(domain)
+end
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>User List</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html, body {height: 100%;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+span{
+	vertical-align:middle;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listhead3
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead4
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+</style>
+
+<!–[if IE 6]>
+<link rel="stylesheet" type="text/css" href="css/ie6.css" />
+<![endif]–>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var domain = "<%=domain%>";
+var accessway = "<%=accessway%>";
+var totalrecords = "<%=totalrecords%>";
+var totalpages = "<%=totalpages%>";
+var nowpage = 1;
+var nowrows = 0;
+var ajaxlock = false;
+var selectedRow = null;
+var lastObj = null;
+var lastObjIndex = -1;
+var userCount = 0;
+var nowgroup = "*all*";
+var g_username = "";
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+		if(page != "")
+			$("waitingdiv").style.display = "";
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	if (xmlhttp.readyState == 4)
+	{
+		ajaxlock = false;
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_get_userlist':	
+					{
+						if(accessway == "2" || accessway == "3")
+						{
+							userpagelist_result();
+						}
+						else
+						{
+							getuserlist_result();
+						}
+						break;
+					}
+					case 'admin_reconnect_db':	
+					{
+						window.location.reload();
+						break;
+					}
+					case 'admin_delete_user':	
+					{
+						Refresh();
+						break;
+					}
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+			finally
+			{
+				$("waitingdiv").style.display = "none";
+			}
+		}
+		else
+		{
+			$("waitingdiv").style.display = "none";
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+function getuserlist_req()
+{
+	ajaxRequest("admin_get_userlist","domain="+domain+"&r=" + Math.random() );
+}
+
+function getuserlistpage(page,column,sortflag)
+{
+	<%
+	if nType == LICENSE_FREE or nType == LICENSE_STANDARD or nType == LICENSE_SECURE then
+	%>
+	if(accessway == "2" || accessway == "3")
+	{
+		alert("<%=LANG['str_notsupport_feature1']%>");
+		return false;
+	}
+	<%
+	end
+	%>
+
+	if(sortflag == false)
+		sortflag = 0;
+	else
+		sortflag = 1;
+
+	ajaxRequest("admin_get_userlist","domain="+domain+"&page="+page+"&column="+column+"&sortflag="+sortflag+"&username="+g_username+"&r=" + Math.random() );
+	$("page_selector").value = page;
+	nowpage = page;
+}
+
+function getuserlist_group()
+{
+	if(nowgroup != "*all*")
+	{
+		lastsortcol = -1;
+		sortArrow = false;
+		if(lastArrow != null)
+			lastArrow.style.backgroundImage="";
+
+		ajaxRequest("admin_get_userlist","domain="+domain+"&group="+nowgroup+"&r=" + Math.random() );
+	}
+}
+
+function getuserlist_result()
+{
+	$("waitingdiv").style.display = "";
+	try
+	{
+		var headcell = $("listhead").rows[0].cells;
+		var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='3' cellspacing='0' style='table-layout:fixed;'><thead><tr height='0'><td></td></tr></thead><tbody id='maintable'>";
+
+		var userArray = xmlhttp.responseText.split("\n");
+		userCount = userArray.length;
+		for(var i=0;i<userArray.length;i++)
+		{
+			if(userArray[i] != "" && userArray[i] != " ")
+			{
+				var matched = false;
+				var tempName = userArray[i].toLowerCase();
+				if(g_username.indexOf("*") != -1)
+				{
+					matched = true;
+					var strArray = g_username.split("*");
+					for(var k=0;k<strArray.length;k++)
+					{
+						if(trim(strArray[k]) != "" && tempName.indexOf(strArray[k]) == -1)
+						{
+							matched = false;
+							break;
+						}
+					}
+				}
+				else
+				{
+					if(tempName.indexOf(g_username.toLowerCase()) != -1)
+						matched = true;
+				}
+				
+				if(matched == true)
+					htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td myname='"+userArray[i].toLowerCase()+"' td realname='"+userArray[i]+"'>"+userArray[i]+"</td></tr>";
+			}
+		}
+		htmltext += "</tbody></table>";
+		clear("listview_div");
+		write("listview_div",htmltext);
+		selectedRow = null;
+		lastsortcol = -1;
+		nowrows = rownum;
+	}
+	catch(e){}
+	sortTable(null, "listtable", 0, "myname");
+	$("waitingdiv").style.display = "none";
+	if(lastArrow != null)
+		lastArrow.style.backgroundImage="";
+}
+
+function userpagelist_result()
+{
+	$("waitingdiv").style.display = "";
+	try
+	{
+		var headcell = $("listhead").rows[0].cells;
+		var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='3' cellspacing='0' style='table-layout:fixed;'><thead><tr height='0'><td width='"+headcell[0].width+"'></td><td width='"+headcell[1].width+"'></td><td width='"+headcell[2].width+"'></td><td width='"+headcell[3].width+"'></td><td width='"+headcell[4].width+"'></td><td width='"+headcell[5].width+"'><td width='"+headcell[6].width+"'></td><td></td></tr></thead><tbody id='maintable'>";
+
+		var userArray = xmlhttp.responseText.split("\n");
+		userCount = userArray.length;
+
+		var pages = parseInt(userArray[0]);
+
+		if(totalpages != pages)
+		{
+			//for (var n=0; n<$("page_selector").options.length; n++)  
+			//	$("page_selector").options[n] = null;
+
+			$("page_selector").options.length=0;
+
+			if(pages > 0)
+			{
+				for (var n=1; n<=pages; n++)  
+					$("page_selector").options[n-1] = new Option(n, n);
+			}
+
+			totalpages = pages;
+			$("page_selector").value = 1;
+			nowpage = 1;
+			//pagejump(totalpages);
+			//return;
+		}
+
+		for(var i=1;i<userArray.length;i++)
+		{
+			if(userArray[i] != "" && userArray[i] != " ")
+			{
+				var tempVal = userArray[i];
+				var fieldArray = tempVal.split("|");
+				var strExpired = "";
+				var strLastIP = "";
+				var currentQuota = parseInt(fieldArray[7]);
+				var maxQuota = parseInt(fieldArray[8]);
+				var strQuota = fileSize(fieldArray[7])+" / "+fileSize(fieldArray[8]);
+
+				if(fieldArray[5] == "1")
+				{
+					strExpired = "<font color='#FF0000'><%=LANG['str_expired']%></font>";
+				}
+				else if(fieldArray[5] != "0")
+				{
+					strExpired = "<font color='#999999'>"+fieldArray[5]+"</font>";
+				}
+
+				if(fieldArray[1] != "")
+				{
+					strLastIP = "<%=LANG['title_loginip']%>: "+fieldArray[1];
+				}
+
+				if(currentQuota >= 1024 && currentQuota >= maxQuota)
+				{
+					strQuota = "<font color='#FF0000'>"+fileSize(fieldArray[7])+" / "+fileSize(fieldArray[8])+"</font>";
+				}
+
+				htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td myname='"+fieldArray[0].toLowerCase()+"' td realname='"+fieldArray[0]+"'>"+fieldArray[0]+"</td><td>"+strExpired+"</td><td>"+fieldArray[2]+"</td><td title='"+strLastIP+"'>"+fieldArray[14]+"</td><td>"+fieldArray[12]+" ("+fileSize(fieldArray[3])+")</td><td>"+fieldArray[11]+" ("+fileSize(fieldArray[4])+")</td><td>"+strQuota+"</td><td></td></tr>";
+			}
+		}
+		htmltext += "</tbody></table>";
+		clear("listview_div");
+		write("listview_div",htmltext);
+		selectedRow = null;
+		//lastsortcol = -1;
+		nowrows = rownum;
+	}
+	catch(e){}
+	//sortTable(null, "listtable", 0, "myname");
+	$("waitingdiv").style.display = "none";
+	//if(lastArrow != null)
+	//	lastArrow.style.backgroundImage="";
+}
+
+
+function do_list_click(obj)
+{
+	var row_index = obj.rowIndex-1;
+	if(selectedRow != $("maintable").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("maintable").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifyUser();
+	}
+
+	return false;
+}
+
+
+function AddUser()
+{
+	if((accessway == "2" || accessway == "3") && totalrecords == "-1" && totalpages == "-1")
+	{
+		alert("<%=LANG['str_datebase_error']%>");
+		return;
+	}
+
+	<%
+	if nType == LICENSE_STANDARD then
+	%>
+	if(accessway == "1" && userCount >= 100)
+	{
+		alert("<%=LANG['str_notsupport_feature5']%>");
+		return false;
+	}
+	<%
+	elseif nType == LICENSE_SECURE then
+	%>
+	if(accessway == "1" && userCount >= 200)
+	{
+		alert("<%=LANG['str_notsupport_feature6']%>");
+		return false;
+	}
+	<%
+	elseif nType == LICENSE_FREE then
+	%>
+	if(accessway == "1" && userCount >= 10)
+	{
+		alert("<%=LANG['str_notsupport_feature7']%>");
+		return false;
+	}
+	<%
+	end
+	%>
+
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_adduser']%>","<iframe src='admin_adduser_form2.html?domain="+domain+"&seeds=" + Math.random() +"' width=825 height=540 border=0 frameborder=0 id='add"+frametag+"'></iframe>",callback_return,825,540);
+}
+
+function AddUserWizard()
+{
+	if((accessway == "2" || accessway == "3") && totalrecords == "-1" && totalpages == "-1")
+	{
+		alert("<%=LANG['str_datebase_error']%>");
+		return;
+	}
+
+	<%
+	if nType == LICENSE_STANDARD then
+	%>
+	if(accessway == "1" && userCount >= 100)
+	{
+		alert("<%=LANG['str_notsupport_feature5']%>");
+		return false;
+	}
+	<%
+	elseif nType == LICENSE_SECURE then
+	%>
+	if(accessway == "1" && userCount >= 200)
+	{
+		alert("<%=LANG['str_notsupport_feature6']%>");
+		return false;
+	}
+	<%
+	elseif nType == LICENSE_FREE then
+	%>
+	if(accessway == "1" && userCount >= 10)
+	{
+		alert("<%=LANG['str_notsupport_feature7']%>");
+		return false;
+	}
+	<%
+	end
+	%>
+
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_adduser']%>","<iframe src='admin_adduser_form.html?domain="+domain+"&seeds=" + Math.random() +"' width=480 height=280 border=0 frameborder=0 id='add"+frametag+"'></iframe>",callback_return,480,280);
+}
+
+function callback_return(value)
+{
+	if(value != null)
+	{
+		Refresh();
+	}
+	return true;
+}
+
+function DeleteUser()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_nouser_tip']%>");
+		return;
+	}
+
+	if((accessway == "2" || accessway == "3") && totalrecords == "-1" && totalpages == "-1")
+	{
+		alert("<%=LANG['str_datebase_error']%>");
+		return;
+	}
+
+	var username = selectedRow.cells[0].getAttribute("realname");
+	if(confirm("<%=LANG['str_deluser_tip']%>("+username+") ?"))
+		ajaxRequest("admin_delete_user","domain="+domain+"&username="+username);
+}
+
+function ModifyUser()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_nouser_tip']%>");
+		return;
+	}
+
+	if((accessway == "2" || accessway == "3") && totalrecords == "-1" && totalpages == "-1")
+	{
+		alert("<%=LANG['str_datebase_error']%>");
+		return;
+	}
+
+	var username = urlEncode(selectedRow.cells[0].getAttribute("realname"));
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_modifyuser']%>","<iframe src='admin_adduser_form2.html?domain="+domain+"&username="+username+"&seeds=" + Math.random() +"' width=825 height=540 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",callback_return,825,540);
+}
+
+function SearchUser(value)
+{
+	if(accessway == "2" || accessway == "3")
+	{
+		if(value == null)
+			value = trim($("searchword").value.replace(/\'/g,"").replace(/\*/g,"%"));
+
+		g_username = urlEncode(value);
+		nowpage = 1;
+		getuserlistpage(nowpage, lastsortcol, sortArrow);
+	}
+	else
+	{
+		if(value == null)
+			value = trim($("searchword").value);
+
+		g_username = value;
+		getuserlist_req();
+	}
+}
+
+function OpenUser(value)
+{	
+	var username = urlEncode(value);
+
+	if(username != "")
+	{
+		var frametag = new Date().getTime();
+		showMessagebox("<%=LANG['str_modifyuser']%>","<iframe src='admin_adduser_form2.html?domain="+domain+"&username="+username+"&seeds=" + Math.random() +"' width=825 height=540 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",callback_return,825,540);
+	}
+}
+
+function CopyUser()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_nouser_tip']%>");
+		return;
+	}
+
+	if((accessway == "2" || accessway == "3") && totalrecords == "-1" && totalpages == "-1")
+	{
+		alert("<%=LANG['str_datebase_error']%>");
+		return;
+	}
+
+	<%
+	if nType == LICENSE_STANDARD then
+	%>
+	if(accessway == "1" && userCount >= 100)
+	{
+		alert("<%=LANG['str_notsupport_feature5']%>");
+		return false;
+	}
+	<%
+	elseif nType == LICENSE_SECURE then
+	%>
+	if(accessway == "1" && userCount >= 200)
+	{
+		alert("<%=LANG['str_notsupport_feature6']%>");
+		return false;
+	}
+	<%
+	elseif nType == LICENSE_FREE then
+	%>
+	if(accessway == "1" && userCount >= 10)
+	{
+		alert("<%=LANG['str_notsupport_feature7']%>");
+		return false;
+	}
+	<%
+	end
+	%>
+
+	var username = urlEncode(selectedRow.cells[0].getAttribute("realname"));
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_copyuser']%>","<iframe src='admin_copyuser_form.html?domain="+domain+"&username="+username+"&seeds=" + Math.random() +"' width=360 height=200 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",CopyUser_Return,360,200);
+}
+
+function CopyUser_Return(value)
+{
+	if(value != null)
+	{
+		if(nowgroup == "*all*")
+		{
+			if(accessway == "2" || accessway == "3")
+				getuserlistpage(nowpage, lastsortcol, sortArrow);
+			else
+				setTimeout("getuserlist_req()",100);
+		}
+		else
+		{
+			setTimeout("getuserlist_group()",100);
+		}
+		setTimeout("OpenUser('"+value+"')",100);
+	}
+}
+
+function Refresh()
+{
+	if((accessway == "2" || accessway == "3") && totalrecords == "-1" && totalpages == "-1")
+	{
+		alert("<%=LANG['str_datebase_error']%>");
+		window.location.reload();
+		return;
+	}
+
+	if(nowgroup == "*all*")
+	{
+		if(accessway == "2" || accessway == "3")
+		{
+			getuserlistpage(nowpage, lastsortcol, sortArrow);
+		}
+		else
+		{
+			setTimeout("getuserlist_req()",100);
+		}
+	}
+	else
+	{
+		getuserlist_group();
+	}
+}
+
+function Reconnect()
+{
+	ajaxRequest("admin_reconnect_db","domain="+domain);
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#777; filter:alpha(opacity=60); -moz-opacity: 0.60; opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:40%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<div style="padding-top:2px; overflow-x:hidden;">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+	<tr>
+	<td width="80%" style="padding-left:2px;">
+		<button onclick="AddUser();"><span><em><img src="images/ico_adduser.png" align="absmiddle"> <%=LANG["button_adduser"]%></em></span></button>
+		<button onclick="AddUserWizard();"><span><em><img src="images/ico_quickadd.png" align="absmiddle"> <%=LANG["button_quickadd"]%></em></span></button>
+		<button onclick="ModifyUser();"><span><em><img src="images/ico_modifyuser.png" align="absmiddle"> <%=LANG["button_modify"]%></em></span></button>
+		<button onclick="DeleteUser();"><span><em><img src="images/ico_deleteuser.png" align="absmiddle"> <%=LANG["button_delete"]%></em></span></button>
+		<button onclick="CopyUser();"><span><em><img src="images/ico_copyuser.png" align="absmiddle"> <%=LANG["button_copy"]%></em></span></button>
+		<button onclick="Refresh();"><span><em><img src="images/ico_refresh.png" align="absmiddle"> <%=LANG["button_refresh"]%></em></span></button>
+	</td>
+	<td align="right" style="padding-right:10px;"><span><%=LANG["str_domain"]%>:<b><%=specialhtml_encode(unescape(_GET["domain"]))%></b><span>
+	<%
+		if totalrecords == -1 and totalpages == -1 then
+			print("<b><font color='red'>("..LANG["str_datebase_error"]..")</font></b><button onclick='Reconnect();'><span><em>"..LANG["button_reconnect"].."</em></span></button>")
+			print("<script>alert('"..LANG["str_datebase_error"].."');</script>")
+		end
+	%>	
+	</td>
+	</tr>
+	</table>
+
+</div>
+
+<div style="background-color:#E6E6E6;">
+	<div style="margin-top:3px; margin-left:5px; border:1px solid #919B9C; border-bottom:0px; width:98%;">
+		<table id="listhead" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+			<tr style="background-color: #EFEFEF;">
+			<% if accessway == 2 or accessway == 3 then %>
+			<td class="listhead" width="20%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,0,0)"><%=LANG["str_username"]%></td>
+			<td class="listhead" width="10%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,5,1)"><%=LANG["str_expired"]%></td>
+			<td class="listhead" width="9%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,2,2, 'size')"><%=LANG["str_logincount"]%></td>
+			<td class="listhead" width="13%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,14,3)"><%=LANG["str_lastlogin"]%></td>
+			<td class="listhead" width="15%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,12,4, 'size')"><%=LANG["str_file_uploaded"]%> (<%=LANG["str_byte"]%>)</td>
+			<td class="listhead" width="16%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,11,5, 'size')"><%=LANG["str_file_downloaded"]%> (<%=LANG["str_byte"]%>)</td>
+			<td class="listhead" style="border-right:0px;" width="17%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,8,6, 'size')"><%=LANG["str_current_quota"]%> / <%=LANG["str_max_quota"]%></td>
+			<td class="listhead3">&nbsp;</td>
+			<% else %>
+			<td class="listhead" style="border-right:0px;" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 0, 'myname')"><%=LANG["str_username"]%></td>
+			<% end %>
+			</tr>
+		</table>
+	</div>
+	<div id="listview_div" style="background-color:#FFF; margin-left:5px; border:1px solid #919B9C; border-top:0px; width:98%; height:430px; overflow:auto; overflow-x:hidden;">
+		<table id="listtable" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;">
+		<thead><tr height="0">
+		<% if accessway == 2 or accessway == 3 then %>
+		<td width="20%"></td>
+		<td width="10%"></td>
+		<td width="9%"></td>
+		<td width="13%"></td>
+		<td width="15%"></td>
+		<td width="16%"></td>
+		<td width="17%"></td>
+		<td></td>
+		<% else %>
+		<td width="100%"></td>
+		<% end %>
+		</tr></thead>
+		<tbody id="maintable">
+		</tbody>
+		</table>
+	</div>
+</div>
+
+<div style="padding-left:5px;">
+<input type='text' id='searchword' value='' onmouseover="this.focus();" style="width:130px;">&nbsp;<button onclick='SearchUser();'><span><em><%=LANG["button_search"]%></em></span></button>
+
+<% if accessway == 2 or accessway == 3 then %>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onclick='jumpprevious();'><span><em><%=LANG["button_previous_page"]%></em></span></button>&nbsp;
+	<select id='page_selector' onchange="pagejump(this.value)">
+		<script language="javascript">
+			for(i=1;i<=totalpages;i++)
+			{
+				document.write("<option value='"+i+"'>"+i+"</option>");
+			}
+		</script>
+	</select>
+	&nbsp;<button onclick='jumpnext();'><span><em><%=LANG["button_next_page"]%></em></span></button>&nbsp;&nbsp;&nbsp;
+<% end %>
+
+&nbsp;&nbsp;
+<%=LANG["title_group"]%>:
+<select id="select_group" style="width:90px;" onchange="update_userlist(this.value);">
+<%
+	print("<option value='*all*'> --- "..LANG["str_all"].." --- </option>")
+
+	local pages = c_GetGroupPageCount(domain)
+	if pages == 0 then pages = 1 end
+
+	local grouplist = {}
+
+	for i=1,pages do
+	   local tempGroups = Split(c_GetGroupListPage(domain,i), "\n")
+	   for _,tempName in pairs(tempGroups) do
+			table.insert(grouplist,tempName)
+	   end
+	end
+
+	table.sort(grouplist, function(a , b)
+									return string.lower(a) < string.lower(b)
+								end) 
+
+	for _,groupname in pairs(grouplist) do
+		if groupname ~= nil and groupname ~= "" then
+			print("<option value='"..groupname.."' title='"..groupname.."'>"..groupname.."</option>")
+		end
+	end
+%>
+
+
+<script language="javascript">
+if(accessway == "2" || accessway == "3")
+{
+	pagejump(nowpage);
+}
+else
+{
+	getuserlist_req();
+}
+
+
+function jumpprevious()
+{
+	if(nowpage <= 1)
+		return;
+
+	if(nowgroup != "*all*")
+	{
+		ajaxRequest("admin_get_userlist","domain="+domain+"&group="+nowgroup+"&r=" + Math.random() );
+		return;
+	}
+
+	page = nowpage-1;
+	pagejump(page);
+}
+
+function jumpnext()
+{
+	if(nowpage >= totalpages)
+		return;
+
+	if(nowgroup != "*all*")
+	{
+		ajaxRequest("admin_get_userlist","domain="+domain+"&group="+nowgroup+"&r=" + Math.random() );
+		return;
+	}
+
+	page = nowpage+1;
+	pagejump(page);
+}
+
+function pagejump(page)
+{
+	if(nowgroup != "*all*")
+	{
+		ajaxRequest("admin_get_userlist","domain="+domain+"&group="+nowgroup+"&r=" + Math.random() );
+		return;
+	}
+
+	page = parseInt(page);
+	if(page > totalpages)
+		page = totalpages;
+	if(page < 1)
+		page = 1;
+	nowpage = page;
+	getuserlistpage(nowpage, lastsortcol, sortArrow);
+
+	$("page_selector").value = nowpage;
+}
+
+function update_userlist(group)
+{
+	nowgroup = group;
+
+	if(nowgroup == "*all*")
+	{
+		if(accessway == "2" || accessway == "3")
+			getuserlistpage(nowpage, lastsortcol, sortArrow);
+		else
+			getuserlist_req();
+	}
+	else
+	{
+		getuserlist_group();
+	}
+}
+
+function sortSQLTable(obj, iCol, iIndex, sDataType) 
+{
+	if(nowgroup == "*all*")
+	{
+		if (lastsortcol == iCol)
+		{
+			sortArrow = !sortArrow;
+		}
+		else
+		{
+			sortArrow = false;
+		}
+
+		if(obj != null)
+		{
+			if(lastArrow != null)
+				lastArrow.style.backgroundImage="";
+			if(sortArrow == false)
+				obj.style.backgroundImage="url('images/sortup.gif')";
+			else
+				obj.style.backgroundImage="url('images/sortdown.gif')";
+			obj.style.backgroundPosition="10px";
+			obj.style.backgroundRepeat="no-repeat";
+			lastArrow = obj;
+		}
+
+		lastsortcol = iCol;
+
+		getuserlistpage(1, lastsortcol, sortArrow);
+	}
+	else
+	{
+		if(accessway == "2" || accessway == "3")
+			sortTable(obj,'listtable', iIndex, sDataType);
+		else
+			sortTable(obj,'listtable', 0, 'myname');
+	}
+}   
+</script>
+</div>
+</body>
+</html>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

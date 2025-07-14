@@ -1,0 +1,7 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local taskname = _POST["taskname"]
+	c_DeleteTask(taskname)
+	c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted the task '"..taskname.."'.",ADMIN_LOG_OK)
+end
+%>

@@ -1,0 +1,32 @@
+<%
+function GetTempBanList(domain)
+	local xml = ""
+	local count = 1
+	local banlist = c_GetTempBlockIpList(domain)
+	xml = xml.."<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n"
+	xml = xml.."<alldata>\r\n"
+	for _,banip in pairs(banlist) do
+		xml = xml.."<banip>\r\n"
+		xml = xml.."<id>"
+		xml = xml..count
+		xml = xml.."</id>"
+		xml = xml.."<ip>"
+		xml = xml..banip["ip"]
+		xml = xml.."</ip>"
+		xml = xml.."<blocktime>"
+		xml = xml..tostring(banip["sec"])
+		xml = xml.."</blocktime>\r\n"
+		xml = xml.."</banip>\r\n"
+		count = count + 1
+	end
+	xml = xml.."</alldata>\r\n"
+	return xml
+end
+
+if _SESSION["logined"] ~= nil then
+	setContentType("text/xml; charset=UTF-8")
+	local domain = _POST["domain"]
+	local liststr = GetTempBanList(domain)
+	print(liststr)
+end
+%>

@@ -1,0 +1,17 @@
+<%
+if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
+
+	local nowdir = string.gsub(_SESSION["currentpath"],":{{","%[")
+	nowdir = string.gsub(nowdir,"}}:","%]")
+
+	if _SESSION["upload_errorcode"] == "0" or _SESSION["upload_errorcode"] == "-6" or _SESSION["upload_errorcode"] == "-11" then
+		print(_SESSION["upload_errorcode"])
+		rawset(_SESSION,"upload_errorcode",nil)
+		SessionModule.save(_SESSION_ID)
+	elseif _GET["filename"] ~= nil and _GET["filename"] ~= "" and _GET["filesize"] ~= nil and _GET["filesize"] ~= "" then
+		print(c_CheckUploadedFile(_SESSION["username"], nowdir, _GET["filename"], _GET["filesize"]))
+	end
+else
+	print("-5")
+end
+%>

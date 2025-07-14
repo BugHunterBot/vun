@@ -1,0 +1,11 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local username = _POST["username"]
+	local newname = _POST["newname"]
+	local result = c_CopyUser(domain,username,newname)
+	if result ~= nil then
+		print(tostring(result))
+	end
+end
+%>

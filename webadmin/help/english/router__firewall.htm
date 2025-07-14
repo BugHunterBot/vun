@@ -1,0 +1,183 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Quick Start &gt; Router &amp; Firewall</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="Router &amp; Firewall">
+   <meta name="description" content="Router and Firewall">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?router__firewall.htm"; }
+  else { parent.quicksync('a2.2'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Quick Start&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Router and Firewall</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="aoe.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="uoeoeia.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="email_notification.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p><span style="font-size: 12pt; font-weight: bold;">Configure FTP service with a router or firewall.</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">If your WingFTP server machine is in a private local-area network (LAN), and the FTP client connections are from the internet, then you need to forward the necessary FTP ports in your router/firewall. </span></p>
+<p><span style="font-size: 11pt;">&nbsp;</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt; font-weight: bold;">Step 1 – Configure Wing FTP Server </span></p>
+<p><img src="pasv1.png" width="884" height="634" border="0" alt="pasv1"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">1. Login WingFTP's Administration and navigate to "Domains -&gt; Settings -&gt; General Settings -&gt; FTP Passive Mode".</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">2. Select the option "Fixed IP address" and type the external IP address of your router/firewall. If you don't know the external IP address, just select the option "Get IP from a web file".</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">3. Set the passive port range (FTP data ports) between 1024 and 1124.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">4. Click the button "OK" to save the changes.</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt; font-weight: bold;">Step 2 – Configure your router/firewall</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">Just take a few steps to forward the FTP listener ports and FTP passive data ports. Our test scenario is based on a NETGEAR router (Nighthawk R7000), other devices may have the similar process.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">1. Login the NETGEAR Administration</span><span style="font-size: 11pt;">.</span></p>
+<p><span style="font-size: 11pt;">2. Go to the page "Advanced Setup -&gt; Port Forwarding", and click the button "Add Custom Service".</span></p>
+<p><span style="font-size: 11pt;">3. Our WingFTP server machine is 192.168.1.123, so just forward the FTP listener ports </span><span style="font-size: 11pt; font-weight: bold;">21</span><span style="font-size: 11pt;"> and </span><span style="font-size: 11pt; font-weight: bold;">990</span><span style="font-size: 11pt;"> to 192.168.1.123.</span></p>
+<p><span style="font-size: 11pt;">4. Forward the passive ports </span><span style="font-size: 11pt; font-weight: bold;">1024 - 1124</span><span style="font-size: 11pt;"> to 192.168.1.123. It is necessary so that the server will open a data channel for the client when FTP client issues a passive mode transfer.</span></p>
+<p><span style="font-size: 11pt;">&nbsp;</span></p>
+<p>&nbsp;</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

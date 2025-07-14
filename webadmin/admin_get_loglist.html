@@ -1,0 +1,117 @@
+<%
+function safeSQL(src)
+	src=src.gsub(src,"\'", "")
+	src=src.gsub(src,"\"", "")
+	src=src.gsub(src,";", "")
+	src=src.gsub(src,"\\", "")
+	return src
+end
+
+function safeQuery(field, value)
+	if string.find(value,"%%") or string.find(value,"_") then
+		return field.." LIKE '"..safeSQL(value).."'"
+	else
+		return field.." = '"..safeSQL(value).."'"
+	end
+end
+
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"] or _GET["domain"]
+	local page = _POST["page"] or _GET["page"]
+	local filters = _POST["filters"] or _GET["filters"] or ""
+	local orderby = _POST["orderby"] or _GET["orderby"] or ""
+	local f_username = _POST["f_username"] or _GET["f_username"] or ""
+	local f_filename = _POST["f_filename"] or _GET["f_filename"] or ""
+	local f_ip = _POST["f_ip"] or _GET["f_ip"] or ""
+	local f_starttime = _POST["f_starttime"] or _GET["f_starttime"] or ""
+	local f_endtime = _POST["f_endtime"] or _GET["f_endtime"] or ""
+	local csv = _POST["csv"] or _GET["csv"] or ""
+	local pages = _POST["pages"] or _GET["pages"] or "1"
+	local fullperm = true
+
+	filters = safeSQL(filters)
+	if string.find(string.lower(filters), " or") or string.find(string.lower(filters), "or ") then
+		filters = ""
+	end
+	if f_username ~= "" then
+		filters = filters.." and "..safeQuery("f_username", f_username)
+	end
+	if f_filename ~= "" then
+		filters = filters.." and "..safeQuery("f_filename", f_filename)
+	end
+	if f_ip ~= "" then
+		filters = filters.." and "..safeQuery("f_ip", f_ip)
+	end
+	if f_starttime ~= "" then
+		filters = filters.." and f_time >= '"..safeSQL(f_starttime).."' "
+	end
+	if f_endtime ~= "" then
+		filters = filters.." and f_time <= '"..safeSQL(f_endtime).."' "
+	end
+
+	orderby = safeSQL(orderby)
+	if string.find(string.lower(orderby), " or") or string.find(string.lower(orderby), "or ") then
+		orderby = ""
+	end
+
+	if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) then
+		filters = ""
+		orderby = "order by f_id desc"
+		fullperm = false
+	end
+
+	if string.find(domain,"'") or c_IsGrantedDomainAdmin(domain) == false then
+		exit()
+	end
+
+	if csv ~= "" then
+		_CONTENTTYPE = ".csv"
+		_SETCOOKIE = "Content-Disposition: attachment; charset=utf-8; filename=\"audit_data_"..os.date("%Y%m%d",os.time())..".csv\"\r\n"
+
+		local arrProtocol = {[0]="FTP", [1]="SFTP", [2]="HTTP"}
+		local arrType = {[0]="Login", [3]="Create Dir", [4]="Delete Dir", [7]="Delete", [8]="Download", [9]="Rename", [10]="Upload", [30]="Change Pass", [31]="Copy Files"}
+		local totalPages = tonumber(pages) or 1
+		if totalPages > 10000 then
+			totalPages = 10000
+		end
+
+		if fullperm == true then
+			local temp = {}
+			temp[#temp+1] = "ID,Protocols,Action,UserName,Time,FilePath,Size,IP\n"
+			local result = c_DoSQL("select * from wftp_dblogs where f_domain='"..domain.."' "..filters.." "..orderby.." limit "..100*totalPages.." offset "..(tonumber(page)-1)*100)
+			for _,row in pairs(result) do
+				temp[#temp+1] = row[0]..",\""..arrProtocol[tonumber(row[4])].."\",\""..arrType[tonumber(row[3])].."\",\""..row[2].."\",\""..row[5].."\",\""..row[7].."\",\""..row[9].."\",\""..row[12].."\"\n"
+			end
+			--UTF-8 BOM header 0xEF 0xBB 0xBF
+			print(string.char(239)..string.char(187)..string.char(191))
+			print(table.concat(temp))
+		else
+			print("no permission.")
+		end
+	else
+		local liststr = ""
+		local totalrecords = 0
+		local totalpages = 0
+		local result = c_DoSQL("select count(*) from wftp_dblogs where f_domain='"..domain.."' "..filters.." limit 1")
+		for _,row in pairs(result) do
+			totalrecords = row[0]
+		end
+		totalpages = (totalrecords/100)+1
+		liststr = totalpages.."\n"
+
+		local temp = {}
+		result = c_DoSQL("select * from wftp_dblogs where f_domain='"..domain.."' "..filters.." "..orderby.." limit 100 offset "..(tonumber(page)-1)*100)
+		for _,row in pairs(result) do
+			if fullperm == true then
+				temp[#temp+1] = row[0].."||"..row[1].."||"..row[2].."||"..row[3].."||"..row[4].."||"..row[5].."||"..row[6].."||"..row[7].."||"..row[8].."||"..row[9].."||"..row[10].."||"..row[11].."||"..row[12].."||".."\n"
+			else
+				temp[#temp+1] = row[0].."||"..row[1].."||"..row[2].."||"..row[3].."||"..row[4].."||"..row[5].."||"..row[6].."||"..row[7].."||"..row[8].."||"..row[9].."||"..row[10].."||/||"..row[12].."||".."\n"
+			end
+		end
+		liststr = liststr..table.concat(temp)
+		print(liststr)
+	end
+else
+	print("<script>top.location='admin_login.html';</script>")
+end
+%>

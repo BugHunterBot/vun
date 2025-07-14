@@ -1,0 +1,80 @@
+<%
+local http_url = _GET["httpurl"] or ""
+local dir_list = _GET["dirlist"] or ""
+local file_list = _GET["filelist"] or ""
+
+
+if string.find(dir_list, "%.%./") or string.find(dir_list, "%.%.\\") or string.find(file_list, "%.%./") or string.find(file_list, "%.%.\\") or dir_list == ".." or file_list == ".." then
+	exit()
+end
+
+
+if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
+
+	local currentpath = string.gsub(_SESSION["currentpath"],":{{","%[")
+	currentpath = string.gsub(currentpath,"}}:","%]")
+
+	local bShowHiddenFile = c_ShowHiddenFile(_SESSION["username"])
+	local strResult = ""
+	local nCount = 0
+	strResult = strResult.."<table id='links'>"
+
+	function checkfolder(now_dir, name)
+		local now_dir_path, permission = c_GetUserAbsolutePath(domain, _SESSION["username"], now_dir)
+		if permission == false then return end
+		for isdir,filename,ishidden in c_GetFileDir(now_dir_path) do
+			if isdir == false then
+				if filename ~= nil and filename ~= "." and filename ~= ".."  then
+					if bShowHiddenFile == false and ishidden == true then
+					else
+						local subfolder = now_dir.gsub(now_dir, "//", "/")
+						strResult = strResult.."<tr id='tr"..tostring(nCount).."'><td id='td"..tostring(nCount).."' url='"..http_url.."/extension.html?download&filename="..urlencode(filename).."&nowpath="..urlencode(now_dir).."&UID=".._SESSION_ID.."'><input type='checkbox' id='check"..tostring(nCount).."' checked>"..string.sub(subfolder, string.len(currentpath)+1).."/"..filename.."</td></tr>"
+						nCount = nCount+1
+					end
+				end
+			else
+				if bShowHiddenFile == false and ishidden == true then
+				else
+					checkfolder(now_dir.."/"..filename, filename)
+				end
+			end
+		end
+	end
+
+	function checkfile(now_dir, name)
+		strResult = strResult.."<tr id='tr"..tostring(nCount).."'><td id='td"..tostring(nCount).."' url='"..http_url.."/extension.html?download&filename="..urlencode(name).."&nowpath="..urlencode(now_dir).."&UID=".._SESSION_ID.."'><input type='checkbox' id='check"..tostring(nCount).."' checked>"..name.."</td></tr>"
+		nCount = nCount+1
+	end
+
+	if file_list ~= "" then
+		local files = Split(file_list, "||")
+		for _,file in pairs(files) do
+			if string.find(file, "/") then
+				local path = string.sub(file,0,string.len(file)-string.find(string.reverse(file),"/"))
+				local filename = string.sub(file,string.len(file)-string.find(string.reverse(file),"/")+2)
+				checkfile(path, filename)
+			else
+				checkfile(currentpath, file)
+			end
+		end
+	end
+
+	if dir_list ~= "" then
+		local dirs = Split(dir_list, "||")
+		for _,dir in pairs(dirs) do
+			checkfolder(currentpath.."/"..dir, dir)
+		end
+	end
+
+	strResult = strResult.."</table>"
+	print(strResult)
+
+else
+	if dir_list == "" and file_list == "" then
+		print("<h2>No session exists or session expired, please login to the web client first.</h2>")
+	else
+		print("<h2>The web client session has expired, please press F5.</h2>")
+	end
+end
+
+%>

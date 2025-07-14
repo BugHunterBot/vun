@@ -1,0 +1,18 @@
+<%
+if _SESSION["logined"] ~= nil then
+
+	local mysqlserver = _POST["mysqlserver"]
+	local mysqlport = _POST["mysqlport"]
+	local mysqlusername = _POST["mysqlusername"]
+	local mysqlpassword = _POST["mysqlpassword"]
+	local mysqldatabase = _POST["mysqldatabase"]
+	local mysqlsocket = _POST["mysqlsocket"]
+	local retval,errmsg = c_TestMysql(mysqlserver,mysqlport,mysqlusername,mysqlpassword,mysqldatabase,mysqlsocket)
+	if retval == true then
+		print("1")
+	else
+		print(errmsg or "")
+	end
+
+end
+%>

@@ -1,0 +1,52 @@
+<%
+if _SESSION["logined"] ~= nil then
+	rawset(_SESSION,"keeplive",1)
+
+	local domain = ""
+	local refresh = false
+	local deleted = false
+	local temptable = {}
+	for _,domain in pairs(c_GetDomainList()) do
+		local online = tostring(c_IsDomainOnline(domain))
+		if _SESSION["online_"..domain] == nil or (_SESSION["online_"..domain] ~= nil and _SESSION["online_"..domain] ~= online) then
+			refresh = true
+		end
+		rawset(_SESSION,"online_"..domain,online)
+		table.insert(temptable,"online_"..domain)
+	end
+
+	if refresh == false then
+		for key,value in pairs(_SESSION) do
+			if string.find(key,"online_") ~= nil then
+				local domainexist = false
+				for _,tempval in pairs(temptable) do
+					if key == tempval then
+						domainexist = true
+						break
+					end
+				end
+				if domainexist == false then
+					rawset(_SESSION, key, nil)
+					deleted = true
+				end
+			end
+		end
+	end
+	
+	local upgrade_tip = false
+	if _SESSION["upgrade_tip"] ~= nil and _SESSION["upgrade_tip"] == 1 then
+		upgrade_tip = true
+		rawset(_SESSION, "upgrade_tip", nil)
+	end
+
+	SessionModule.save(_SESSION_ID)
+
+	if upgrade_tip == true then
+		print("upgrade_tip")
+	elseif deleted == true then
+		print("deleted")
+	elseif refresh == true then
+		print("refreshed")
+	end
+end
+%>

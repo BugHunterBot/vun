@@ -1,0 +1,351 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Advanced Features &gt; Server Lua API &gt; Administrator</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="">
+   <meta name="description" content="Administrator">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?administration.htm"; }
+  else { parent.quicksync('a6.3.6'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Advanced Features &gt; <a href="server_lua_api.htm">Server Lua API</a>&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Administrator</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="miscellaneous2.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="server_lua_api.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="database.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CheckAdmin</span>(string strUserName,string strPassword)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; admin username</p>
+<p>[2]string &nbsp; admin password</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if administrator login is successful, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check administrator's login?</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CheckAdminIp</span>(string strUserName,string strIp)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; admin username</p>
+<p>[2]string &nbsp; the client IP</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return false when IP is banned, otherwise return true</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check administrator's login IP.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AdminLogout</span>(string strSessionId)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the admin session ID</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Administrator logout.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AdminExist</span>(string strUserName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; admin username</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if specified admin exists, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the specified administrator exists.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddAdmin</span>(string strUserName, string strPassword, bool bReadonly, table tabAdminIpmasks)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; admin username</p>
+<p>[2]string &nbsp; admin password with MD5/SHA256 encryption</p>
+<p>[3]bool &nbsp; is read-only admin?</p>
+<p>[4]table &nbsp;administrator's IPmask list which is formatted as: <span style="font-style: italic;">{{ip,refuse}}</span></p>
+<p>[5]bool &nbsp; is domain admin?</p>
+<p>[6]string &nbsp; all the domains which admin can manage.</p>
+<p>[7]string &nbsp; specify a base folder to limit the domain admin access.</p>
+<p>[8]bool &nbsp; whether enable two-factor authentication (TOTP)</p>
+<p>[9]string &nbsp; the TOTP secret code</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add or modify an administrator .</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteAdmin</span>(string strUserName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; admin username</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete an administrator.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAdmin</span>(string strUsername)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; admin username</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; administrator data table which is formatted as: <span style="font-style: italic;">{username,password,readonly,{Ipmask table},domainadmin,domainlist,mydirectory,enable_two_factor,two_factor_code}</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return an administrator data table if the specified admin exists, otherwise return nil.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAdminType</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the administrator name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp; return true if administrator is read-only admin, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the administrator's type.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAdminList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; administrator list table which is formatted as: <span style="font-style: italic;">{{username,lastlogin,lastip}}</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return all the administrators.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddAdminFailedIp</span>(string strIp)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the client IP</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add the client IP to a temp banned list when login fails.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_RemoveAdminFailedIp</span>(string strIp)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the client IP</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Remove the specified IP from banned list when login is successful, for system anti-hammer.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ClearAdminSession</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Clear all the expired admin sessions.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ChangeAdminListener</span>(int nHttpPort,bool bHttpSecure)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]int &nbsp;administration listener's port</p>
+<p>[1]bool &nbsp;use SSL/TLS? 1=yes, 0=no</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if administration listener is updated successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Modify the administration listener.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAdminIPMaskList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the administrator IP mask list which is formatted as: <span style="font-style: italic;">{{ip,refuse}}</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return administrator IP mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetAdminIPMaskList</span>(table tabIpmask)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]table &nbsp; the administrator IP mask list which is formatted as: <span style="font-style: italic;">{{ip,refuse}}</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set administrator IP mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAdminLog</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp;admin log text</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get all the admin logs.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddAdminLog</span>(string strLog,int nType)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the admin log text</p>
+<p>[2]int &nbsp;the admin log type: 1=normal log, 2=error log</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add an admin log.</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

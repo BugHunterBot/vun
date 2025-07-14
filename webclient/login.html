@@ -1,0 +1,565 @@
+<%
+local all_lang = {"english","french","german","italian","dutch","portuguese","spanish","schinese","tchinese","japanese","czech","romanian","turkish","korean","polish"}
+if _GET["lang"] ~= nil then
+	for _,val in pairs(all_lang) do
+		if _GET["lang"] == val then
+			setcookie("client_lang",val,os.time()+3600*24*365)
+			break
+		end
+	end
+
+	if _COOKIE["client_lang"] == nil then
+		_COOKIE["client_lang"] = "english"
+	end
+end
+
+include("language.html")
+
+local nType = c_GetLicenseInfo()
+local client_login_name = _COOKIE["client_login_name"] or ""
+client_login_name = specialhtml_encode(client_login_name)
+
+local imageDate = c_GetFileTime(c_GetAppPath().."/webclient/images/"..c_GetDomainLogo())
+
+if _SESSION["username"] == nil then
+%>
+<html>
+<head>
+<title>Wing FTP Server - Web Client</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+<meta http-equiv="Expires" content="0" />
+<link rel="Shortcut Icon" href="images/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="css/bulma.min.css" type="text/css">
+<link rel="stylesheet" href="css/allfonts.min.css" type="text/css">
+<style type="text/css">
+	img { 
+		float:left; margin-right:10px; margin-top:-22px;
+	} 
+	input:focus,select:focus {
+		border:0px;
+	}
+	.main {
+		width:480px; margin:0 auto; margin-top:100px;
+	}
+
+	.hiddenimg {
+		margin:5px;
+		display:none;
+	}
+
+	@media only screen and (max-width: 1023px), only screen and (max-device-width: 1023px) {
+		.main {
+			width:380px; margin:0 auto; margin-top:60px;
+		}
+	}
+</style>
+
+<!--[if lt IE 9]>
+  <style type="text/css">
+	.input:active,.input:focus,.select select:active,.select select:focus {
+		border:solid 1px #CCC;
+	}
+
+	.hiddenimg {
+		margin:5px;
+		display:block;
+	}
+  </style>
+<![endif]-->
+
+
+<script language="javascript">
+
+if(!navigator.cookieEnabled)
+{
+	alert("Cookies must be enabled on your browser!");
+}
+
+function $(obj)
+{
+	return document.getElementById(obj);
+}
+
+function ch()
+{
+	if ($("username_val").value=="")
+	{
+		alert("<%=LANG['error_no_username']%>");
+		$("username_val").focus();
+		return false;
+	}
+	$("username").value = $("username_val").value.replace(/\+/g,"\t");
+	$("password").value = $("password_val").value.replace(/\+/g,"\t");
+	return true;
+}
+
+
+function setCookie(name,value,date) 
+{
+	document.cookie = name + "=" + escape(value) + "; expires=" + date.toGMTString() + "; path=/;";
+}
+
+function getCookie(name) 
+{
+	var search; 
+	search = name + "=" 
+	offset = document.cookie.indexOf(search) 
+	if (offset != -1) 
+	{ 
+		offset += search.length ; 
+		end = document.cookie.indexOf(";", offset) ; 
+		if (end == -1) 
+		end = document.cookie.length; 
+		return unescape(document.cookie.substring(offset, end)); 
+	} 
+	else 
+	{
+		return ""; 
+	}
+}
+
+function deleteCookie(name) 
+{
+	var expdate = new Date(); 
+	expdate.setTime(expdate.getTime() - (86400*1000)); 
+	setCookie(name, "", expdate); 
+}
+
+var langindexArr = new Array("english","french","german","italian","dutch","portuguese","spanish","schinese","tchinese","japanese","czech","romanian","turkish","korean","polish");
+var langArr = new Array("English","French","German","Italian","Dutch","Portuguese","Spanish","Simplified Chinese","Traditional Chinese","Japanese","Czech","Romanian","Turkish","Korean","Polish");
+
+if(navigator.cookieEnabled)
+{
+	if(getCookie("client_lang") == "" && location.search.indexOf("?lang") == -1)
+	{
+		var language = null;
+		if (navigator.appName == 'Netscape')
+			language = navigator.language;
+		else
+			language = navigator.browserLanguage;
+
+		if (language.indexOf('en') > -1) location = 'login.html?lang=english';
+		else if (language.indexOf('fr') > -1) location = 'login.html?lang=french';
+		else if (language.indexOf('de') > -1) location = 'login.html?lang=german';
+		else if (language.indexOf('it') > -1) location = 'login.html?lang=italian';
+		else if (language.indexOf('nl') > -1) location = 'login.html?lang=dutch';
+		else if (language.indexOf('pt') > -1) location = 'login.html?lang=portuguese';
+		else if (language.indexOf('es') > -1) location = 'login.html?lang=spanish';
+		else if (language.indexOf('zh-TW') > -1) location = 'login.html?lang=tchinese';
+		else if (language.indexOf('zh-HK') > -1) location = 'login.html?lang=tchinese';
+		else if (language.indexOf('zh-MO') > -1) location = 'login.html?lang=tchinese';
+		else if (language.indexOf('zh') > -1) location = 'login.html?lang=schinese';
+		else if (language.indexOf('ja') > -1) location = 'login.html?lang=japanese';
+		else if (language.indexOf('cz') > -1) location = 'login.html?lang=czech';
+		else if (language.indexOf('ro') > -1) location = 'login.html?lang=romanian';
+		else if (language.indexOf('tr') > -1) location = 'login.html?lang=turkish';
+		else if (language.indexOf('ko') > -1) location = 'login.html?lang=korean';
+		else if (language.indexOf('pl') > -1) location = 'login.html?lang=polish';
+		else location = 'login.html?lang=english';
+	}
+	else
+	{
+		langArr = new Array("English","Français","Deutsch","Italiano","Nederlands","Português","Español","简体中文","繁體中文","日本語","Czech","Romanian","Türkçe","한국어","Polski");
+	}
+}
+
+function changelanguage(obj)
+{
+	var l = obj.options[obj.selectedIndex].value;
+	location = 'login.html?lang='+l;
+}
+
+function switchcheckbox()
+{
+	if($("remember").checked == false)
+	{
+		deleteCookie("client_login_name");
+	}
+}
+
+function showQRcode()
+{
+	if($("qrcode").style.display == "none" || $("qrcode").style.display == "")
+		$("qrcode").style.display = "block";
+	else
+		$("qrcode").style.display = "none";
+}
+</script>
+
+ </head>
+ <body>
+
+<div class="main">
+
+<form class="box" method="post" action="loginok.html">
+<input name="username" id="username" type="hidden">
+<input name="password" id="password" type="hidden">
+
+<div class="field">
+	<p class="subtitle is-4" style="color:#CCC; margin-top:22px;"><img src="images/<%=c_GetDomainLogo()%>?t=<%=imageDate%>">Web Client</p>
+</div>
+
+<div class="field" style="margin-top:50px">
+  <p class="control has-icons-left">
+    <input class="input" name="username_val" id="username_val" type="text" autocomplete="new-password" maxlength="128" value="<%=client_login_name%>" placeholder="<%=LANG["username"]%>">
+    <span class="icon is-small is-left">
+	  <img src="images/input_user.png" class="hiddenimg" title="<%=LANG["username"]%>">
+      <i class="fas fa-user"></i>
+    </span>
+  </p>
+</div>
+<div class="field" style="margin-top:5px">
+  <p class="control has-icons-left">
+    <input class="input" name="password_val" id="password_val" type="password" autocomplete="off" maxlength="128" placeholder="<%=LANG["password"]%>">
+    <span class="icon is-small is-left">
+	  <img src="images/input_pass.png" class="hiddenimg" title="<%=LANG["password"]%>">
+      <i class="fas fa-lock"></i>
+    </span>
+  </p>
+</div>
+
+<div class="field" style="margin-top:5px">
+<div class="control has-icons-left">
+  <div class="select is-fullwidth">
+    <select id="lang_sel" onchange="changelanguage(this)">
+    </select>
+  </div>
+  <span class="icon is-small is-left">
+    <img src="images/select_lang.png" class="hiddenimg" title="<%=LANG["language"]%>">
+    <i class="fas fa-globe"></i>
+  </span>
+</div>
+</div>
+
+<div class="level" style="margin-top:5px">
+<div class="level-left" style="float:left;">
+  <input type="checkbox" name="remember" id="remember" value="true" <% if client_login_name ~= "" then print("checked") end%> onclick="switchcheckbox()" style="margin-right:5px;"><%=LANG["remember"]%>
+</div>
+<div class="level-right" style="float:right; margin:5px;">
+  <p style="font-size:9pt; cursor:pointer; min-width:80px;" onclick="showQRcode();"><img src="images/phone.png" style="margin-right:3px; margin-top:1px;"><%=LANG["button_downpicture"]%> App</p>
+  <p><a href="https://wftpserver.com/download_client.html" target="_blank"><img src="images/qrcode.png" id="qrcode" border="0" style="display:none; margin-top:1px; margin-bottom:10px; margin-left:18px;" title="<%=LANG["scan_qrcode"]%>"></a></p>
+</div>
+</div>
+
+<div class="control" style="padding-top:20px">
+<button class="button is-info is-fullwidth" onclick="return ch()">
+<span class="icon">
+  <i class="fas fa-sign-in-alt"></i>
+</span>
+<span><%=LANG["login"]%></span>	
+</button>
+</div>
+
+</form>
+
+<div style="text-align:center; margin-top:30px; font-size:10pt;">
+	<% if nType == 4 then %>
+	  FTP server software powered by <b><a href="https://www.wftpserver.com/">Wing FTP Server v<%=c_GetVersion()%></a></b>
+	<% else %>
+	  <a href="https://www.wftpserver.com/">Wing FTP Server</a> ©2003-2025 <b>wftpserver.com</b> All Rights Reserved
+	<% end %>
+</div>
+
+</div>
+</body>
+</html>
+
+<script language="javascript">
+if(navigator.cookieEnabled)
+{
+	for(var index in langArr)
+	{
+		$("lang_sel").options.add(new Option(langArr[index],langindexArr[index]));
+		if(getCookie("client_lang") == langindexArr[index])
+			$("lang_sel").options[index].selected = true;
+	}
+}
+
+<% if client_login_name == "" then %>
+$("username_val").focus();
+<% else %>
+$("password_val").focus();
+<% end %>
+</script>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>
+
+<% 
+else
+	local enableTwoFactor, twoFactorCode = c_GetSecretCode(_SESSION["username"])
+	if enableTwoFactor ~= nil and enableTwoFactor == true and _SESSION["currentpath"] == nil then
+		rawset(_SESSION,"logintime",os.time())
+		if _SESSION["totp_randomkey"] == nil or _SESSION["totp_randomkey"] == "" then
+			rawset(_SESSION,"totp_randomkey",c_TotpRandomKey(_REMOTE_IP))
+		end
+		SessionModule.save(_SESSION_ID)
+		if twoFactorCode ~= nil and twoFactorCode == "" then
+%>
+<html>
+<head>
+<title>Wing FTP Server - Web Client</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+<meta http-equiv="Expires" content="0" />
+<link rel="Shortcut Icon" href="images/logo.ico" type="image/x-icon">
+</head>
+
+<style type="text/css">
+<!--
+body{
+background:#60605E;
+text-align: center;
+overflow: auto;
+}
+a:link,a:visited,a:active,a:hover{color: #FFF;text-decoration:none;}
+
+div{
+font-size:15px;
+color:#000000;
+}
+
+.btn_login{
+border:none; border-radius:5px; background-color:#007BFF; color:#FFF; padding:8 20px; text-decoration:none; font-size:15px;
+}
+-->
+</style>
+
+<body>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr> 
+	<td align="left" valign="top" style="padding-top:30px;"> 
+	<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="max-width: 980px; _width: 980px;">
+		<tr style="background:#EEE;">
+			<td height="80">
+				<img src="images/iphone.png" border="0" style="vertical-align:middle;"> <b><%=LANG["totp_auth_required"]%></b>
+			</td>
+			<td align="right" style="padding-right:15px;">
+				<input type="image" src="images/return.png" onclick="gotoUrl('logout.html');" style="border:0px; cursor:pointer;" alt="<%=LANG["str_switch_account"]%>" title="<%=LANG["str_switch_account"]%>">
+			</td>
+		</tr>
+		<tr> 
+		  <td style="background:#FFF; padding:20px;" colspan="2">
+			  <div style="height: 450px;">
+				<div style="margin-top:30px;">
+				  <%=LANG["totp_init_tip1"]%>
+				</div>
+				<div style="margin-top:30px;">
+				  <%=LANG["totp_init_tip2"]%> "<b><span id="secret"></span></b>".
+				  <div id="qrcode" style="margin-top:10px;"></div>
+				</div>
+				<div style="margin-top:30px;">
+				  <%=LANG["totp_init_tip3"]%>
+				  <div style="margin-top:15px;">
+				  <form id="frm_login2" name="frm_login2" method="post" action="checkcode.html">
+				  <input name="secretcode" id="secretcode" type="hidden" />
+				  <input name="digitalcode" id="digitalcode" type="text" pattern="\d*" style="height:32px; width:150px; font-size:18px;" maxlength="6" />
+				  <input class="btn_login" width="110" height="27" type="submit" name="submit_btn" id="submit_btn" value="<%=LANG["str_verify"]%>" onclick="return ch()" tabindex="5" />
+				  </form>
+				  </div>
+				</div>
+			  </div>
+			</td>
+		</tr>
+		<tr> 
+		<td height="50" style="font-size:12px;color:white;" colspan="2">
+		<a href="https://www.wftpserver.com/" target="_blank">Wing FTP Server</a> ©2003-2025 <b>wftpserver.com</b> All Rights Reserved
+		</td>
+		</tr>
+	  </table>
+	  </td>
+  </tr>
+</table>
+
+<script src="include/arale-qrcode.js"></script>
+<script>
+function $(obj)
+{
+	return document.getElementById(obj);
+}
+
+var secret = "<%=_SESSION['totp_randomkey']%>";
+var qrcode = new AraleQRCode({
+size: 128, text: "otpauth://totp/<%=_SESSION['username']%>?issuer=Wing%20FTP%20Server&secret=<%=_SESSION['totp_randomkey']%>"
+});
+$("secret").innerHTML = secret;
+$("secretcode").value = secret;
+$("qrcode").appendChild(qrcode);
+
+$("digitalcode").focus();
+
+
+function ch()
+{
+	if($("digitalcode").value.length != 6)
+	{
+		$("digitalcode").focus();
+		$("digitalcode").value = "";
+		return false;
+	}
+
+	return true;
+}
+
+function gotoUrl(url) 
+{
+	var isBrowserIE = navigator.userAgent.indexOf('MSIE')==-1? 0:1;
+	if (isBrowserIE) 
+	{
+		try
+		{
+			var referLink = document.createElement("a");
+			referLink.href = url;
+			document.body.appendChild(referLink);
+			referLink.click();
+		}
+		catch(e)
+		{
+			window.location = url;
+		}
+	} 
+	else
+	{
+		window.location = url;
+	}
+}
+</script>
+</body>
+</html>
+<% else %>
+<html>
+<head>
+<title>Wing FTP Server - Web Client</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+<meta http-equiv="Expires" content="0" />
+<link rel="Shortcut Icon" href="images/logo.ico" type="image/x-icon">
+</head>
+
+<style type="text/css">
+<!--
+body{
+background:#60605E;
+text-align: center;
+overflow: auto;
+}
+a:link,a:visited,a:active,a:hover{color: #FFF;text-decoration:none;}
+
+div{
+font-size:15px;
+color:#000000;
+}
+
+.btn_login{
+border:none; border-radius:5px; background-color:#007BFF; color:#FFF; padding:8 20px; text-decoration:none; font-size:15px;
+}
+-->
+</style>
+
+<body>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr> 
+	<td align="left" valign="top" style="padding-top:30px;"> 
+	<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="max-width: 800px; _width: 800px;">
+		<tr style="background:#EEE;">
+			<td height="80">
+				<img src="images/iphone.png" border="0" style="vertical-align:middle;"> <b><%=LANG["totp_auth_required"]%></b>
+			</td>
+			<td align="right" style="padding-right:15px;">
+				<input type="image" src="images/return.png" onclick="gotoUrl('logout.html');" style="border:0px; cursor:pointer;" alt="<%=LANG["str_switch_account"]%>" title="<%=LANG["str_switch_account"]%>">
+			</td>
+		</tr>
+		<tr> 
+		  <td style="background:#FFF; padding:20px;" colspan="2">
+			  <div style="height: 350px;">
+				<div style="margin-top:30px;">
+				  <%=LANG["totp_input_tip1"]%>
+				</div>
+				<div style="margin-top:30px;">
+				  <%=LANG["totp_input_tip2"]%>
+				  <div style="margin-top:15px;">
+				  <form id="frm_login3" name="frm_login3" method="post" action="checkcode.html">
+				  <input name="secretcode" id="secretcode" type="hidden" value="" />
+				  <input name="digitalcode" id="digitalcode" type="text" pattern="\d*" style="height:32px; width:150px; font-size:18px;" maxlength="6" />
+				  <input class="btn_login" width="110" height="27" type="submit" name="submit_btn" id="submit_btn" value="<%=LANG["str_verify"]%>" onclick="return ch()" tabindex="5" />
+				  </form>
+				  </div>
+				</div>
+			  </div>
+			</td>
+		</tr>
+		<tr> 
+		<td height="50" style="font-size:12px;color:white;" colspan="2">
+		<a href="https://www.wftpserver.com/" target="_blank">Wing FTP Server</a> ©2003-2025 <b>wftpserver.com</b> All Rights Reserved
+		</td>
+		</tr>
+	  </table>
+	  </td>
+  </tr>
+</table>
+
+<script>
+function $(obj)
+{
+	return document.getElementById(obj);
+}
+
+$("digitalcode").focus();
+
+function ch()
+{
+	if($("digitalcode").value.length != 6)
+	{
+		$("digitalcode").focus();
+		$("digitalcode").value = "";
+		return false;
+	}
+
+	return true;
+}
+
+function gotoUrl(url) 
+{
+	var isBrowserIE = navigator.userAgent.indexOf('MSIE')==-1? 0:1;
+	if (isBrowserIE) 
+	{
+		try
+		{
+			var referLink = document.createElement("a");
+			referLink.href = url;
+			document.body.appendChild(referLink);
+			referLink.click();
+		}
+		catch(e)
+		{
+			window.location = url;
+		}
+	} 
+	else
+	{
+		window.location = url;
+	}
+}
+</script>
+</body>
+</html>
+<%
+		end
+	else
+		print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+		print("<meta http-equiv='Developer' content='www.wftpserver.com'>")
+		print("<script>top.location='main.html';</script>")
+	end
+end 
+%>

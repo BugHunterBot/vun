@@ -1,0 +1,22 @@
+<%
+if _REMOTE_IP == "127.0.0.1" or _REMOTE_IP == "localhost" then
+	setContentType("text/xml; charset=UTF-8")
+	local nType,strVersion,strUserName,strCopyNumber,strOS,nLeftDay = c_GetLicenseInfo()
+	local xml = ""
+	xml = xml.."<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n"
+	xml = xml.."<alldata>\r\n"
+	xml = xml.."<statistic>\r\n"
+	xml = xml.."<version>"
+	xml = xml..c_GetVersion()
+	xml = xml.."</version>"
+	xml = xml.."<licensetype>"
+	xml = xml..nType
+	xml = xml.."</licensetype>"
+	xml = xml.."<leftday>"
+	xml = xml..nLeftDay
+	xml = xml.."</leftday>\r\n"
+	xml = xml.."</statistic>\r\n"
+	xml = xml.."</alldata>\r\n"
+	print(xml)
+end
+%>

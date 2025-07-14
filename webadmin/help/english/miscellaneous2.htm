@@ -1,0 +1,355 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Advanced Features &gt; Server Lua API &gt; Miscellaneous</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="">
+   <meta name="description" content="Miscellaneous">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?miscellaneous2.htm"; }
+  else { parent.quicksync('a6.3.5'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Advanced Features &gt; <a href="server_lua_api.htm">Server Lua API</a>&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Miscellaneous</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="get_set_options.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="server_lua_api.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="administration.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>&nbsp;</p>
+<p class="p_NewStyle"><span class="f_NewStyle" style="font-size: 12pt; font-weight: bold; color: #0000ff;">md5</span><span class="f_NewStyle">(string strText)</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the original string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; the md5 hash of a string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Calculate the md5 hash of a string.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetAppPath</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; the installation path of WingFTP</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns the absolute path where Wing FTP Server is installed.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_IsDir</span>(string strPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the directory path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if strPath is an existing directory, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the path is a directory.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_MkDir</span>(string strPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the directory path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if making a directory successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Make a directory.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_RemoveFileDir</span>(string strPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the file/directory path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if removing a file or folder successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Remove a file or directory.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_MoveFileDir</span>(string strOldPath, string strNewPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the source path</p>
+<p>[2]string &nbsp; the destination path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if moving a file or folder successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Move/Rename a file or directory.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CopyFileDir</span>(string strOldPath, string strNewPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the source path</p>
+<p>[2]string &nbsp; the destination path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if copying a file or folder successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Copy a file or directory.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_FileExist</span>(string strPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the file path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if strPath is a regular file, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether a regular file exists.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetFileTime</span>(string strPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the file path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the file modify time</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the time when the file was modified</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetTimeMS</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the milliseconds of current time</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the milliseconds of current time.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetTimeUS</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the microseconds of current time</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the microseconds of current time.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetRandom</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the random number</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Generate a system random number.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetDir</span>(string strDirPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the directory path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; return an iterative directory name when no exception occurred, otherwise return <span style="font-weight: bold;">nil</span>.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns an iterative directory name inside the specified path strDirPath. So you can use this function for directory traversal, for example:</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">for subdir in c_GetDir(rootpath) do</span></p>
+<p><span style="font-style: italic;"> &nbsp;print(subdir)</span></p>
+<p><span style="font-style: italic;">end</span></p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetFileDir</span>(string strDirPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the directory path</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; return an iterative directory/file name when no exception occurred, otherwise return <span style="font-weight: bold;">nil</span>.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns an iterative directory/file name inside the specified path strDirPath. So you can use this function for directory/file traversal, for example:</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">for subdirfile in c_GetFileDir(rootpath) do</span></p>
+<p><span style="font-style: italic;"> &nbsp;print(subdirfile)</span></p>
+<p><span style="font-style: italic;">end</span></p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetRootDir</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a table list of local drivers in windows, and in other OS its subdirectory table under "/"</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return local drivers string table in windows, subdirectory table under "/" in other OS, for example:</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">for _,root_sub in pairs(c_GetRootDir()) do</span></p>
+<p><span style="font-style: italic;"> &nbsp;if root_sub ~= nil and root_sub["isdir"] == true then</span></p>
+<p><span style="font-style: italic;"> &nbsp; &nbsp;print(root_sub["dir"])</span></p>
+<p><span style="font-style: italic;"> &nbsp;end</span></p>
+<p><span style="font-style: italic;">end</span></p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetLocalIpList</span>()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; the local IP list string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns the local IP list, and IP in string is separated with a comma.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_TranslateTime</span>(string strTime)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the time string, such as "2009-09-09 00:00:00"</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;time_t value of the time</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Translate a time string to a time_t value .</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

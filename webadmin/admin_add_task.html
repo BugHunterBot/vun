@@ -1,0 +1,48 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local taskname = _POST["taskname"]
+	local type = _POST["type"]
+	local daynum = _POST["day"]
+	local datefrom = _POST["datefrom"]
+	local timefrom = _POST["timefrom"]
+	local script = _POST["script"]
+	local modify = _POST["modify"]
+	local reset = false
+
+	if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then
+		print("2")
+		exit()
+	end
+
+	if taskname ~= nil then
+		if modify == nil then
+			local result = c_TaskExist(taskname)
+			if result == true then
+				print("0")
+			else
+				local status,err = loadstring(script)
+				if not status then
+					if type(err) == "string" then
+						print(string.format("Lua Error: %s!",err))
+					end
+				else
+					c_AddTask(taskname,type,daynum,datefrom,timefrom,script,reset)
+					c_AddAdminLog("administrator '".._SESSION["admin"].."' added a task '"..taskname.."'.",ADMIN_LOG_OK)
+					print("1")
+				end
+			end
+		else
+			local status,err = loadstring(script)
+			if not status then
+				if type(err) == "string" then
+					print(string.format("Lua Error: %s!",err))
+				end
+			else
+				c_AddTask(taskname,type,daynum,datefrom,timefrom,script,reset)
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' modified the task '"..taskname.."'.",ADMIN_LOG_OK)
+				print("1")
+			end
+		end
+	end
+end
+%>

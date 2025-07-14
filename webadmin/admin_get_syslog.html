@@ -1,0 +1,5 @@
+<%
+if _SESSION["logined"] ~= nil then
+	print(c_GetSystemLog() or "Read-Only Administrator or Domain Administrator can't see the system logs.")
+end
+%>

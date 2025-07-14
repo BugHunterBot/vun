@@ -1,0 +1,36 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local name = _POST["name"]
+	local sender_name = _POST["sender_name"]
+	local sender_email = _POST["sender_email"]
+	local need_auth = _POST["need_auth"]
+	local smtp_server = _POST["smtp_server"]
+	local smtp_port = _POST["smtp_port"]
+	local smtp_username = _POST["smtp_username"]
+	local smtp_password = _POST["smtp_password"]
+	local use_ssl = _POST["use_ssl"]
+	local modify = _POST["modify"]
+	local testsmtp = _POST["testsmtp"]
+	if testsmtp ~= nil then
+		local result,errmsg = c_TestSMTP(name,sender_name,sender_email,need_auth,smtp_server,smtp_port,smtp_username,smtp_password,use_ssl)
+		if result == true then
+			print("SMTP_OK")
+		else
+			print(errmsg or "")
+		end		
+	elseif modify == nil then
+		local result = c_GetSMTP(name)
+		if result ~= nil then
+			print("0")
+		else
+			c_AddSMTP(name,sender_name,sender_email,need_auth,smtp_server,smtp_port,smtp_username,smtp_password,use_ssl)
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' added smtp config ["..name.."].",ADMIN_LOG_OK)
+			print("1")
+		end
+	else
+		c_AddSMTP(name,sender_name,sender_email,need_auth,smtp_server,smtp_port,smtp_username,smtp_password,use_ssl)
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' modified smtp config ["..name.."].",ADMIN_LOG_OK)
+		print("1")
+	end
+end
+%>

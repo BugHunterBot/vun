@@ -1,0 +1,6 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	print(c_GetDomainLog(domain))
+end
+%>

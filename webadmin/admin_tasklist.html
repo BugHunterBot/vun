@@ -1,0 +1,389 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Show Task List</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html, body {height: 100%;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+span{
+	vertical-align:middle;
+}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listhead3
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead4
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+</style>
+
+<!–[if IE 6]>
+<link rel="stylesheet" type="text/css" href="css/ie6.css" />
+<![endif]–>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var tasktype = ['<%=TASK_TYPE_STR[0]%>','<%=TASK_TYPE_STR[1]%>','<%=TASK_TYPE_STR[2]%>','<%=TASK_TYPE_STR[3]%>','<%=TASK_TYPE_STR[4]%>','<%=TASK_TYPE_STR[5]%>'];
+var nowrows = 0;
+var ajaxlock = false;
+var selectedRow = null;
+var lastObj = null;
+var lastObjIndex = -1;
+var weekdays = [<%=LANG["calendar_weekdays"]%>];
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+		if(page != "")
+			$("waitingdiv").style.display = "";
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	if (xmlhttp.readyState == 4)
+	{
+		ajaxlock = false;
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_get_tasklist':	gettasklist_result();break;
+					case 'admin_delete_task':	gettasklist_req();break;
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+			finally
+			{
+				$("waitingdiv").style.display = "none";
+			}
+		}
+		else
+		{
+			$("waitingdiv").style.display = "none";
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+function gettasklist_req()
+{
+	ajaxRequest("admin_get_tasklist", "r=" + Math.random() );
+}
+
+function gettasklist_result()
+{
+	$("waitingdiv").style.display = "";
+	try
+	{
+		var xmldoc = xmlhttp.responseXML;
+		var row = xmldoc.getElementsByTagName("tasklist");
+		var rownum = row.length;
+
+		var headcell = $("listhead").rows[0].cells;
+		var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='3' cellspacing='0' style='table-layout:fixed;'><thead><tr height='0'><td width='"+headcell[0].width+"'></td><td width='"+headcell[1].width+"'></td><td width='"+headcell[2].width+"'></td><td width='"+headcell[3].width+"'><td width='"+headcell[4].width+"'></td><td></td></tr></thead><tbody id='maintable'>";
+		for(var i=0; i < rownum; i++)
+		{
+			var myrow = row[i];
+			var f_taskname = xmlFieldValue(myrow,"taskname");
+			var type = parseInt(xmlFieldValue(myrow,"type"));
+			var f_day = parseInt(xmlFieldValue(myrow,"day"));
+			var f_executed = xmlFieldValue(myrow,"executed");
+			var f_type = tasktype[type];
+			if(type == 3)
+				f_type = f_type+"("+weekdays[f_day]+")";
+			else if(type == 4)
+				f_type = f_type+"("+f_day+")";
+			var f_datefrom = xmlFieldValue(myrow,"datefrom");
+			var f_timefrom = xmlFieldValue(myrow,"timefrom");
+			htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td>"+f_taskname+"</td><td>"+f_type+"</td><td>"+f_datefrom+"</td><td>"+f_timefrom+"</td><td><img src='images/"+f_executed+".png'></td><td></td></tr>";
+		}
+		htmltext += "</tbody></table>";
+		clear("listview_div");
+		write("listview_div",htmltext);
+		selectedRow = null;
+		lastsortcol = -1;
+		nowrows = rownum;
+		/*
+		if(lastObjIndex >= 0)
+		{
+			for(var i=0; i < rownum; i++)
+			{
+				var tempID = parseInt($("maintable").rows[i].cells[0].innerHTML);
+				if(tempID == lastObjIndex)
+				{
+					$("maintable").rows[i].className = "listtr02";
+					lastObj = $("maintable").rows[i];
+					selectedRow = lastObj;
+				}
+			}
+		}
+		*/
+	}
+	catch(e){}
+	$("waitingdiv").style.display = "none";
+	if(lastArrow != null)
+		lastArrow.style.backgroundImage="";
+}
+
+
+function do_list_click(obj)
+{
+	var row_index = obj.rowIndex-1;
+	if(selectedRow != $("maintable").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("maintable").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifyTask();
+	}
+
+	return false;
+}
+
+
+function AddTask()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['button_addtask']%>","<iframe src='admin_addtask_form.html?seeds=" + Math.random() +"' width=740 height=530 border=0 frameborder=0 id='add"+frametag+"'></iframe>",callback_return,740,530);
+}
+
+function callback_return(value)
+{
+	if(value != null)
+	{
+		setTimeout("gettasklist_req()",100);
+	}
+	return true;
+}
+
+function DeleteTask()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_notask_tip']%>");
+		return;
+	}
+
+	var taskname = selectedRow.cells[0].innerHTML;
+	if(confirm("<%=LANG['str_deltask_tip']%>("+taskname+")?"))
+		ajaxRequest("admin_delete_task","taskname="+taskname);
+}
+
+function ModifyTask()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_notask_tip']%>");
+		return;
+	}
+
+	var taskname = urlEncode(selectedRow.cells[0].innerHTML);
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['button_modifytask']%>","<iframe src='admin_addtask_form.html?taskname="+taskname+"&seeds=" + Math.random() +"' width=740 height=530 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",callback_return,740,530);
+}
+
+function Refresh()
+{
+	gettasklist_req();
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#fff; filter:alpha(opacity=60); -moz-opacity: 0.60; opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:40%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<div style="padding-top:2px; overflow-x:hidden;">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+	<td style="padding-left:5px;">
+		<button onclick="AddTask();"><span><em><img src="images/ico_addtask.png" align="absmiddle"> <%=LANG["button_addtask"]%></em></span></button>
+		<button onclick="ModifyTask();"><span><em><img src="images/ico_modifytask.png" align="absmiddle"> <%=LANG["button_modifytask"]%></em></span></button>
+		<button onclick="DeleteTask();"><span><em><img src="images/ico_deletetask.png" align="absmiddle"> <%=LANG["button_deletetask"]%></em></span></button>
+		<button onclick="Refresh();"><span><em><img src="images/ico_refresh.png" align="absmiddle"> <%=LANG["button_refresh"]%></em></span></button>
+	</td>
+	</tr>
+	</table>
+
+</div>
+
+
+<div style="background-color:#E6E6E6;">
+	<div style="margin-top:3px; margin-left:5px; border:1px solid #919B9C; border-bottom:0px; width:98%; overflow-x:hidden;">
+		<table id="listhead" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+			<tr style="background-color: #EFEFEF;">
+			<td class="listhead" width="36%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 0)"><%=LANG["title_taskname"]%></td>
+			<td class="listhead" width="18%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 1);"><%=LANG["title_type"]%></td>
+			<td class="listhead" width="16%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 2);"><%=LANG["title_fromdate"]%></td>
+			<td class="listhead" width="16%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 3);"><%=LANG["title_starttime"]%></td>
+			<td class="listhead" width="12%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 4);"><%=LANG["title_executed"]%></td>
+			<td class="listhead3">&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+	<div id="listview_div" style="background-color:#FFF; margin-left:5px; border:1px solid #919B9C; border-top:0px; width:98%; height:450px; overflow:auto; overflow-x:hidden;">
+		<table id="listtable" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;">
+		<thead><tr height="0">
+		<td width="36%"></td>
+		<td width="18%"></td>
+		<td width="16%"></td>
+		<td width="16%"></td>
+		<td width="12%"></td>
+		<td></td>
+		</tr></thead>
+		<tbody id="maintable">
+		</tbody>
+		</table>
+	</div>
+</div>
+
+<script language="javascript">
+gettasklist_req();
+setInterval("gettasklist_req()",20000);
+</script>
+</body>
+</html>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

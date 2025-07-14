@@ -1,0 +1,19 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local httpport = _POST["httpport"]
+	local listenerip = _POST["listenerip"]
+	local httpsecure = false
+	if _POST["httpsecure"] == "1" then
+		httpsecure = true
+	end
+
+	local result = c_ChangeAdminListener(httpport, httpsecure, listenerip)
+	if result == true then
+		print("1")
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' changed administrator listener.",ADMIN_LOG_OK)
+	else
+		print("0")
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' changed administrator listener failed.",ADMIN_LOG_ERROR)
+	end
+end
+%>

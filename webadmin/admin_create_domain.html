@@ -1,0 +1,24 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local bindaddress = _POST["bindaddress"]
+	local ftp_port = _POST["ftp_port"]
+	local ftps_port = _POST["ftps_port"]
+	local http_port = _POST["http_port"]
+	local https_port = _POST["https_port"]
+	local ssh_port = _POST["ssh_port"]
+
+	if domain ~= nil then
+		local result = c_AddDomain(domain,bindaddress,ftp_port,ftps_port,http_port,https_port,ssh_port)
+
+		if result == 1 then
+			for _,domain in pairs(c_GetDomainList()) do
+				local online = tostring(c_IsDomainOnline(domain))
+				rawset(_SESSION,"online_"..domain,online)
+			end
+			SessionModule.save(_SESSION_ID)
+		end
+		print(tostring(result))
+	end
+end
+%>

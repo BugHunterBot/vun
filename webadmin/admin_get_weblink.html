@@ -1,0 +1,44 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local is_uplink = _POST["is_uplink"]
+	local page = _POST["page"]
+	local filters = _POST["filters"] or ""
+	if filters == "" then
+		filters = "1=1 order by f_id desc"
+	end
+
+	if _SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1 then
+		filters = "1=1 order by f_id desc"
+	end
+
+	if _SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1 then
+		exit()
+	end
+
+	if string.find(domain,"'") or c_IsGrantedDomainAdmin(domain) == false then
+		exit()
+	end
+
+	local liststr = ""
+
+	local totalrecords = 0
+	local totalpages = 0
+	local result = c_ExecuteSQL("select count(*) from wftp_weblink where (f_domain='"..domain.."' or f_domain='<UNKNOWN>') and f_is_uplink="..tonumber(is_uplink).." and "..filters.." limit 1")
+	for _,row in pairs(result) do
+		totalrecords = row[0]
+	end
+	totalpages = (totalrecords/50)+1
+
+	liststr = totalpages.."\n"..c_GetTimeUTC().."\n"
+
+	result = c_ExecuteSQL("select * from wftp_weblink where (f_domain='"..domain.."' or f_domain='<UNKNOWN>') and f_is_uplink="..tonumber(is_uplink).." and "..filters.." limit 50 offset "..(tonumber(page)-1)*50)
+	for _,row in pairs(result) do
+		local temp = ""
+		temp = temp..row[0].."||"..row[1].."||"..row[2].."||"..row[3].."||"..row[4].."||"..row[5].."||"..row[6].."||"..row[7].."||"..row[8].."||"..row[9].."||"..row[10].."||"..row[11].."||"..row[12].."||"..row[13].."||".."\n"
+		liststr = liststr..temp
+	end
+
+	print(liststr)
+end
+%>

@@ -1,0 +1,434 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Wing Ftp Server</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<%
+	local IpMask = c_GetAdminIPMaskList()
+		IpMask = json.encode(IpMask)
+%>
+<style type="text/css">
+a {text-decoration:none;}
+a,a:visited {color:#000;background:inherit;}
+img {border:0px;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {margin:0;padding:0;font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {margin:0;padding:0;font:11px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+input,select,textarea{margin:4px;}
+input,textarea{background-color:expression((this.disabled && this.disabled==true)?"#D4D0C8":"")}
+td{line-height:20px;}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:18px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:18px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript" src="include/json.js"></script>
+<script language="javascript">
+var ajaxlock = false;
+var selectedRow = null;
+var lastObj = null;
+var lastObjIndex = -1;
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	if (xmlhttp.readyState == 4)
+	{
+		ajaxlock = false;
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_add_adminipmask': addIPMask_result();break;
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+		}
+		else
+		{
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+
+var ipmasks = new Array();
+var last_dir_id = null;
+
+function addIPMaskSubmit()
+{
+	var IpMaskString = urlEncode(JSON.stringify(ipmasks));
+	ajaxRequest("admin_add_adminipmask","ipmask="+IpMaskString);
+}
+
+function addIPMask_result()
+{
+	top.closewindow(1);
+}
+
+function IpMaskInit()
+{
+	var IpMask = '<%=IpMask%>';
+	if(IpMask != "")
+	{
+		try
+		{
+			var IpMaskObject = JSON.parse(IpMask);
+			ipmasks = (IpMaskObject != null ? IpMaskObject : new Array());
+			AddBlockIP_updateview();
+		}
+		catch(e)
+		{
+			alert("<%=LANG['str_adminipmask_loadfail']%>");
+		}
+	}
+}
+
+
+
+function AddBlockIP()
+{
+	showMessagebox("<%=LANG['str_addblockip']%>","<span style='padding:5px;'><%=LANG['str_ipmask_tip']%><span><br><br><%=LANG['str_ip']%>: <input type='text' style='width:190px' id='blockip'><br><input type='radio' name='radio' id='radio_deny' checked><%=LANG['str_denied']%> <input type='radio' name='radio' id='radio_allow'><%=LANG['str_allowed']%><br><br><br><button id='btn_submit' type='submit' onclick='return AddBlockIP_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button>",null,340,190);
+	top.$("blockip").focus();
+
+	top.$("btn_submit").onclick = function(){return AddBlockIP_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function AddBlockIP_updateview()
+{
+	var htmltext = "<table id='listtable2' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'>";
+	for(var i=0;i<ipmasks.length;i++)
+	{
+		var refuse = ipmasks[i].refuse ? "<font color='red'>Deny</font>":"<font color='green'>Allow</font>";
+		htmltext += "<tr class='listtr01' onmouseup='do_list_click2(this);'><td width='65%' f_id='"+i+"'>"+ipmasks[i].ip+"</td><td width='35%'>"+refuse+"</td></tr>";
+	}
+	htmltext += "</table>";
+	clear("listview_div2");
+	write("listview_div2",htmltext);
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function AddBlockIP_submit()
+{
+	var blockip = htmldecode(top.$("blockip").value);
+	if(blockip.length == 0 || blockip.search(/[\<\>\"\']/i) != -1)
+	{
+		alert("<%=LANG['str_invalidip']%>");
+		top.$("blockip").focus();
+		return;
+	}
+	var mask = new Object();
+	mask.ip = blockip;
+	mask.refuse = top.$("radio_deny").checked ? true:false;
+	ipmasks.push(mask);
+	mask = null;
+	AddBlockIP_updateview();
+	top.closewindow();
+}
+
+function do_list_click2(obj)
+{
+	var row_index = obj.rowIndex;
+	if(selectedRow != $("listtable2").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("listtable2").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifyBlockIP();
+	}
+
+	return false;
+}
+
+function ModifyBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	var f_ip = ipmasks[f_id].ip;
+	var f_deny = ipmasks[f_id].refuse ? "checked":"";
+	var f_allow = ipmasks[f_id].refuse ? "":"checked";
+	showMessagebox("<%=LANG['str_modifyblockip']%>","<span style='padding:5px;'><%=LANG['str_ipmask_tip']%><span><br><input type='hidden' id='blockip_id' value='"+f_id+"'><br><%=LANG['str_ip']%>: <input type='text' style='width:190px' id='blockip' value='"+f_ip+"'><br><input type='radio' name='radio' id='radio_deny' "+f_deny+"><%=LANG['str_denied']%> <input type='radio' name='radio' id='radio_allow' "+f_allow+"><%=LANG['str_allowed']%><br><br><br><button id='btn_submit' type='submit' onclick='return ModifyBlockIP_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button>",null,340,190);
+	top.$("blockip").focus();
+
+	top.$("btn_submit").onclick = function(){return ModifyBlockIP_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function ModifyBlockIP_submit()
+{
+	var f_id = parseInt(htmldecode(top.$("blockip_id").value));
+	var blockip = htmldecode(top.$("blockip").value);
+	if(blockip.length == 0 || blockip.search(/[\<\>\"\']/i) != -1)
+	{
+		alert("<%=LANG['str_invalidip']%>");
+		top.$("blockip").focus();
+		return;
+	}
+	ipmasks[f_id].ip = blockip;
+	ipmasks[f_id].refuse = top.$("radio_deny").checked ? true:false;
+	AddBlockIP_updateview();
+	top.closewindow();
+}
+
+function DeleteBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	ipmasks.splice(f_id,1);
+	AddBlockIP_updateview();
+}
+
+function UpBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id > 0)
+	{
+		var temp = ipmasks[f_id-1]; 
+		ipmasks[f_id-1] = ipmasks[f_id];
+		ipmasks[f_id] = temp;
+	}
+
+	AddBlockIP_updateview();
+
+	if(f_id > 0)
+	{
+		for(var i=0; i < ipmasks.length; i++)
+		{
+			var tempID = parseInt($("listtable2").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id-1)
+			{
+				$("listtable2").rows[i].className = "listtr02";
+				lastObj = $("listtable2").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+function DownBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id < ipmasks.length-1)
+	{
+		var temp = ipmasks[f_id+1]; 
+		ipmasks[f_id+1] = ipmasks[f_id];
+		ipmasks[f_id] = temp;
+	}
+
+	AddBlockIP_updateview();
+
+	if(f_id < ipmasks.length-1)
+	{
+		for(var i=0; i < ipmasks.length; i++)
+		{
+			var tempID = parseInt($("listtable2").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id+1)
+			{
+				$("listtable2").rows[i].className = "listtr02";
+				lastObj = $("listtable2").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+
+</script>
+</head>
+<body style="background-color:#E6E6E6;">
+
+<div style="height:290px; width:100%; overflow:auto; overflow-x:hidden; padding-left:4px;">
+	<table id="listhead2" width="98%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+	<tr>
+	<td colspan="2">
+		<button onclick="AddBlockIP();"><span><em><%=LANG["button_addblockip"]%></em></span></button><button onclick="ModifyBlockIP();"><span><em><%=LANG["button_modify"]%></em></span></button><button onclick="DeleteBlockIP();"><span><em><%=LANG["button_delete"]%></em></span></button><button onclick="UpBlockIP();"><span><em><%=LANG["button_up"]%></em></span></button><button onclick="DownBlockIP();"><span><em><%=LANG["button_down"]%></em></span></button>
+	</td>
+	</tr>
+
+	<tr>
+	<td colspan="2">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+		<tr>
+		<td class="listhead" width="65%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_ip"]%></td>
+		<td class="listhead" width="35%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_allowdeny"]%></td>
+		</tr>
+		<tr>
+		<td colspan="2">
+		<div id="listview_div2" style="height:220px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+		<table id="listtable2" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;"></table>
+		</div>
+		</td></tr>
+	</table>
+	</td></tr>
+
+	</table>
+</div>
+
+<div style="margin-top:10px;width:100%;text-align:center;">
+<button type='submit' onclick='addIPMaskSubmit();'><span><em><%=LANG["button_submit"]%></em></span></button>&nbsp;
+<button onclick='top.closewindow();'><span><em><%=LANG["button_cancel"]%></em></span></button>
+</div>
+
+<script type="text/javascript">
+IpMaskInit();
+
+</script>
+</body>
+</html>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

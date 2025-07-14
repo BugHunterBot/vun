@@ -1,0 +1,60 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+<meta http-equiv="Expires" content="0" />
+<body>
+<%
+include("language.html")
+
+local mainpage = "main.html"
+local loginpage = "admin_login.html"
+
+if _SESSION["admin"] ~= nil then
+	local secretcode = _POST["secretcode"] or nil
+	local digitalcode = _POST["digitalcode"] or nil
+
+	if _SESSION["logined"] ~= nil then
+		print("<script>top.location='"..mainpage.."';</script>")
+	else
+		if secretcode ~= nil and digitalcode~= nil then
+			local enableTwoFactor, twoFactorCode = c_GetAdminSecretCode(_SESSION["admin"])
+			if secretcode == "" then
+				if enableTwoFactor ~= nil and enableTwoFactor == true then
+					if twoFactorCode ~= nil and twoFactorCode ~= "" and c_TotpCode(twoFactorCode) == digitalcode and _SESSION["logintime"] ~= nil and (os.time() - tonumber(_SESSION["logintime"])) >= 2 then
+						rawset(_SESSION,"logined","true")
+						SessionModule.save(_SESSION_ID)
+
+						c_AddAdminLog("administrator '".._SESSION["admin"].."' logged in ok! (IP:".._REMOTE_IP..")",ADMIN_LOG_OK)
+						print("<script>top.location='"..mainpage.."';</script>")
+					else
+						print("<script>alert('"..LANG["wrong_totp_tip1"].."'); top.location='"..loginpage.."';</script>")
+					end
+				else
+					print("<script>top.location='"..mainpage.."';</script>")
+				end
+			else
+				if enableTwoFactor ~= nil and enableTwoFactor == true and twoFactorCode ~= nil and twoFactorCode == "" then
+					local totp_randomkey = _SESSION["totp_randomkey"] or secretcode
+					if c_TotpCode(totp_randomkey) == digitalcode and _SESSION["logintime"] ~= nil and string.len(totp_randomkey) == 16 and (os.time() - tonumber(_SESSION["logintime"])) >= 2 then
+						c_ChangeAdminSecretCode(_SESSION["admin"], totp_randomkey)
+						rawset(_SESSION,"logined","true")
+						rawset(_SESSION,"totp_randomkey","")
+						SessionModule.save(_SESSION_ID)
+
+						c_AddAdminLog("administrator '".._SESSION["admin"].."' logged in ok! (IP:".._REMOTE_IP..")",ADMIN_LOG_OK)
+						c_AddAdminLog("administrator '".._SESSION["admin"].."' updated the TOTP secret code.",ADMIN_LOG_OK)
+						print("<script>top.location='"..mainpage.."';</script>")
+					else
+						print("<script>alert('"..LANG["wrong_totp_tip2"].."'); top.location='"..loginpage.."';</script>")
+					end
+				end
+			end
+		end
+	end
+else
+	print("<script>top.location='"..loginpage.."';</script>")
+end
+%>
+</body>
+</html>

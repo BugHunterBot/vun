@@ -1,0 +1,382 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Temporary Ban IP List</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html, body {height: 100%;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+span{
+	vertical-align:middle;
+}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listhead3
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead4
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+</style>
+
+<!–[if IE 6]>
+<link rel="stylesheet" type="text/css" href="css/ie6.css" />
+<![endif]–>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var domain = "<%=_GET['domain']%>";
+var ajaxlock = false;
+var selectedRow = null;
+var lastObj = null;
+var lastObjIndex = -1;
+var _TIMER_BANLIST = null;
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+		if(page == "admin_kickuser")
+			$("waitingdiv").style.display = "";
+	}
+}
+
+function ajaxResponse()
+{
+	ajaxlock = false;
+	$("waitingdiv").style.display = "none";
+	if (xmlhttp.readyState == 4)
+	{
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_get_banlist':	getTempBanList();break;
+					case 'admin_delete_tempban':	getlist_loop();break;
+					case 'admin_add_tempban':	getlist_loop();break;
+				}
+			}
+			catch(e)
+			{
+			}
+		}
+		else
+		{
+		}
+	}
+}
+
+function localFormatTime(time) 
+{
+    seconds = parseInt(time % 60);
+    minutes = parseInt(time / 60);
+
+	return minutes+" <%=LANG['str_minute']%> "+seconds+" <%=LANG['str_second']%>";
+}
+
+function getTempBanList()
+{
+	try
+	{
+		var xmldoc = xmlhttp.responseXML;
+		var row = xmldoc.getElementsByTagName("banip");
+		var rownum = row.length;
+
+		var headcell = $("listhead").rows[0].cells;
+		var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'><thead><tr height='0'><td width='"+headcell[0].width+"'></td><td width='"+headcell[1].width+"'></td><td width='"+headcell[2].width+"'></td><td></td></tr></thead><tbody id='maintable'>";
+		for(var i=0; i < rownum; i++)
+		{
+			var myrow = row[i];
+			var f_id = xmlFieldValue(myrow,"id");
+			var f_ip = xmlFieldValue(myrow,"ip");
+			var f_blocktime = xmlFieldValue(myrow,"blocktime");
+			htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td>"+f_id+"</td><td>"+f_ip+"</td><td timevalue='"+f_blocktime+"'>"+localFormatTime(f_blocktime)+"</td><td></td></tr>";
+		}
+		htmltext += "</tbody></table>";
+		clear("listview_div");
+		write("listview_div",htmltext);
+		selectedRow = null;
+		autoSortTable("listtable");
+
+		if(lastObjIndex >= 0)
+		{
+			for(var i=0; i < rownum; i++)
+			{
+				var tempID = parseInt($("maintable").rows[i].cells[0].innerHTML);
+				if(tempID == lastObjIndex)
+				{
+					$("maintable").rows[i].className = "listtr02";
+					lastObj = $("maintable").rows[i];
+					selectedRow = lastObj;
+				}
+			}
+		}
+	}
+	catch(e){}
+
+	clearInterval(_TIMER_BANLIST);
+	_TIMER_BANLIST = setTimeout("getlist_loop()",2000);
+}
+
+
+function do_list_click(obj)
+{
+	var row_index = obj.rowIndex-1;
+	if(selectedRow != $("maintable").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("maintable").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		editTempBan(1);
+	}
+
+	return false;
+}
+
+
+function editTempBan(modify)
+{
+	var ip = "";
+	var blocktime = "300";
+	var disabled = "";
+	if(modify == 1 || modify == true)
+	{
+		if(selectedRow == null)
+		{
+			alert("<%=LANG['str_norow_tip']%>");
+			return;
+		}
+		ip = selectedRow.cells[1].innerHTML;
+		blocktime = selectedRow.cells[2].getAttribute("timevalue");
+		disabled = "disabled";
+	}
+
+	showMessagebox("<%=LANG['str_banip_tip']%>","<span style='padding-top:6px;'><%=LANG['str_ipmask_tip']%><span><br><br><table width='100%' border='0' cellpadding='0' cellspacing='0' style='padding-left:10px;'><tr><td width=100 align='right'><%=LANG['title_ipaddress']%>:</td><td align='left'><input type='text' style='width:170px' id='f_ip' value='"+ip+"' "+disabled+"></td></tr><tr><td height=30 width=100 align='right'><%=LANG['str_blocktime']%>:</td><td align='left'><input type='text' style='width:70px' id='f_blocktime' value='"+blocktime+"'><%=LANG['str_second']%></td></tr><tr><td height=80 colspan=2><button id='btn_submit' type='submit' onclick='return editTempBan_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",null,340,200);
+	top.$("f_blocktime").focus();
+	top.$("btn_submit").onclick = function(){return editTempBan_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+	top.$("f_blocktime").onkeyup = function(){top.$("f_blocktime").value=top.$("f_blocktime").value.replace(/\D/g,'');};
+	top.$("f_blocktime").onafterpaste = function(){top.$("f_blocktime").value=top.$("f_blocktime").value.replace(/\D/g,'');};
+}
+
+function editTempBan_submit()
+{
+	var ip = htmldecode(top.$("f_ip").value);
+	var blocktime = parseInt(htmldecode(top.$("f_blocktime").value));
+
+	if(ip.length == 0 || ip.search(/[\<\>\"\']/i) != -1)
+	{
+		alert("<%=LANG['str_invalidip']%>");
+		top.$("f_ip").focus();
+		return;
+	}
+	ajaxRequest("admin_add_tempban","domain="+domain+"&blocktime="+blocktime+"&ip="+encodeURIComponent(ip)+"&r=" + Math.random());
+	top.closewindow();
+}
+
+function deleteTempBan()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var ip = selectedRow.cells[1].innerHTML;
+	ajaxRequest("admin_delete_tempban","domain="+domain+"&ip="+encodeURIComponent(ip)+"&r=" + Math.random());
+}
+
+</script>
+</head>
+<body style="background-color:#E6E6E6;" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#777; filter:alpha(opacity=60); opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:20%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<div style="padding-top:2px; overflow-x:hidden;">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+	<tr>
+	<td width="69%" style="padding-left:5px;">
+	<button onclick="editTempBan(0);"><span><em><img src="images/ico_addtask.png" align="absmiddle"> <%=LANG["button_addban"]%></em></span></button>
+	<button onclick="editTempBan(1);"><span><em><img src="images/ico_modifytask.png" align="absmiddle"> <%=LANG["button_editban"]%></em></span></button>
+	<button onclick="deleteTempBan();"><span><em><img src="images/ico_deletetask.png" align="absmiddle"> <%=LANG["button_deleteban"]%></em></span></button>
+	</td>
+	<td align="right" style="padding-right:12px;"><%=LANG["str_domain"]%>:<b><%=specialhtml_encode(unescape(_GET["domain"]))%></b></td>
+	</tr>
+	</table>
+
+</div>
+
+
+<div style="background-color:#E6E6E6;">
+	<div style="margin-top:3px; margin-left:5px; border:1px solid #919B9C; border-bottom:0px; width:98%; overflow-x:hidden;">
+		<table id="listhead" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+			<tr>
+			<td class="listhead" width="10%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 0 , 'int')"><div class="resizeblock">&nbsp;</div><%=LANG["title_num"]%></td>
+			<td class="listhead" width="25%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 1);"><div class="resizeblock">&nbsp;</div><%=LANG["title_ip"]%></td>
+			<td class="listhead" width="25%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 2);"><div class="resizeblock">&nbsp;</div><%=LANG["str_blocktime"]%></td>
+			<td class="listhead3">&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+	<div id="listview_div" style="background-color:#FFF; margin-left:5px; border:1px solid #919B9C; border-top:0px; width:98%; height:460px; overflow:auto; overflow-x:hidden;">
+		<table id="listtable" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;">
+		<thead><tr height="0">
+		<td width="10%"></td>
+		<td width="25%"></td>
+		<td width="25%"></td>
+		<td></td>
+		</tr></thead>
+		<tbody id="maintable"></tbody>
+		</table>
+	</div>
+</div>
+
+</body>
+</html>
+<script>
+function getlist_loop()
+{
+	ajaxRequest("admin_get_banlist","domain="+domain+"&r=" + Math.random());
+}
+
+clearInterval(_TIMER_BANLIST);
+_TIMER_BANLIST = setTimeout("getlist_loop()",2000);
+getlist_loop();
+</script>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

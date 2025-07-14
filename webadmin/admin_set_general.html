@@ -1,0 +1,213 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local enable_hammer = _POST["enable_hammer"]
+	local send_message = _POST["send_message"]
+	local block_time = _POST["block_time"]
+	local failed_count = _POST["failed_count"]
+	local failed_interval = _POST["failed_interval"]
+	local enable_fxp = _POST["enable_fxp"]
+	local enable_utf8_on = _POST["enable_utf8_on"]
+	local enable_auth_tls = _POST["enable_auth_tls"]
+	local enable_uploadlink = _POST["enable_uploadlink"]
+	local buffer_size = _POST["buffer_size"]
+	local enable_weblink = _POST["enable_weblink"]
+	local show_subfolder = _POST["show_subfolder"]
+	local keep_old_weblink = _POST["keep_old_weblink"]
+	local anonymous_weblink = _POST["anonymous_weblink"]
+	local uplink_overwrite = _POST["uplink_overwrite"]
+	local weblink_domain = _POST["weblink_domain"]
+	local enable_https_redirect = _POST["enable_https_redirect"]
+	local https_redirect_port = _POST["https_redirect_port"]
+	local sslcert = _POST["sslcert"]
+	local sshkey = _POST["sshkey"]
+	local smtpconfig = _POST["smtpconfig"]
+	local listener_enable_upnp = _POST["listener_enable_upnp"]
+	local list_time_gmt = _POST["list_time_gmt"]
+	local enable_log = _POST["enable_log"]
+	local log_filename = _POST["log_filename"]
+	local log_maxsize = _POST["log_maxsize"]
+	local log_compress = _POST["log_compress"]
+	local log_millisecond = _POST["log_millisecond"]
+	local enable_modez = _POST["enable_modez"]
+	local zlevel_default = _POST["zlevel_default"]
+	local zlevel_min = _POST["zlevel_min"]
+	local zlevel_max = _POST["zlevel_max"]
+	local max_session = _POST["max_session"]
+	local max_ipsession = _POST["max_ipsession"]
+	local max_session_per_user = _POST["max_session_per_user"]
+	local max_ipsession_for_user = _POST["max_ipsession_for_user"]
+	local connection_timeout = _POST["connection_timeout"]
+	local session_downspeed = _POST["session_downspeed"]
+	local session_upspeed = _POST["session_upspeed"]
+	local user_downspeed = _POST["user_downspeed"]
+	local user_upspeed = _POST["user_upspeed"]
+	local domain_downspeed = _POST["domain_downspeed"]
+	local domain_upspeed = _POST["domain_upspeed"]
+	local data_transfer_timeout = _POST["data_transfer_timeout"]
+	local pasv_method = _POST["pasv_method"]
+	local pasv_fixed_ip = _POST["pasv_fixed_ip"]
+	local pasv_web_ip = _POST["pasv_web_ip"]
+	local pasv_dns_ip = _POST["pasv_dns_ip"]
+	local pasv_ip_refresh = _POST["pasv_ip_refresh"]
+	local pasv_min_port = _POST["pasv_min_port"]
+	local pasv_max_port = _POST["pasv_max_port"]
+	local enable_logfile_message = _POST["enable_logfile_message"]
+	local enable_logscrn_message = _POST["enable_logscrn_message"]
+	local enable_logfile_security = _POST["enable_logfile_security"]
+	local enable_logscrn_security = _POST["enable_logscrn_security"]
+	local enable_logfile_ftpcmd = _POST["enable_logfile_ftpcmd"]
+	local enable_logscrn_ftpcmd = _POST["enable_logscrn_ftpcmd"]
+	local enable_logfile_ftpresp = _POST["enable_logfile_ftpresp"]
+	local enable_logscrn_ftpresp = _POST["enable_logscrn_ftpresp"]
+	local enable_logfile_webcmd = _POST["enable_logfile_webcmd"]
+	local enable_logscrn_webcmd = _POST["enable_logscrn_webcmd"]
+	local enable_logfile_webresp = _POST["enable_logfile_webresp"]
+	local enable_logscrn_webresp = _POST["enable_logscrn_webresp"]
+	local enable_logfile_sshcmd = _POST["enable_logfile_sshcmd"]
+	local enable_logscrn_sshcmd = _POST["enable_logscrn_sshcmd"]
+	local enable_logfile_sshresp = _POST["enable_logfile_sshresp"]
+	local enable_logscrn_sshresp = _POST["enable_logscrn_sshresp"]
+	local enable_logfile_odbcerr = _POST["enable_logfile_odbcerr"]
+	local enable_logscrn_odbcerr = _POST["enable_logscrn_odbcerr"]
+	local enable_logfile_mysqlerr = _POST["enable_logfile_mysqlerr"]
+	local enable_logscrn_mysqlerr = _POST["enable_logscrn_mysqlerr"]
+	local enable_logfile_luaerr = _POST["enable_logfile_luaerr"]
+	local enable_logscrn_luaerr = _POST["enable_logscrn_luaerr"]
+	local enable_logfile_mailerr = _POST["enable_logfile_mailerr"]
+	local enable_logscrn_mailerr = _POST["enable_logscrn_mailerr"]
+	local enable_logfile_fileerr = _POST["enable_logfile_fileerr"]
+	local enable_logscrn_fileerr = _POST["enable_logscrn_fileerr"]
+	local enable_logfile_normalerr = _POST["enable_logfile_normalerr"]
+	local enable_logscrn_normalerr = _POST["enable_logscrn_normalerr"]
+	local enable_domain_logo = _POST["enable_domain_logo"]
+	local min_password = _POST["min_password"]
+	local password_complexity1 = _POST["password_complexity1"]
+	local password_complexity2 = _POST["password_complexity2"]
+	local password_complexity3 = _POST["password_complexity3"]
+	local password_complexity4 = _POST["password_complexity4"]
+	local sha256_password = _POST["sha256_password"]
+	local changepass_firstlogon = _POST["changepass_firstlogon"]
+	local http_headers = _POST["http_headers"]
+	local enable_passive_active = _POST["enable_passive_active"]
+	local passive_listener_timeout = _POST["passive_listener_timeout"]
+	local auto_pasv_ip = _POST["auto_pasv_ip"]
+	local auto_passive_forward = _POST["auto_passive_forward"]
+	local auto_active_forward = _POST["auto_active_forward"]
+	local enable_symbolic_link = _POST["enable_symbolic_link"]
+	local enable_welcome_message = _POST["enable_welcome_message"]
+	local str_welcome_message = _POST["str_welcome_message"]
+	local ssh_banner = _POST["ssh_banner"]
+	ssh_banner = string.sub(ssh_banner, 1, 30)
+	local http_keepalive = _POST["http_keepalive"]
+	local tls_session_timeout = _POST["tls_session_timeout"]
+	local enable_salting = _POST["enable_salting"]
+	local salting_string = _POST["salting_string"]
+
+	http_headers = string.sub(http_headers, 1, 512)
+	http_headers = http_headers.gsub(http_headers, "<br>", "\r\n")
+
+	str_welcome_message = string.sub(str_welcome_message, 1, 10240)
+
+	c_SetOptionInt(domain,DOPTION_ANTI_HAMMER_ENABLE_INT,enable_hammer)
+	c_SetOptionInt(domain,DOPTION_ANTI_HAMMER_SEND_MESSAGE_INT,send_message)
+	c_SetOptionInt(domain,DOPTION_ANTI_HAMMER_BLOCK_TIME_INT,block_time)
+	c_SetOptionInt(domain,DOPTION_ANTI_HAMMER_LOGIN_FAILED_COUNTS_INT,failed_count)
+	c_SetOptionInt(domain,DOPTION_ANTI_HAMMER_INTERVAL_INT,failed_interval)
+	c_SetOptionInt(domain,DOPTION_ENABLE_FXP_INT,enable_fxp)
+	c_SetOptionInt(domain,DOPTION_ENABLE_UTF8ON,enable_utf8_on)
+	c_SetOptionInt(domain,DOPTION_ENABLE_AUTH,enable_auth_tls)
+	c_SetOptionInt(domain,DOPTION_ENABLE_UPLOADLINK_INT,enable_uploadlink)
+	c_SetOptionInt(domain,DOPTION_BUFFERSIZE_INT,buffer_size)
+	c_SetOptionInt(domain,DOPTION_ENABLE_WEBLINK_INT,enable_weblink)
+	c_SetOptionInt(domain,DOPTION_ENABLE_WEBLINK_SUBFOLDER,show_subfolder)
+	c_SetOptionInt(domain,DOPTION_KEEP_OLD_WEBLINK,keep_old_weblink)
+	c_SetOptionInt(domain,DOPTION_ANONYMOUS_WEBLINK,anonymous_weblink)
+	c_SetOptionInt(domain,DOPTION_UPLINK_OVERWRITE,uplink_overwrite)
+	c_SetOptionStr(domain,DOPTION_WEBLINK_URL,weblink_domain)
+	c_SetOptionInt(domain,DOPTION_ENABLE_HTTPS_REDIRECT,enable_https_redirect)
+	c_SetOptionInt(domain,DOPTION_HTTPS_REDIRECT_PORT,https_redirect_port)
+	c_SetOptionStr(domain,DOPTION_SSL_NAME_STR,sslcert)
+	c_SetOptionStr(domain,DOPTION_SSH_NAME_STR,sshkey)
+	c_SetOptionStr(domain,DOPTION_SMTP_NAME_STR,smtpconfig)
+	c_SetOptionInt(domain,DOPTION_LISTENER_ENABLE_UPNP_INT,listener_enable_upnp)
+	c_SetOptionInt(domain,DOPTION_LIST_TIME_GMT,list_time_gmt)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_ENABLE_INT,enable_log)
+	c_SetOptionStr(domain,DOPTION_LOGFILE_NAME_STR,log_filename)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_MAXSIZE_INT,log_maxsize)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_COMPRESS_INT,log_compress)
+	c_SetOptionInt(domain,DOPTION_ENABLE_LOG_MILLISECOND,log_millisecond)
+	c_SetOptionInt(domain,DOPTION_ENABLE_MODEZ_INT,enable_modez)
+	c_SetOptionInt(domain,DOPTION_DEFAULT_ZLEVEL_INT,zlevel_default)
+	c_SetOptionInt(domain,DOPTION_MIN_ZLEVEL_INT,zlevel_min)
+	c_SetOptionInt(domain,DOPTION_MAX_ZLEVEL_INT,zlevel_max)
+	c_SetOptionInt(domain,DOPTION_DOMAIN_MAX_SESSION_INT,max_session)
+	c_SetOptionInt(domain,DOPTION_DOMAIN_PER_IP_MAX_SESSION_INT,max_ipsession)
+	c_SetOptionInt(domain,DOPTION_PER_ACCOUNT_MAX_SESSIONS_INT,max_session_per_user)
+	c_SetOptionInt(domain,DOPTION_PER_ACCOUNT_PER_IP_MAX_SESSIONS_INT,max_ipsession_for_user)
+	c_SetOptionInt(domain,DOPTION_COMMAND_TIMEOUT_INT,connection_timeout)
+	c_SetOptionInt(domain,DOPTION_PER_SESSION_MAX_DOWN_SPEED_INT,session_downspeed)
+	c_SetOptionInt(domain,DOPTION_PER_SESSION_MAX_UP_SPEED_INT,session_upspeed)
+	c_SetOptionInt(domain,DOPTION_PER_USER_MAX_DOWN_SPEED_INT,user_downspeed)
+	c_SetOptionInt(domain,DOPTION_PER_USER_MAX_UP_SPEED_INT,user_upspeed)
+	c_SetOptionInt(domain,DOPTION_DOMAIN_MAX_DOWN_SPEED_INT,domain_downspeed)
+	c_SetOptionInt(domain,DOPTION_DOMAIN_MAX_UP_SPEED_INT,domain_upspeed)
+	c_SetOptionInt(domain,DOPTION_TRANSFER_TIMEOUT_INT,data_transfer_timeout)
+	c_SetDomainPasvOption(domain,pasv_method,pasv_fixed_ip,pasv_web_ip,pasv_dns_ip,pasv_ip_refresh,0,pasv_min_port,pasv_max_port)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_MESSAGE_INT,enable_logfile_message)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_MESSAGE_INT,enable_logscrn_message)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_SECURITY_INT,enable_logfile_security)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_SECURITY_INT,enable_logscrn_security)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_FTP_COMMAND_INT,enable_logfile_ftpcmd)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_FTP_COMMAND_INT,enable_logscrn_ftpcmd)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_FTP_RESPONSE_INT,enable_logfile_ftpresp)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_FTP_RESPONSE_INT,enable_logscrn_ftpresp)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_WEB_COMMAND_INT,enable_logfile_webcmd)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_WEB_COMMAND_INT,enable_logscrn_webcmd)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_WEB_RESPONSE_INT,enable_logfile_webresp)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_WEB_RESPONSE_INT,enable_logscrn_webresp)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_SSH_COMMAND_INT,enable_logfile_sshcmd)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_SSH_COMMAND_INT,enable_logscrn_sshcmd)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_SSH_RESPONSE_INT,enable_logfile_sshresp)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_SSH_RESPONSE_INT,enable_logscrn_sshresp)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_ODBC_ERROR_INT,enable_logfile_odbcerr)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_ODBC_ERROR_INT,enable_logscrn_odbcerr)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_MYSQL_ERROR_INT,enable_logfile_mysqlerr)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_MYSQL_ERROR_INT,enable_logscrn_mysqlerr)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_LUA_ERROR_INT,enable_logfile_luaerr)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_LUA_ERROR_INT,enable_logscrn_luaerr)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_MAIL_ERROR_INT,enable_logfile_mailerr)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_MAIL_ERROR_INT,enable_logscrn_mailerr)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_FILE_ERROR_INT,enable_logfile_fileerr)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_FILE_ERROR_INT,enable_logscrn_fileerr)
+	c_SetOptionInt(domain,DOPTION_LOGFILE_NORMAL_ERROR_INT,enable_logfile_normalerr)
+	c_SetOptionInt(domain,DOPTION_LOGSCREEN_NORMAL_ERROR_INT,enable_logscrn_normalerr)
+	c_SetOptionInt(domain,DOPTION_ENABLE_DOMAINLOGO_INT,enable_domain_logo)
+	c_SetOptionInt(domain,DOPTION_PASSWORD_LEN_INT,min_password)
+	c_SetOptionInt(domain,DOPTION_INC_NUMBER_INT,password_complexity1)
+	c_SetOptionInt(domain,DOPTION_INC_LOWERCASE_INT,password_complexity2)
+	c_SetOptionInt(domain,DOPTION_INC_UPPERCASE_INT,password_complexity3)
+	c_SetOptionInt(domain,DOPTION_INC_NONALPHANUMERIC_INT,password_complexity4)
+	c_SetOptionInt(domain,DOPTION_ENABLE_SHA256,sha256_password)
+	c_SetOptionInt(domain,DOPTION_CHANGEPASS_FIRSTLOGON,changepass_firstlogon)
+	c_SetOptionStr(domain,DOPTION_HTTP_HEADER_STR,http_headers)
+	c_SetOptionInt(domain,DOPTION_ALLOW_PASSIVE_ACTIVE,enable_passive_active)
+	c_SetOptionInt(domain,DOPTION_PASSIVE_LISTENER_TIMEOUT,passive_listener_timeout)
+	c_SetOptionInt(domain,DOPTION_USE_LOCAL_IP_PASSIVE_INT,auto_pasv_ip)
+	c_SetOptionInt(domain,DOPTION_AUTO_PASSIVE_FORWARD,auto_passive_forward)
+	c_SetOptionInt(domain,DOPTION_AUTO_ACTIVE_FORWARD,auto_active_forward)
+	c_SetOptionInt(domain,DOPTION_ENABLE_SYMBOLIC_LINK,enable_symbolic_link)
+	c_SetOptionInt(domain,DOPTION_ENABLE_WELCOME_MSG,enable_welcome_message)
+	c_SetOptionStr(domain,DOPTION_WELCOME_MESSAGE,str_welcome_message)
+	c_SetOptionStr(domain,DOPTION_SSH_BANNER,ssh_banner)
+	c_SetOptionInt(domain,DOPTION_HTTP_KEEP_ALIVE,http_keepalive)
+	c_SetOptionInt(domain,DOPTION_TLS_SESSION_TIMEOUT,tls_session_timeout)
+
+	c_SetOptionInt(domain,DOPTION_ENABLE_PASS_SALTING,enable_salting)
+	local old_salt_string = c_GetOptionStr(domain,DOPTION_SALTING_STRING)
+	c_SetOptionStr(domain,DOPTION_SALTING_STRING,salting_string)
+	if old_salt_string ~= salting_string then
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' changed the password salt into '"..salting_string.."' for domain ["..unescape(domain).."].", ADMIN_LOG_OK)
+	end
+end
+%>

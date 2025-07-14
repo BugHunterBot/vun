@@ -1,0 +1,19 @@
+<%
+include("language.html")
+if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
+	local filename = _POST["filename"] or _GET["filename"] or nil
+	if filename ~= nil then
+		local nowdir = _POST["nowpath"] or _GET["nowpath"] or string.gsub(_SESSION["currentpath"],":{{","%[")
+		local status,result = c_GetFileSize(_SESSION["username"],filename,nowdir)		
+		if status == 1 then
+			print(result)
+		else
+			print("0")
+		end
+	else
+		print("0")
+	end
+else
+	print("0")
+end
+%>

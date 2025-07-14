@@ -1,0 +1,41 @@
+<%
+include("language.html")
+
+if _SESSION["logined"] ~= nil then
+	local type = _GET["type"] or _POST["type"]
+	local domain = _GET["domain"] or _POST["domain"]
+
+	local i = 0
+	if type == "ftp" then
+		for key,value in ipairs(FTP_EVENT_KEY) do
+			local val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14 = c_GetFTPEvent(domain,i)
+			if val1 == true or val4 == true or val7 == true or val13 == true then
+				print("<tr class='listtr01' onmouseup='do_list_click(this);'><td type='FTP'>FTP <img src='images/markicon.gif'></td><td index='"..i.."'>"..value.."</td><td>"..FTP_EVENT_VALUE[i+1].."</td></tr>")
+			else
+				print("<tr class='listtr01' onmouseup='do_list_click(this);'><td type='FTP'>FTP</td><td index='"..i.."'>"..value.."</td><td>"..FTP_EVENT_VALUE[i+1].."</td></tr>")
+			end
+			i = i + 1
+		end
+	elseif type == "ssh" then
+		for key,value in ipairs(SSH_EVENT_KEY) do
+			local val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14 = c_GetSSHEvent(domain,i)
+			if val1 == true or val4 == true or val7 == true or val13 == true then
+				print("<tr class='listtr01' onmouseup='do_list_click(this);'><td type='SSH'>SSH <img src='images/markicon.gif'></td><td index='"..i.."'>"..value.."</td><td>"..SSH_EVENT_VALUE[i+1].."</td></tr>")
+			else
+				print("<tr class='listtr01' onmouseup='do_list_click(this);'><td type='SSH'>SSH</td><td index='"..i.."'>"..value.."</td><td>"..SSH_EVENT_VALUE[i+1].."</td></tr>")
+			end
+			i = i + 1
+		end
+	elseif type == "http" then
+		for key,value in ipairs(WEB_EVENT_KEY) do
+			local val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14 = c_GetHTTPEvent(domain,i)
+			if val1 == true or val4 == true or val7 == true or val13 == true then
+				print("<tr class='listtr01' onmouseup='do_list_click(this);'><td type='HTTP'>HTTP <img src='images/markicon.gif'></td><td index='"..i.."'>"..value.."</td><td>"..WEB_EVENT_VALUE[i+1].."</td></tr>")
+			else
+				print("<tr class='listtr01' onmouseup='do_list_click(this);'><td type='HTTP'>HTTP</td><td index='"..i.."'>"..value.."</td><td>"..WEB_EVENT_VALUE[i+1].."</td></tr>")
+			end
+			i = i + 1
+		end
+	end
+end
+%>

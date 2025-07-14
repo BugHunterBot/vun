@@ -1,0 +1,7 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local username = _POST["username"]
+	c_DeleteUser(domain, username)
+end
+%>

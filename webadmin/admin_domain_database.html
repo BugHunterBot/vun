@@ -1,0 +1,978 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<%
+if _GET["domain"] ~= nil then
+	local domain = _GET["domain"]
+
+	if c_IsGrantedDomainAdmin(domain) == false then
+		exit()
+	end
+
+	local method = c_AccessDataWay(domain)
+
+	local dsn_user = c_GetOptionStr(domain,DOPTION_DSN_USERNAME_STR)
+	local dsn_password = c_GetOptionStr(domain,DOPTION_DSN_PASSWORD_STR)
+	local mysql_user = c_GetOptionStr(domain,DOPTION_MYSQL_USERNAME_STR)
+	local mysql_password = c_GetOptionStr(domain,DOPTION_MYSQL_PASSWORD_STR)
+	local ldap_user = c_GetOptionStr(domain,DOPTION_LDAP_BINDDN_STR)
+	local ldap_password = c_GetOptionStr(domain,DOPTION_LDAP_BINDPASS_STR)
+
+	if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then
+		dsn_user = "*****"
+		dsn_password = "*****"
+		mysql_user = "*****"
+		mysql_password = "*****"
+		ldap_user = "*****"
+		ldap_password = "*****"
+	end
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Authentication Settings</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html, body {height: 100%;}
+a {text-decoration:none;}
+a,a:visited {color:#000;background:inherit;}
+html, body {height: 100%;margin:0px;padding:0px;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:11px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+input,select,textarea{margin:4px;}
+input,textarea{background-color:expression((this.disabled && this.disabled==true)?"#D4D0C8":"")}
+span{
+	vertical-align:middle;
+}
+fieldset {  
+    border-color: #999;  
+    border-style: solid;  
+    border-width: 1px;  
+}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:18px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:18px;
+}
+
+
+#tabDiv {
+	width: 635px;
+	margin: 0px auto 0px auto;
+	position: relative;
+	border:1px solid transparent;
+	border:1px solid #E6E6E6;
+}
+#tabDiv ul {
+	padding: 0px;
+	position: absolute;
+	margin-left: 0px;
+	margin-top: 4px;
+}
+#tabDiv li {
+	list-style-type: none;
+	float: left;
+	margin-right: 1px;
+	height: 24px;
+	line-height: 24px;
+	padding: 0px;
+}
+#tabDiv li a {
+	display: block;
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+.tagContent {
+	clear:both;
+	float:none;
+	margin-top: 27px;
+	border: 1px solid #919B9C;
+}
+.tagContent div {
+	margin-top: 0px;
+	height: 350px;
+	overflow-y:auto;
+	background-image: url('images/tabbg.gif');
+	background-repeat: repeat-x;
+	background-color: #fff;
+	padding: 12px;
+	display: none;
+}
+.selectedTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+.selectedTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right top;
+	color:#000;
+}
+.normalTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left bottom;
+}
+.normalTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right bottom;
+	color:#49658F
+}
+.emptyTag { width:15px;}
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var str_mapping = "";
+
+var ajaxlock = false;
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+		$("waitingdiv").style.display = "";
+	}
+}
+
+function ajaxResponse()
+{
+	ajaxlock = false;
+	$("waitingdiv").style.display = "none";
+	if (xmlhttp.readyState == 4)
+	{
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_testodbc':	testODBC_result();break;
+					case 'admin_testmysql':	testMYSQL_result();break;
+					case 'admin_set_accessway':	doSubmit_result();break;
+					case 'admin_testguest':	testGuest_result();break;
+					case 'admin_testldap':	testLDAP_result();break;
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+		}
+		else
+		{
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+function testODBC()
+{
+	var paramStr = "";
+	var odbcsource = encodeURIComponent($("odbcsource").value);
+	var odbcusername = encodeURIComponent($("odbcusername").value);
+	var odbcpassword = encodeURIComponent($("odbcpassword").value);
+	paramStr = "odbcsource="+odbcsource+"&odbcusername="+odbcusername+"&odbcpassword="+odbcpassword+"&r="+Math.random();
+	ajaxRequest("admin_testodbc",paramStr);
+}
+
+function testODBC_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "1" || result == 1)
+	{
+		alert("<%=LANG['str_testodbc_ok']%>");
+	}
+	else if(result == "")
+	{
+		window.location.reload();
+	}
+	else
+	{
+		showMessagebox("<%=LANG['str_field_odbcerr']%>","<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0' style='background-color:#E6E6E6;padding:8px;'><tr><td align='left'><img src='images/vista_warning.gif' align='absmiddle'><br><textarea readonly  style='width:430px;height:180px;border:0;background-color:#E6E6E6;word-break:keep-all;overflow:hidden;'>"+removeXSS(result)+"</textarea></td></tr><tr><td><button id='btn_submit' type='submit' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_cancel']%></em></span></button><br><br></td></tr></table>",null,450,300);
+	}
+}
+
+function testMYSQL()
+{
+	var paramStr = "";
+	var mysqlserver = $("mysqlserver").value;
+	var mysqlport = $("mysqlport").value;
+	var mysqldatabase = encodeURIComponent($("mysqldatabase").value);
+	var mysqlusername = encodeURIComponent($("mysqlusername").value);
+	var mysqlpassword = encodeURIComponent($("mysqlpassword").value);
+	var mysqlsocket = $("mysqlsocket").value;
+	paramStr = "mysqlserver="+mysqlserver+"&mysqlport="+mysqlport+"&mysqldatabase="+mysqldatabase+"&mysqlusername="+mysqlusername+"&mysqlpassword="+mysqlpassword+"&mysqlsocket="+mysqlsocket+"&r="+Math.random();
+	ajaxRequest("admin_testmysql",paramStr);
+}
+
+function testMYSQL_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "1" || result == 1)
+	{
+		alert("<%=LANG['str_testmysql_ok']%>");
+	}
+	else if(result == "")
+	{
+		window.location.reload();
+	}
+	else
+	{
+		showMessagebox("<%=LANG['str_field_mysqlerr']%>","<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0' style='background-color:#E6E6E6;padding:8px;'><tr><td align='left'><img src='images/vista_warning.gif' align='absmiddle'><br><textarea readonly  style='width:430px;height:180px;border:0;background-color:#E6E6E6;word-break:keep-all;overflow:hidden;'>"+removeXSS(result)+"</textarea></td></tr><tr><td><button id='btn_submit' type='submit' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_cancel']%></em></span></button><br><br></td></tr></table>",null,450,300);
+	}
+}
+
+function doSubmit()
+{
+    var radios = document.getElementsByName("method");
+    var method = 1;
+    for(var i=0;i<radios.length;i++)
+	{
+        if(radios[i].checked)
+		{ 
+            method = radios[i].value; 
+            break; 
+        } 
+    }
+
+	var paramStr = "";
+	var domain = $("domain").value;
+	var odbcsource = encodeURIComponent($("odbcsource").value);
+	var odbcusername = encodeURIComponent($("odbcusername").value);
+	var odbcpassword = encodeURIComponent($("odbcpassword").value);
+	var mysqlserver = $("mysqlserver").value;
+	var mysqlport = $("mysqlport").value;
+	var mysqldatabase = encodeURIComponent($("mysqldatabase").value);
+	var mysqlusername = encodeURIComponent($("mysqlusername").value);
+	var mysqlpassword = encodeURIComponent($("mysqlpassword").value);
+	var mysqlsocket = $("mysqlsocket").value;
+	var mysql_utf8 = ($("mysql_utf8").checked ? 1:0);
+	var enable_aduser = ($("enable_aduser").checked ? 1:0);
+	var aduser_domain = encodeURIComponent($("aduser_domain").value);
+	var aduser_dir = encodeURIComponent($("aduser_dir").value);
+	var aduser_ntfs = ($("aduser_ntfs").checked ? 1:0);
+	var aduser_owndir = ($("aduser_owndir").checked ? 1:0);
+	var fileread = ($("fileread").checked ? 1:0);
+	var filewrite = ($("filewrite").checked ? 1:0);
+	var fileappend = ($("fileappend").checked ? 1:0);
+	var filedelete = ($("filedelete").checked ? 1:0);
+	var dirlist = ($("dirlist").checked ? 1:0);
+	var dirmake = ($("dirmake").checked ? 1:0);
+	var dirdelete = ($("dirdelete").checked ? 1:0);
+	var dirrename = ($("dirrename").checked ? 1:0);
+	var filerename = ($("filerename").checked ? 1:0);
+	var zipfile = ($("zipfile").checked ? 1:0);
+	var unzipfile = ($("unzipfile").checked ? 1:0);
+
+	var enable_ldap = ($("enable_ldap").checked ? 1:0);
+	var ldap_host = $("ldap_host").value;
+	var ldap_port = $("ldap_port").value;
+	var ldap_timeout = $("ldap_timeout").value;
+	var ldap_basedn = encodeURIComponent($("ldap_basedn").value);
+	var ldap_version = $("ldap_version").value;
+	var ldap_usessl = ($("ldap_usessl").checked ? 1:0);
+	var ldap_binddn = encodeURIComponent($("ldap_binddn").value);
+	var ldap_bindpass = encodeURIComponent($("ldap_bindpass").value);
+	var ldap_filter = encodeURIComponent($("ldap_filter").value);
+	var ldap_dir = encodeURIComponent($("ldap_dir").value);
+	var ldap_owndir = ($("ldap_owndir").checked ? 1:0);
+	var ldap_fileread = ($("ldap_fileread").checked ? 1:0);
+	var ldap_filewrite = ($("ldap_filewrite").checked ? 1:0);
+	var ldap_fileappend = ($("ldap_fileappend").checked ? 1:0);
+	var ldap_filedelete = ($("ldap_filedelete").checked ? 1:0);
+	var ldap_dirlist = ($("ldap_dirlist").checked ? 1:0);
+	var ldap_dirmake = ($("ldap_dirmake").checked ? 1:0);
+	var ldap_dirdelete = ($("ldap_dirdelete").checked ? 1:0);
+	var ldap_dirrename = ($("ldap_dirrename").checked ? 1:0);
+	var ldap_filerename = ($("ldap_filerename").checked ? 1:0);
+	var ldap_zipfile = ($("ldap_zipfile").checked ? 1:0);
+	var ldap_unzipfile = ($("ldap_unzipfile").checked ? 1:0);
+	var ldap_dir_lowercase = ($("ldap_dir_lowercase").checked ? 1:0);
+
+
+	<%
+	local nType = c_GetLicenseInfo()
+	if nType == LICENSE_STANDARD or nType == LICENSE_SECURE or nType == LICENSE_FREE then
+	%>
+	if(method > 1 || enable_aduser || enable_ldap)
+	{
+		alert("<%=LANG['str_notsupport_feature1']%>");
+		return;
+	}
+	<%
+	end
+	%>
+
+
+	if(enable_aduser && aduser_dir == "")
+	{
+		alert("<%=LANG['str_no_globalhome']%>");
+		return;
+	}
+
+	if(enable_ldap && ldap_dir == "")
+	{
+		alert("<%=LANG['str_no_globalhome']%>");
+		return;
+	}
+
+	paramStr = "domain="+domain+"&method="+method+"&odbcsource="+odbcsource+"&odbcusername="+odbcusername+"&odbcpassword="+odbcpassword+"&mysqlserver="+mysqlserver+"&mysqlport="+mysqlport+"&mysqldatabase="+mysqldatabase+"&mysqlusername="+mysqlusername+"&mysqlpassword="+mysqlpassword+"&mysqlsocket="+mysqlsocket+"&mysql_utf8="+mysql_utf8+"&enable_aduser="+enable_aduser+"&aduser_domain="+aduser_domain+"&aduser_dir="+aduser_dir+"&aduser_ntfs="+aduser_ntfs+"&aduser_owndir="+aduser_owndir+"&fileread="+fileread+"&filewrite="+filewrite+"&fileappend="+fileappend+"&filedelete="+filedelete+"&dirlist="+dirlist+"&dirmake="+dirmake+"&dirdelete="+dirdelete+"&dirrename="+dirrename+"&filerename="+filerename+"&zipfile="+zipfile+"&unzipfile="+unzipfile+"&enable_ldap="+enable_ldap+"&ldap_host="+ldap_host+"&ldap_port="+ldap_port+"&ldap_timeout="+ldap_timeout+"&ldap_basedn="+ldap_basedn+"&ldap_version="+ldap_version+"&ldap_usessl="+ldap_usessl+"&ldap_binddn="+ldap_binddn+"&ldap_bindpass="+ldap_bindpass+"&ldap_filter="+ldap_filter+"&ldap_dir="+ldap_dir+"&ldap_owndir="+ldap_owndir+"&ldap_fileread="+ldap_fileread+"&ldap_filewrite="+ldap_filewrite+"&ldap_fileappend="+ldap_fileappend+"&ldap_filedelete="+ldap_filedelete+"&ldap_dirlist="+ldap_dirlist+"&ldap_dirmake="+ldap_dirmake+"&ldap_dirdelete="+ldap_dirdelete+"&ldap_dirrename="+ldap_dirrename+"&ldap_filerename="+ldap_filerename+"&ldap_zipfile="+ldap_zipfile+"&ldap_unzipfile="+ldap_unzipfile+"&ldap_dir_lowercase="+ldap_dir_lowercase+"&ad_mapping="+encodeURIComponent($("mapping_value").value)+"&ldap_mapping="+encodeURIComponent($("ldap_mapping_value").value)+"&mapping_case_insensitive="+$("mapping_case_insensitive").value+"&ldap_groupmapping="+encodeURIComponent($("ldap_groupmapping_value").value)+"&r="+Math.random();
+	ajaxRequest("admin_set_accessway",paramStr);
+}
+
+function doSubmit_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "1" || result == 1)
+	{
+		top.closewindow(1);
+	}
+	else if(result == "")
+	{
+		window.location.reload();
+	}
+	else
+	{
+		showMessagebox("<%=LANG['str_database']%>","<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0' style='background-color:#E6E6E6;padding:8px;'><tr><td align='left'><img src='images/vista_warning.gif' align='absmiddle'><br><textarea readonly  style='width:430px;height:180px;border:0;background-color:#E6E6E6;word-break:keep-all;overflow:hidden;'>"+removeXSS(result)+"</textarea></td></tr><tr><td><button id='btn_submit' type='submit' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_cancel']%></em></span></button><br><br></td></tr></table>",null,450,300);
+	}
+}
+
+
+function chooseDirectory()
+{
+	showMessagebox("<%=LANG['str_choosedir']%>","<iframe src='admin_dir_selector.html' width=580 height=500 border=0 frameborder=0></iframe>",callback_return,580,500);
+}
+
+function callback_return(value)
+{
+	try
+	{
+		$("aduser_dir").focus();
+		if(value != null)
+			$("aduser_dir").value = value;
+	}
+	catch(e){}
+}
+
+function chooseDirectory2()
+{
+	showMessagebox("<%=LANG['str_choosedir']%>","<iframe src='admin_dir_selector.html' width=580 height=500 border=0 frameborder=0></iframe>",callback_return2,580,500);
+}
+
+function callback_return2(value)
+{
+	try
+	{
+		$("ldap_dir").focus();
+		if(value != null)
+			$("ldap_dir").value = value;
+	}
+	catch(e){}
+}
+
+function AddUserMapping()
+{
+	showMessagebox("<%=LANG['str_aduser_mapping']%>","<table width='100%' height='100%' border='0' cellpadding='2' cellspacing='2' style='background-color:#E6E6E6;word-wrap:normal;table-layout:fixed;word-break:normal' align='left'><tr align=left><td style='padding:5px;'><%=LANG['str_admapping_tip']%></td></tr><tr><td><textarea style='width:475px;height:200px;' id='str_mapping'>"+htmldecode($("mapping_value").value)+"</textarea></td></tr><tr height='50'><td><button id='btn_submit' type='submit' onclick='return AddUserMapping_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",null,510,380);
+	top.$("str_mapping").focus();
+
+	top.$("btn_submit").onclick = function(){return AddUserMapping_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function AddUserMapping_submit()
+{
+	$("mapping_value").value = top.$("str_mapping").value;
+	top.closewindow();
+}
+
+function AddLDAPMapping()
+{
+	var bChecked = "";
+	if($("mapping_case_insensitive").value == "1")
+		bChecked = " checked";
+	showMessagebox("<%=LANG['str_ldap_mapping']%>","<table width='100%' height='100%' border='0' cellpadding='2' cellspacing='2' style='background-color:#E6E6E6;word-wrap:normal;table-layout:fixed;word-break:normal' align='left'><tr align=left><td style='padding:5px;'><%=LANG['str_ldapmapping_tip']%></td></tr><tr><td><textarea style='width:485px;height:200px;' id='str_ldap_mapping'>"+htmldecode($("ldap_mapping_value").value)+"</textarea></td></tr><tr><td align='left'>&nbsp;&nbsp;<input id='ldap_case_insensitive' type='checkbox'"+bChecked+"> <%=LANG['str_case_insensitive']%></td></tr><tr height='40'><td><button id='btn_submit' type='submit' onclick='return AddLDAPMapping_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",null,520,390);
+	top.$("str_ldap_mapping").focus();
+
+	top.$("btn_submit").onclick = function(){return AddLDAPMapping_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function AddLDAPMapping_submit()
+{
+	$("ldap_mapping_value").value = top.$("str_ldap_mapping").value;
+	if(top.$("ldap_case_insensitive").checked)
+		$("mapping_case_insensitive").value = "1";
+	else
+		$("mapping_case_insensitive").value = "0";
+	top.closewindow();
+}
+
+
+
+function AddLDAPGroupMapping()
+{
+	showMessagebox("<%=LANG['str_ldapgroup_mapping']%>","<table width='100%' height='100%' border='0' cellpadding='2' cellspacing='2' style='background-color:#E6E6E6;word-wrap:normal;table-layout:fixed;word-break:normal' align='left'><tr align=left><td style='padding:5px;'><%=LANG['str_ldapgroupmapping_tip']%></td></tr><tr><td><textarea style='width:475px;height:200px;' id='str_ldapgroup_mapping'>"+htmldecode($("ldap_groupmapping_value").value)+"</textarea></td></tr><tr height='50'><td><button id='btn_submit' type='submit' onclick='return AddLDAPGroupMapping_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",null,510,380);
+	top.$("str_ldapgroup_mapping").focus();
+
+	top.$("btn_submit").onclick = function(){return AddLDAPGroupMapping_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function AddLDAPGroupMapping_submit()
+{
+	$("ldap_groupmapping_value").value = top.$("str_ldapgroup_mapping").value;
+	top.closewindow();
+}
+
+function testGuest_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "1" || result == 1)
+	{
+		$("enable_aduser").checked = false;
+		alert("<%=LANG['str_guest_enabled']%>");
+	}
+
+	$("aduser_domain").disabled = ($("enable_aduser").checked ? false : true);
+	$("aduser_dir").disabled = ($("enable_aduser").checked ? false : true);
+	$("aduser_ntfs").disabled = ($("enable_aduser").checked ? false : true);
+	$("aduser_owndir").disabled = ($("enable_aduser").checked ? false : true);
+	$("choosedir").disabled = ($("enable_aduser").checked ? false : true);
+	$("fileread").disabled = ($("enable_aduser").checked ? false : true);
+	$("filewrite").disabled = ($("enable_aduser").checked ? false : true);
+	$("fileappend").disabled = ($("enable_aduser").checked ? false : true);
+	$("filedelete").disabled = ($("enable_aduser").checked ? false : true);
+	$("dirlist").disabled = ($("enable_aduser").checked ? false : true);
+	$("dirmake").disabled = ($("enable_aduser").checked ? false : true);
+	$("dirdelete").disabled = ($("enable_aduser").checked ? false : true);
+	$("dirrename").disabled = ($("enable_aduser").checked ? false : true);
+	$("filerename").disabled = ($("enable_aduser").checked ? false : true);
+	$("zipfile").disabled = ($("enable_aduser").checked ? false : true);
+	$("unzipfile").disabled = ($("enable_aduser").checked ? false : true);
+	$("addmapping").disabled = ($("enable_aduser").checked ? false : true);
+}
+
+function testLDAP()
+{
+	var paramStr = "";
+	var ldap_host = $("ldap_host").value;
+	var ldap_port = $("ldap_port").value;
+	var ldap_version = $("ldap_version").value;
+	var ldap_usessl = ($("ldap_usessl").checked ? 1:0);
+	var ldap_binddn = encodeURIComponent($("ldap_binddn").value);
+	var ldap_bindpass = encodeURIComponent($("ldap_bindpass").value);
+	paramStr = "domain=<%=domain%>&ldap_host="+ldap_host+"&ldap_port="+ldap_port+"&ldap_version="+ldap_version+"&ldap_usessl="+ldap_usessl+"&ldap_binddn="+ldap_binddn+"&ldap_bindpass="+ldap_bindpass+"&r="+Math.random();
+	ajaxRequest("admin_testldap",paramStr);
+}
+
+function testLDAP_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "1" || result == 1)
+	{
+		alert("<%=LANG['str_testldap_ok']%>");
+	}
+	else
+	{
+		showMessagebox("<%=LANG['str_testldap_fail']%>","<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0' style='background-color:#E6E6E6;padding:8px;'><tr><td align='left'><img src='images/vista_warning.gif' align='absmiddle'><br><textarea readonly  style='width:430px;height:180px;border:0;background-color:#E6E6E6;word-break:keep-all;overflow:hidden;'>"+removeXSS(result)+"</textarea></td></tr><tr><td><button id='btn_submit' type='submit' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();' class='button1'><span><em><%=LANG['button_cancel']%></em></span></button><br><br></td></tr></table>",null,450,300);
+	}
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#777; filter:alpha(opacity=60); opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:20%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<div id="tabDiv">
+  <ul id="tags">
+  	<li class="emptyTag"></li>
+    <li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent1',this)"><%=LANG["title_storageway"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent2',this)"><%=LANG["title_odbcsetting"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent3',this)"><%=LANG["title_mysqlsetting"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent4',this)"><%=LANG["title_windowsauth"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent5',this)"><%=LANG["title_ldapauth"]%></a></li>
+  </ul>
+  <div id="tagContent" class="tagContent">
+  	<div id="tagContent1">
+		<input id="domain" type="hidden" value="<%=_GET["domain"]%>">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td height="35"><%=LANG["str_storage_via"]%>:</td></tr>
+		<tr><td height="30"><input type="radio" name="method" value="1" <%if method == 1 then print("checked") end%> > <%=LANG["str_via_xml"]%></td></tr>
+		<tr><td height="30"><input type="radio" name="method" value="3" <%if method == 3 then print("checked") end%> > <%=LANG["str_via_odbc"]%></td></tr>
+		<tr><td height="30"><input type="radio" name="method" value="2" <%if method == 2 then print("checked") end%> > <%=LANG["str_via_mysql"]%></td></tr>
+		<tr><td height="20"></td></tr>
+		<tr><td height="35"><%=LANG["str_storage_tip"]%></td></tr>
+		</table>
+	</div>
+	<div id="tagContent2">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td><%=LANG["str_odbc_source"]%>:</td><td><input id="odbcsource" type="text" style="width:240px;" value="<%=c_GetOptionStr(domain,DOPTION_DSN_ADDRESS_STR)%>"></td></tr>
+		<tr><td><%=LANG["str_username2"]%>:</td><td><input id="odbcusername" type="text" style="width:240px;" value="<%=dsn_user%>"></td></tr>
+		<tr><td><%=LANG["str_password2"]%>:</td><td><input id="odbcpassword" type="password" autocomplete="new-password" style="width:240px;" value="<%=dsn_password%>"></td></tr>
+		<tr><td height="50" colspan="2"><button id="testodbc_btn" onclick='testODBC();'><span style="vertical-align:middle;"><em><img src="images/ico_connect.png" align="absmiddle"> <%=LANG["str_conn_test"]%></em></span></button>
+		</td>
+		</tr>
+		</table>
+	</div>
+	<div id="tagContent3">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td><%=LANG["str_mysql_server"]%>:</td><td><input id="mysqlserver" type="text" style="width:240px;" value="<%=c_GetOptionStr(domain,DOPTION_MYSQL_ADDRESS_STR)%>"></td></tr>
+		<tr><td><%=LANG["str_server_port"]%>:</td><td><input id="mysqlport" type="text" style="width:240px;" value="<%=c_GetOptionInt(domain,DOPTION_MYSQL_PORT_INT)%>"></td></tr>
+		<tr><td><%=LANG["str_username2"]%>:</td><td><input id="mysqlusername" type="text" style="width:240px;" value="<%=mysql_user%>"></td></tr>
+		<tr><td><%=LANG["str_password2"]%>:</td><td><input id="mysqlpassword" type="password" autocomplete="new-password" style="width:240px;" value="<%=mysql_password%>"></td></tr>
+		<tr><td><%=LANG["str_database"]%>:</td><td><input id="mysqldatabase" type="text" style="width:240px;" value="<%=c_GetOptionStr(domain,DOPTION_MYSQL_DBNAME_STR)%>"></td></tr>
+		<tr><td><%=LANG["str_unixsocket"]%>:</td><td><input id="mysqlsocket" type="text" style="width:240px;" value="<%=c_GetOptionStr(domain,DOPTION_MYSQL_UNIXSOCKET_STR)%>"></td></tr>
+		<td colspan="2"><input id="mysql_utf8" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_MYSQL_SET_UTF8) == 1 then print("checked") end%>> SET NAMES UTF8</td>
+		<tr><td height="60" colspan="2"><button id="testmysql_btn" onclick='testMYSQL();'><span style="vertical-align:middle;"><em><img src="images/ico_connect.png" align="absmiddle"> <%=LANG["str_conn_test"]%></em></span></button>
+		</td>
+		</tr>
+		</table>
+	</div>
+	<div id="tagContent4">
+		<table cellSpacing="0" cellPadding="0" border="0" width="95%">
+		<tr>
+		  <td colspan="2"><input id="enable_aduser" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ENABLE_ADUSER_INT) == 1 then print("checked") end%>> <%=LANG["str_enable_aduser"]%></td>
+		</tr>
+		<tr>
+		<td width="100"><%=LANG["str_aduser_domain"]%>:</td>
+		<td><input id="aduser_domain" type="text" style="width:240px;" value="<%=c_GetOptionStr(domain,DOPTION_ADUSER_DOMAIN_STR)%>"> <%=LANG["str_optional"]%></td>
+		</tr>		
+		<tr>
+		<td><%=LANG["str_aduser_dir"]%>:</td>
+		<td><input id="aduser_dir" type="text" style="width:240px;" value="<%=c_GetOptionStr(domain,DOPTION_ADUSER_DIRPATH_STR)%>"> <button id="choosedir" type="submit" onclick="chooseDirectory();"><span><em><%=LANG["button_choose"]%></em></span></button></td>
+		</tr>
+		<tr>
+		  <td colspan="2"><input id="aduser_ntfs" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ENABLE_NTFS_PERMISSION) == 1 then print("checked") end%>> <%=LANG["str_aduser_ntfs"]%></td>
+		</tr>
+		<tr>
+		  <td colspan="2"><input id="aduser_owndir" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_OWNDIR_INT) == 1 then print("checked") end%>> <%=LANG["str_aduser_owndir"]%></td>
+		</tr>
+		<tr>
+		  <td colspan="2"></td>
+		</tr>
+		<tr>
+		  <td colspan="2">
+			<table cellSpacing="0" cellPadding="0" border="0" width="85%"> 
+			<tr>
+			  <td width="50%">
+			  <table cellSpacing="0" cellPadding="0" border="0" width="100%">
+				<tr>
+				  <td>			  
+				  <fieldset>
+				  <legend><%=LANG["str_file_access"]%></legend>
+				  <input id="fileread" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_FILEREAD_INT) == 1 then print("checked") end%>> <%=LANG["str_access_read"]%><br>
+				   <input id="filewrite" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_FILEWRITE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_write"]%><br>
+					<input id="fileappend" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_FILEAPPEND_INT) == 1 then print("checked") end%>> <%=LANG["str_access_append"]%><br>
+					 <input id="filedelete" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_FILEDELETE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_delete"]%><br>
+					 <input id="filerename" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_FILERENAME_INT) == 1 then print("checked") end%>> <%=LANG["str_access_rename"]%><br>
+				  </fieldset>
+				</td>
+				</tr>
+			  </table>
+			  </td>
+			  <td width="50%" style="padding-left:5px;">
+			  <table cellSpacing="0" cellPadding="0" border="0" width="100%">
+				<tr>
+				  <td>
+				  <fieldset><legend><%=LANG["str_dir_access"]%></legend>
+				  <input id="dirlist" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_DIRLIST_INT) == 1 then print("checked") end%>> <%=LANG["str_access_list"]%><br>
+				   <input id="dirmake" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_DIRCREATE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_create"]%><br>
+					<input id="dirdelete" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_DIRDELETE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_delete"]%><br>
+					<input id="dirrename" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_DIRRENAME_INT) == 1 then print("checked") end%>> <%=LANG["str_access_rename"]%><br>
+				  </fieldset>
+				</td>
+				</tr>
+				<tr>
+				  <td>
+					 <input id="zipfile" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_ZIPFILE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_zip"]%> &nbsp;
+					 <input id="unzipfile" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ADUSER_UNZIPFILE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_unzip"]%>
+				</td>
+				</tr>
+			  </table>
+			  </td>
+			</tr>
+			</table>
+		  </td>
+		</tr>
+		<tr>
+		  <td colspan="2" style="padding-top:5px;">
+		  <button id="addmapping" type="submit" onclick="AddUserMapping();"><span><em><%=LANG["str_aduser_mapping"]%></em></span></button></td>
+		</tr>
+		</table>
+	</div>
+	<div id="tagContent5">
+		<table cellSpacing="0" cellPadding="0" border="0" width="95%">
+		<tr>
+		  <td colspan="2"><input id="enable_ldap" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_ENABLE_LDAP_INT) == 1 then print("checked") end%>> <%=LANG["str_enable_ldap"]%></td>
+		</tr>
+
+		<tr>
+		  <td colspan="2" width="580">
+		  <fieldset>
+		  <legend><%=LANG["str_ldap_hostinfo"]%></legend>
+			<table cellSpacing="2" cellPadding="1" border="0" width="100%"> 
+				<tr>
+				<td><%=LANG["str_ldap_host"]%>:</td>
+				<td><input id="ldap_host" type="text" style="width:170px;" value="<%=c_GetOptionStr(domain,DOPTION_LDAP_HOST_STR)%>"></td>
+				<td><%=LANG["str_ldap_port"]%>:</td>
+				<td><input id="ldap_port" type="text" style="width:70px;" value="<%=c_GetOptionInt(domain,DOPTION_LDAP_PORT_INT)%>">
+				&nbsp;&nbsp;<input id="ldap_usessl" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_USESSL_INT) == 1 then print("checked") end%>> <%=LANG["str_smtpusessl"]%></td>
+				</tr>
+				<tr>
+				<td><%=LANG["str_ldap_basedn"]%>:</td>
+				<td colspan="3"><input id="ldap_basedn" type="text" style="width:320px;" value="<%=c_GetOptionStr(domain,DOPTION_LDAP_BASEDN_STR)%>"></td>
+				</tr>
+				<tr>
+				<tr>
+				<td><%=LANG["str_ldap_filter"]%>:</td>
+				<td colspan="3"><input id="ldap_filter" type="text" style="width:320px;" value="<%=c_GetOptionStr(domain,DOPTION_LDAP_FILTER_STR)%>"></td>
+				</tr>
+				<tr>
+				<td colspan="4">
+				<%=LANG["str_ldap_version"]%>: <select id="ldap_version" style="width:60px;">
+				<option value="2" <%if c_GetOptionInt(domain,DOPTION_LDAP_VERSION_INT) == 2 then print("selected") end%>>2</option>
+				<option value="3" <%if c_GetOptionInt(domain,DOPTION_LDAP_VERSION_INT) == 3 then print("selected") end%>>3</option>
+				</select>
+				&nbsp;&nbsp;&nbsp;&nbsp;<%=LANG["str_ldap_timeout"]%>: <input id="ldap_timeout" type="text" style="width:50px;" value="<%=c_GetOptionInt(domain,DOPTION_LDAP_TIMEOUT_INT)%>"> (0-60)
+				</td>
+				</tr>
+			</table>
+			</fieldset>
+		  </td>
+		</tr>
+		<tr>
+		  <td colspan="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+		  <td colspan="2" width="580">
+		  <fieldset>
+		  <legend><%=LANG["str_ldap_bindinfo"]%></legend>
+			<table cellSpacing="2" cellPadding="1" border="0" width="100%"> 
+				<tr>
+				<td><%=LANG["str_ldap_binddn"]%>:</td>
+				<td><input id="ldap_binddn" type="text" style="width:320px;" value="<%=ldap_user%>"> <%=LANG["str_optional"]%></td>
+				</tr>
+				<tr>
+				<td><%=LANG["str_ldap_bindpass"]%>:</td>
+				<td><input id="ldap_bindpass" type="password" autocomplete="new-password" style="width:320px;" value="<%=ldap_password%>"> <%=LANG["str_optional"]%></td>
+				</tr>
+				<tr>
+				<td colspan="2">
+				<button id="testldap_btn" onclick='testLDAP();'><span style="vertical-align:middle;"><em><img src="images/ico_connect.png" align="absmiddle"> <%=LANG["str_conn_test"]%></em></span></button>
+				</td>
+				</tr>
+			</table>
+			</fieldset>
+		  </td>
+		</tr>
+		<tr>
+		  <td colspan="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+		<td><%=LANG["str_aduser_dir"]%>:</td>
+		<td><input id="ldap_dir" type="text" style="width:240px;" value="<%=c_GetOptionStr(domain,DOPTION_LDAP_DIRPATH_STR)%>"> <button id="ldap_choosedir" type="submit" onclick="chooseDirectory2();"><span><em><%=LANG["button_choose"]%></em></span></button></td>
+		</tr>
+		<tr>
+		  <td colspan="2"><input id="ldap_owndir" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_OWNDIR_INT) == 1 then print("checked") end%>> <%=LANG["str_aduser_owndir"]%></td>
+		</tr>
+		<tr>
+		  <td colspan="2"><input id="ldap_dir_lowercase" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_DIR_LOWERCASE_INT) == 1 then print("checked") end%>> <%=LANG["str_dir_lowercase"]%></td>
+		</tr>
+		<tr>
+		  <td colspan="2"></td>
+		</tr>
+		<tr>
+		  <td colspan="2">
+			<table cellSpacing="0" cellPadding="0" border="0" width="85%"> 
+			<tr>
+			  <td width="50%">
+			  <table cellSpacing="0" cellPadding="0" border="0" width="100%">
+				<tr>
+				  <td>			  
+				  <fieldset>
+				  <legend><%=LANG["str_file_access"]%></legend>
+				  <input id="ldap_fileread" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_FILEREAD_INT) == 1 then print("checked") end%>> <%=LANG["str_access_read"]%><br>
+				   <input id="ldap_filewrite" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_FILEWRITE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_write"]%><br>
+					<input id="ldap_fileappend" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_FILEAPPEND_INT) == 1 then print("checked") end%>> <%=LANG["str_access_append"]%><br>
+					 <input id="ldap_filedelete" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_FILEDELETE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_delete"]%><br>
+					 <input id="ldap_filerename" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_FILERENAME_INT) == 1 then print("checked") end%>> <%=LANG["str_access_rename"]%><br>
+				  </fieldset>
+				</td>
+				</tr>
+			  </table>
+			  </td>
+			  <td width="50%" style="padding-left:5px;">
+			  <table cellSpacing="0" cellPadding="0" border="0" width="100%">
+				<tr>
+				  <td>
+				  <fieldset><legend><%=LANG["str_dir_access"]%></legend>
+				  <input id="ldap_dirlist" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_DIRLIST_INT) == 1 then print("checked") end%>> <%=LANG["str_access_list"]%><br>
+				   <input id="ldap_dirmake" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_DIRCREATE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_create"]%><br>
+					<input id="ldap_dirdelete" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_DIRDELETE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_delete"]%><br>
+					<input id="ldap_dirrename" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_DIRRENAME_INT) == 1 then print("checked") end%>> <%=LANG["str_access_rename"]%><br>
+				  </fieldset>
+				</td>
+				</tr>
+				<tr>
+				  <td>
+					 <input id="ldap_zipfile" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_ZIPFILE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_zip"]%> &nbsp;
+					 <input id="ldap_unzipfile" type="checkbox" <%if c_GetOptionInt(domain,DOPTION_LDAP_UNZIPFILE_INT) == 1 then print("checked") end%>> <%=LANG["str_access_unzip"]%>
+				</td>
+				</tr>
+			  </table>
+			  </td>
+			</tr>
+			</table>
+		  </td>
+		</tr>
+		<tr>
+		  <td colspan="2" style="padding-top:5px;">
+		  <button id="ldap_addmapping" type="submit" onclick="AddLDAPMapping();"><span><em><%=LANG["str_ldap_mapping"]%></em></span></button>&nbsp;&nbsp;&nbsp;&nbsp;
+		  <button id="ldap_group_mapping" type="submit" onclick="AddLDAPGroupMapping();"><span><em><%=LANG["str_ldapgroup_mapping"]%></em></span></button>
+		  </td>
+		</tr>
+		</table>
+	</div>
+
+
+  </div>	
+</div>
+
+<div style="padding:3px;text-align:right;margin-right:10px;">
+<input id="mapping_value" type="hidden" value="<%=specialhtml_encode(c_GetOptionStr(domain,DOPTION_ADUSER_MAPPING_STR))%>">
+<input id="ldap_mapping_value" type="hidden" value="<%=specialhtml_encode(c_GetOptionStr(domain,DOPTION_LDAP_MAPPING_STR))%>">
+<input id="ldap_groupmapping_value" type="hidden" value="<%=specialhtml_encode(c_GetOptionStr(domain,DOPTION_LDAP_GROUP_MAPPING_STR))%>">
+<input id="mapping_case_insensitive" type="hidden" value="<%=c_GetOptionInt(domain,DOPTION_LDAPMAP_CASE_INSENSITIVE)%>">
+<button type='submit' onclick='doSubmit();'><span><em><%=LANG["button_submit"]%></em></span></button>&nbsp;
+<button onclick='top.closewindow();'><span><em><%=LANG["button_cancel"]%></em></span></button>
+</div>
+
+<script type="text/javascript">
+
+var os = "<%=c_GetOsType()%>";
+
+$("tagContent1").style.display="block";
+$("tags").getElementsByTagName("li")[1].className="selectedTag";
+
+
+$("aduser_domain").disabled = ($("enable_aduser").checked ? false : true);
+$("aduser_dir").disabled = ($("enable_aduser").checked ? false : true);
+$("aduser_ntfs").disabled = ($("enable_aduser").checked ? false : true);
+$("aduser_owndir").disabled = ($("enable_aduser").checked ? false : true);
+$("choosedir").disabled = ($("enable_aduser").checked ? false : true);
+$("fileread").disabled = ($("enable_aduser").checked ? false : true);
+$("filewrite").disabled = ($("enable_aduser").checked ? false : true);
+$("fileappend").disabled = ($("enable_aduser").checked ? false : true);
+$("filedelete").disabled = ($("enable_aduser").checked ? false : true);
+$("dirlist").disabled = ($("enable_aduser").checked ? false : true);
+$("dirmake").disabled = ($("enable_aduser").checked ? false : true);
+$("dirdelete").disabled = ($("enable_aduser").checked ? false : true);
+$("dirrename").disabled = ($("enable_aduser").checked ? false : true);
+$("filerename").disabled = ($("enable_aduser").checked ? false : true);
+$("zipfile").disabled = ($("enable_aduser").checked ? false : true);
+$("unzipfile").disabled = ($("enable_aduser").checked ? false : true);
+$("addmapping").disabled = ($("enable_aduser").checked ? false : true);
+
+
+$("ldap_host").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_port").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_timeout").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_basedn").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_version").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_usessl").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_binddn").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_bindpass").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_filter").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_dir").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_owndir").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_choosedir").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_fileread").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_filewrite").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_fileappend").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_filedelete").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_dirlist").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_dirmake").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_dirdelete").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_dirrename").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_filerename").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_zipfile").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_unzipfile").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_dir_lowercase").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_addmapping").disabled = ($("enable_ldap").checked ? false : true);
+$("ldap_group_mapping").disabled = ($("enable_ldap").checked ? false : true);
+$("testldap_btn").disabled = ($("enable_ldap").checked ? false : true);
+
+$("enable_aduser").onclick = function()
+{
+	if($("enable_aduser").checked && $("enable_ldap").checked)
+	{
+		$("enable_aduser").checked = false;
+		alert("<%=LANG['str_tunoff_ldap']%>");
+		return false;
+	}
+
+	if($("enable_aduser").checked && os.toLowerCase() != "windows")
+	{
+		$("enable_aduser").checked = false;
+		alert("<%=LANG['str_for_windows']%>");
+		return false;
+	}
+
+	ajaxRequest("admin_testguest","");
+}
+
+$("enable_ldap").onclick = function()
+{
+	if($("enable_ldap").checked && $("enable_aduser").checked)
+	{
+		$("enable_ldap").checked = false;
+		alert("<%=LANG['str_tunoff_ad']%>");
+		return false;
+	}
+
+	$("ldap_host").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_port").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_timeout").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_basedn").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_version").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_usessl").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_binddn").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_bindpass").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_filter").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_dir").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_owndir").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_choosedir").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_fileread").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_filewrite").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_fileappend").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_filedelete").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_dirlist").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_dirmake").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_dirdelete").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_dirrename").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_filerename").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_zipfile").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_unzipfile").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_dir_lowercase").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_addmapping").disabled = ($("enable_ldap").checked ? false : true);
+	$("ldap_group_mapping").disabled = ($("enable_ldap").checked ? false : true);
+	$("testldap_btn").disabled = ($("enable_ldap").checked ? false : true);
+}
+
+function switchTag(tagContent,obj){
+
+	for(var i=1; i<$("tags").getElementsByTagName("li").length; i++)
+	{
+		$("tags").getElementsByTagName("li")[i].className="normalTag";
+	}
+	obj.parentNode.className="selectedTag";
+	
+	for(var j=0; j<$("tagContent").getElementsByTagName("div").length; j++)
+	{
+		$("tagContent").getElementsByTagName("div")[j].style.display="none";
+	}
+	$(tagContent).style.display="block";
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+</script>
+</body>
+</html>
+<% else %>
+	<script>alert("error parameters!");</script>
+<% end %>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

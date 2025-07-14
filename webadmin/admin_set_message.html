@@ -1,0 +1,22 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local welcome = _POST["welcome"]
+	local login = _POST["login"]
+	local change_dir = _POST["change_dir"]
+	local dir_list = _POST["dir_list"]
+	local file_upload = _POST["file_upload"]
+	local file_download = _POST["file_download"]
+	local system_command = _POST["system_command"]
+	local quit_command = _POST["quit_command"]
+
+	c_SetOptionStr(domain,DOPTION_MESSAGE_WELCOME_STR,welcome)
+	c_SetOptionStr(domain,DOPTION_MESSAGE_LOGIN_STR,login)
+	c_SetOptionStr(domain,DOPTION_MESSAGE_CHANGE_DIR_STR,change_dir)
+	c_SetOptionStr(domain,DOPTION_MESSAGE_DIR_LIST_STR,dir_list)
+	c_SetOptionStr(domain,DOPTION_MESSAGE_FILE_UPLOAD_STR,file_upload)
+	c_SetOptionStr(domain,DOPTION_MESSAGE_FILE_DOWNLOAD_STR,file_download)
+	c_SetOptionStr(domain,DOPTION_MESSAGE_SYSTEM_COMMAND_STR,system_command)
+	c_SetOptionStr(domain,DOPTION_MESSAGE_QUIT_COMMAND_STR,quit_command)
+end
+%>

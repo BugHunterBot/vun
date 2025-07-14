@@ -1,0 +1,6 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _GET["domain"] or _POST["domain"]
+	c_ReconnectDB(domain)
+end
+%>

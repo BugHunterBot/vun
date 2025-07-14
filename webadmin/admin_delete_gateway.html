@@ -1,0 +1,11 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local host = _POST["host"]
+	local result = c_DeleteGateway(host)
+	if result == true then
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted gateway ["..host.."].",ADMIN_LOG_OK)
+	else
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted gateway ["..host.."] failed.",ADMIN_LOG_ERROR)
+	end
+end
+%>

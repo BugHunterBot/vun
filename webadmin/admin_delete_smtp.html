@@ -1,0 +1,11 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local name = _POST["name"]
+	local result = c_DeleteSMTP(name)
+	if result == true then
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted smtp config ["..name.."].",ADMIN_LOG_OK)
+	else
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted smtp config ["..name.."] failed.",ADMIN_LOG_ERROR)
+	end
+end
+%>

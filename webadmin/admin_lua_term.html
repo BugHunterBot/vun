@@ -1,0 +1,369 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Advanced Lua Command-line</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+body 
+{
+	width:100%;
+	margin:0px;
+	padding:0px;
+	background-color:#000;
+	color:#ccc;
+	font:15px Arial, sans-serif, Verdana, Geneva;
+	text-overflow : clip;
+}
+#container
+{ 
+	width:100%;
+	height:100%;
+	word-wrap:break-word;
+	word-break:break-all;
+	margin:0px;
+	font:15px Arial, sans-serif, Verdana, Geneva;
+} 
+#content
+{
+	margin-left:3px;
+	width:95%;
+	background-color:#000;
+	color: #ccc;
+} 
+#bottom
+{
+	width:95%;
+	background-color:#000;
+	color: #ccc;
+} 
+#prompthead
+{
+	margin-left:3px;
+	height:15px;
+	line-height:15px;
+	font:15px Arial, sans-serif, Verdana, Geneva;
+	background-color:#000;
+	color: #ccc;
+	float:left;
+} 
+#textinput 
+{
+	width:90%;
+	height:17px;
+	line-height:17px;
+	font:15px Arial, sans-serif, Verdana, Geneva;
+	background-color:#000;
+	color:#00ffff;
+	border:0;
+}
+</style>
+
+<script type="text/javascript" language="JavaScript">
+	var long_command = "";
+	var current_cmd = 0;
+	var cmd_history = new Array();
+	var prompt_title = "lua>> ";
+	var prompt_mode = "<img src='images/singleline.gif' title='singleline mode' onclick='changeMode();' style='cursor:hand;'> ";
+	var multiline = false;
+	var cansubmit = true;
+
+	var isIE,isOpera,isFirefox,isChrome;
+	isIE = navigator.userAgent.indexOf('MSIE')==-1? 0:1;
+	isOpera = navigator.userAgent.indexOf('Opera')==-1? 0:1;
+	isFirefox = navigator.userAgent.indexOf('Firefox')==-1? 0:1;
+	isChrome = navigator.userAgent.indexOf('Chrome')==-1? 0:1;
+
+	function $(obj)
+	{
+		return document.getElementById(obj);
+	}
+
+	function urlEncodeSpecial(src)
+	{
+		return encodeURIComponent(src).replace(/\'/g,"$27").replace(/\+/g,"$2B").replace(/\%/g,"\$");
+	}
+
+	function htmlencode(src)
+	{
+		src=src.replace(/>/ig, "&gt;"); 
+		src=src.replace(/</ig, "&lt;"); 
+		src=src.replace(/\"/ig, "&quot;");
+		src=src.replace(/\'/ig, "&#39;");
+		src=src.replace(/\ /ig, "&nbsp;");
+		src=src.replace(/\t/ig, "&nbsp;&nbsp;&nbsp;&nbsp;");
+		return src;
+	}
+
+	function txt2html(src)
+	{
+		src=src.replace(/>/ig, "&gt;"); 
+		src=src.replace(/</ig, "&lt;");
+		src=src.replace(/\r\n/ig,"<BR>");	
+		src=src.replace(/\n/ig,"<BR>");
+		src=src.replace(/ /ig,"&nbsp;");
+		src=src.replace(/\t/ig, "&nbsp;&nbsp;&nbsp;&nbsp;");
+		return src;
+	}
+
+
+	var xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+	
+	function ajaxRequest(command) 
+	{
+		xmlhttp.open('post', 'admin_lua_script.html?r='+Math.random() );
+		xmlhttp.onreadystatechange = ajaxResponse;
+		xmlhttp.send('command='+encodeURIComponent(command));
+	}
+	
+	function ajaxResponse() 
+	{
+		if(xmlhttp.readyState == 4)
+		{
+			var response = xmlhttp.responseText;
+			response = response.replace(/(\[nil value\])$/, "");
+			$("content").innerHTML += txt2html(response) + "<br><br>";
+			promptfocus();
+			current_cmd = 0;
+			cansubmit = true;
+			try
+			{
+				document.body.scrollIntoView(false);
+			}catch(e){}
+		}
+	}
+
+	function doInit()
+	{
+		$("console").setAttribute("autocomplete", "off");
+		$("prompthead").innerHTML = prompt_mode + prompt_title;
+		promptfocus();
+	}
+	
+	function doSubmit() 
+	{
+		if(cansubmit == false) return false;
+
+		$("content").innerHTML += prompt_title;
+		$("content").innerHTML += "<font color='#00ffff'>"+htmlencode($("textinput").value)+"</font><br>";
+		$("prompthead").innerHTML = prompt_mode + prompt_title;
+		if($("textinput").value != "")
+			cmd_history.unshift($("textinput").value);
+		if(multiline == false)
+		{
+			cansubmit = false;
+			ajaxRequest($("textinput").value);
+		}
+		else
+		{
+			long_command += "\r\n"+$("textinput").value;
+			$("textinput").value = "";
+		}
+		try
+		{
+			document.body.scrollIntoView(false);
+		}catch(e){}
+		$("textinput").value = "";
+		promptfocus();
+		return false;
+	}
+
+	function changeMode()
+	{
+		multiline = !multiline;
+		if(multiline)
+			prompt_mode = "<img src='images/multiline.gif' title='multiline mode' onclick='changeMode();' style='cursor:hand;'> ";
+		else
+			prompt_mode = "<img src='images/singleline.gif' title='singleline mode' onclick='changeMode();' style='cursor:hand;'> ";
+		
+		$("prompthead").innerHTML = prompt_mode + prompt_title;
+		promptfocus();
+	}
+
+	function clearScreen()
+	{
+		$("content").innerHTML = "";
+		$("prompthead").innerHTML = prompt_mode + prompt_title;
+		promptfocus();
+	}
+
+	function promptfocus()
+	{
+		$("textinput").focus();
+	}
+
+
+	var V_Key = {8:"Backspace",9:"Tab",13:"Enter",16:"Shift",17:"Ctrl",18:"Alt",19:"Pause",20:"Cap",27:"Esc",32:"Space",33:"Page up",34:"Page down",35:"End",36:"Home",37:"Left",38:"Up",39:"Right",40:"Down",44:"Impr ecran",45:"Insert",46:"Delete",91:"Windows",92:"Menu Windows",112:"F1",113:"F2",114:"F3",115:"F4",116:"F5",117:"F6",118:"F7",119:"F8",120:"F9",121:"F10",122:"F11",123:"F12"};
+
+	function myKeyDown(e)
+	{
+		if(cansubmit == false) return false;
+
+		if(!e){//if IE
+			e = window.event;
+		}
+
+		var use=false;
+		if (V_Key[e.keyCode])
+			letter=V_Key[e.keyCode];
+		else
+			letter=String.fromCharCode(e.keyCode);	
+		var low_letter= letter.toLowerCase();
+		
+
+		if(letter == "Tab")
+		{
+			if(isIE)
+			{
+				var input=document.selection.createRange();
+				input.text="\t";
+				input.collapse();
+				input.select();
+			}
+			else
+			{
+				$("textinput").value += "\t";
+			}
+			return false;
+		}
+		
+		if(CtrlPressed(e))
+		{
+			switch(low_letter)
+			{
+				case "m":
+					use=true;
+					changeMode();
+					break;
+				case "enter":
+					use=true;
+					$("content").innerHTML += prompt_title;
+					$("content").innerHTML += "<font color='#00ffff'>"+htmlencode($("textinput").value)+"</font><br>";
+					$("prompthead").innerHTML = prompt_mode + prompt_title;
+					if($("textinput").value != "")
+						cmd_history.unshift($("textinput").value);
+					if(multiline == false)
+					{
+						ajaxRequest($("textinput").value); 
+					}
+					else
+					{
+						long_command += "\r\n"+$("textinput").value;
+						ajaxRequest(long_command); 
+						long_command = "";
+					}
+					if(isChrome || isOpera)
+						document.body.scrollIntoView(false);
+					$("textinput").value = "";
+					promptfocus();
+					cansubmit = false;
+					break;
+				case "f":
+					use=true;
+					promptfocus();
+					break;
+				case "l":
+					use=true;
+					clearScreen();
+					break;
+				default:
+					break;			
+			}		
+		}
+		
+		if(use){
+			if(isIE)
+				e.keyCode=0;
+			return false;
+		}
+		
+		return true;
+		
+	}
+
+	function CtrlPressed(e) 
+	{
+		if(window.event)
+			return (window.event.ctrlKey);
+		else
+			return (e.ctrlKey || (e.modifiers==2) || (e.modifiers==3) || (e.modifiers>5));
+	}
+
+	function inputKeyup(e) 
+	{
+		promptfocus();
+
+		if (cmd_history.length == 0) 
+			return;
+
+		if(!e){//if IE
+			e = window.event;
+		}
+
+		if (e.keyCode == 38 && current_cmd < cmd_history.length ) 
+		{
+			if(current_cmd == 0 && $("textinput").value != "" && $("textinput").value != cmd_history[current_cmd])
+			{
+				cmd_history.unshift($("textinput").value);
+			}
+			$("textinput").value = cmd_history[current_cmd];
+			current_cmd++;
+		}
+		
+		if (e.keyCode == 40 && current_cmd > 0 ) 
+		{
+			current_cmd--;
+			$("textinput").value = cmd_history[current_cmd];
+		}
+	}
+
+	function inputPaste(e)
+	{
+		if(isIE && window.clipboardData)
+		{
+			event.returnValue = false;
+			$("textinput").value += window.clipboardData.getData("Text").replace(/\s*\-\-.*\n/ig," ").replace(/[\s]+/ig," ").replace(/\r\n/ig," ").replace(/\n/ig," ");
+		}
+	}
+
+	if(isOpera)
+		document.onkeypress= myKeyDown;
+	else
+		document.onkeydown= myKeyDown;
+
+</script>
+
+</head>
+
+<body onload="doInit();">
+<font color="#ffffff"><b><%=LANG["str_luaterm"]%><br><br></b></font>
+<form id="console" onsubmit="return doSubmit();">
+<div id="container"> 
+	<div id="content"></div>
+	<div id="bottom" onclick="promptfocus()">
+		<div id="prompthead"></div>
+		<input id="textinput" name="command" type="text" onkeyup="inputKeyup(event)" onpaste="inputPaste(event)">
+	</div>
+</div> 
+</form>
+</body> 
+</html>
+
+<script>
+document.oncontextmenu=function() 
+{
+	return false; 
+}
+</script>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

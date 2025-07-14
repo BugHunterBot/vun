@@ -1,0 +1,16 @@
+<%
+
+if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
+	local filename = _GET["filename"] or _POST["filename"] or nil
+	if filename ~= nil then
+		local nowdir = _POST["nowpath"] or _GET["nowpath"] or string.gsub(_SESSION["currentpath"],":{{","%[")
+		nowdir = string.gsub(nowdir,"}}:","%]")
+		c_AddConnection(_SESSION["username"], nowdir, _REMOTE_IP, _SESSION_ID, "CREATE THUMB")
+		local result = c_MakeThumb(_SESSION["username"], filename, nowdir, _SESSION_ID)
+		print(result)
+	else
+		print("error")
+	end
+end
+
+%>

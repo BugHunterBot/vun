@@ -1,0 +1,820 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil and _SESSION["admin_readonly"] == 0 then
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Weblink Manager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<%
+local domain = _GET["domain"] or _POST["domain"]
+local is_uplink = _GET["is_uplink"] or _POST["is_uplink"] or "0"
+
+local count_title = LANG["str_total_download"]
+local filename_title = LANG["str_filename"]
+if is_uplink == "1" then
+	count_title = LANG["str_total_upload"]
+	filename_title = LANG["title_directory"]
+end
+
+local strBaseURL = c_GetOptionStr(domain, DOPTION_WEBLINK_URL)
+
+if strBaseURL == "" then
+	local listenerlist = c_GetListenerList(domain)
+	for _,listener in pairs(listenerlist) do
+		if type(listener) == "table" and listener["Is_Listening"] == true then
+			if listener["Type"] == "3" or listener["Type"] == "4" then
+				local strPort = ":"..listener["Port"]
+				if listener["Type"] == "3" then
+					strBaseURL = "http://"
+					if listener["Port"] == "80" then
+						strPort = ""
+					end
+				else
+					strBaseURL = "https://"
+					if listener["Port"] == "443" then
+						strPort = ""
+					end
+				end
+
+				if listener["Ip_Address"] == "*" then
+					strBaseURL = strBaseURL.."127.0.0.1"
+				else
+					strBaseURL = strBaseURL..listener["Ip_Address"]
+				end
+				
+				strBaseURL = strBaseURL..strPort.."/"
+				break
+			end
+		end
+	end
+end
+%>
+<style type="text/css">
+html, body {height: 100%;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+span{
+	vertical-align:middle;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listhead3
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:22px;
+}
+
+.listhead4
+{
+		border-top: 1px solid white; border-right: 1px solid white; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:22px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+.fixedwidth
+{
+	word-wrap: break-word;
+	word-break: normal;
+}
+
+</style>
+
+<!–[if IE 6]>
+<link rel="stylesheet" type="text/css" href="css/ie6.css" />
+<![endif]–>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var domain = "<%=domain%>";
+var is_uplink = "<%=is_uplink%>";
+var totalrecords = 0;
+var totalpages = 0;
+var nowpage = 1;
+var ajaxlock = false;
+var selectedRow = null;
+var lastObj = null;
+var lastObjIndex = -1;
+var filters = "";
+var selectAll = false;
+var strWeblink = "";
+
+function translateTime(timevalue)
+{
+	var nDate = new Date(timevalue * 1000);
+
+	var year = nDate.getUTCFullYear();
+	var month = nDate.getUTCMonth()+1;
+	var day = nDate.getUTCDate();
+	var hours = nDate.getUTCHours();
+	var minutes = nDate.getUTCMinutes();
+	var seconds = nDate.getUTCSeconds();
+
+	var dateString = year;
+	dateString += ((month < 10) ? "-0" : "-") + month;
+	dateString += ((day < 10) ? "-0" : "-") + day;
+
+	var timeString = ((hours < 10) ? "0" : "") + hours;
+	timeString += ((minutes < 10) ? ":0" : ":") + minutes;
+	timeString += ((seconds < 10) ? ":0" : ":") + seconds;
+
+	return dateString + " " + timeString;
+}
+
+function compareDate(datevalue)
+{
+	var myDate, nowDate, arr, arr1, arr2;
+
+	arr = datevalue.split(" ");
+	arr1 = arr[0].split("-");
+	arr2 = arr[1].split(":");
+	myDate = new Date(arr1[0], arr1[1] - 1, arr1[2], arr2[0], arr2[1], arr2[2]);
+	nowDate = new Date();
+
+	if(nowDate > myDate)
+	{
+		return true;
+	}
+	return false;
+}
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+		if(page != "")
+			$("waitingdiv").style.display = "";
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	if (xmlhttp.readyState == 4)
+	{
+		ajaxlock = false;
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_get_weblink':	
+					{
+						weblink_result();
+						break;
+					}
+					case 'admin_delete_weblink':	
+					{
+						DoRefresh();
+						break;
+					}
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+			finally
+			{
+				$("waitingdiv").style.display = "none";
+			}
+		}
+		else
+		{
+			$("waitingdiv").style.display = "none";
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+function getloglistpage(page)
+{
+	ajaxRequest("admin_get_weblink","domain="+domain+"&is_uplink="+is_uplink+"&page="+page+"&filters="+encodeURIComponent(filters)+"&r=" + Math.random() );
+}
+
+function weblink_result()
+{
+	$("waitingdiv").style.display = "";
+	try
+	{
+		var headcell = $("listhead").rows[0].cells;
+		var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'><thead><tr height='0'><td width='"+headcell[0].width+"'></td><td width='"+headcell[1].width+"'></td><td width='"+headcell[2].width+"'></td><td width='"+headcell[3].width+"'></td><td width='"+headcell[4].width+"'></td><td width='"+headcell[5].width+"'><td width='"+headcell[6].width+"'></td></tr></thead><tbody id='maintable'>";
+
+		var logArray = xmlhttp.responseText.split("\n");
+		var pages = parseInt(logArray[0]);
+		var nowTimeUTC = parseInt(logArray[1]);
+
+		$("page_number").innerHTML = nowpage + " / " + totalpages;
+
+		if(totalpages != pages)
+		{
+
+
+			$("page_selector").options.length=0;
+
+			if(pages > 0)
+			{
+				try
+				{
+					var fragment = document.createDocumentFragment();
+					for (var n=1; n<=pages; n++)
+					{
+						if(pages <= 100)
+						{
+							var option = document.createElement("option");
+							option.value = n;
+							option.innerText = n;
+							fragment.appendChild(option);
+						}
+						else if(pages > 100 && (n < 50 || n > pages-50 || n % 10 == 0))
+						{
+							var option = document.createElement("option");
+							option.value = n;
+							option.innerText = n;
+							fragment.appendChild(option);
+						}
+					}
+
+					$("page_selector").appendChild(fragment);
+				}
+				catch(e)
+				{
+					for (var n=1; n<=pages; n++)
+						$("page_selector").options[n-1] = new Option(n, n);
+				}
+			}
+
+			totalpages = pages;
+			$("page_number").innerHTML = nowpage + " / " + totalpages;
+		}
+
+		var nowDate = new Date(); 
+
+		for(var i=2;i<logArray.length;i++)
+		{
+			if(logArray[i] != "" && logArray[i] != " ")
+			{
+				var tempVal = logArray[i];
+				var fieldArray = tempVal.split("||");
+				var username = txt2html(fieldArray[3]);
+				var filesize = fieldArray[10] == "0" ? "0":fileSize(fieldArray[10]);
+				var filename = txt2html(fieldArray[8]);
+				if(is_uplink == "1" && filename.substr(0,1) != "/")
+				{
+					filename = "/"+txt2html(fieldArray[8]);
+				}
+
+				var strExpired = "";
+				var strExpiredTips = "";
+
+				try
+				{
+					var nExpiredDate = fieldArray[13].replace("|", ""); 
+					if(nExpiredDate != "-1")
+					{
+						strExpiredTips = "<%=LANG['str_expire_on']%>: "+translateTime(nExpiredDate);
+						if(nExpiredDate < nowTimeUTC)
+							strExpired = "<font color='red'><%=LANG['str_yes']%></font>";
+						else
+							strExpired = "<font color='gray'><%=LANG['str_no']%></font>";
+					}
+				}
+				catch(e)
+				{
+				}
+
+				htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td><input type='checkbox' id='cid_"+i+"' cid='"+i+"'> "+fieldArray[0]+"</td><td class='fixedwidth' id='td_"+i+"' title='"+fieldArray[1]+"'>"+fieldArray[1]+"</td><td title='"+username+"' align='center'><b>"+username+"</b></td><td>"+fieldArray[6]+"</td><td class='fixedwidth' title='"+txt2html(fieldArray[9])+"'><b>"+filename+"</b></td><td>&nbsp;"+fieldArray[7]+"</td><td title='"+strExpiredTips+"'>"+strExpired+"</td><td></td></tr>";
+			}
+		}
+		htmltext += "</tbody></table>";
+		clear("listview_div");
+		write("listview_div",htmltext);
+		selectedRow = null;
+	}
+	catch(e)
+	{
+	}
+
+	$("waitingdiv").style.display = "none";
+}
+
+function do_list_click(obj)
+{
+	var row_index = obj.rowIndex-1;
+	if(selectedRow != $("maintable").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("maintable").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+
+	return false;
+}
+
+
+function sortSQLTable(obj, iCol) 
+{
+<%
+if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then
+	print("return false;")
+end
+%>
+
+	var orderby = "asc";
+
+	if (lastsortcol == iCol)
+	{
+		sortArrow = !sortArrow;
+	}
+	else
+	{
+		sortArrow = false;
+	}
+
+	if(sortArrow == true)
+	{
+		orderby = "desc";
+	}
+
+	if(obj != null)
+	{
+		if(lastArrow != null)
+			lastArrow.style.backgroundImage="";
+		if(sortArrow == false)
+			obj.style.backgroundImage="url('images/sortup.gif')";
+		else
+			obj.style.backgroundImage="url('images/sortdown.gif')";
+		obj.style.backgroundPosition="10px";
+		obj.style.backgroundRepeat="no-repeat";
+		lastArrow = obj;
+	}
+
+	lastsortcol = iCol;
+	filters = " 1=1 order by " + lastsortcol + " " + orderby;
+
+	if(strWeblink != "")
+	{
+		filters = " 1=1 and f_weblink like '"+strWeblink+"%' order by " + lastsortcol + " " + orderby;
+	}
+
+	nowpage = 1;
+	getloglistpage(nowpage);
+	$("page_selector").value = 1;
+
+}
+
+function DoRefresh()
+{
+	getloglistpage(nowpage);
+}
+
+function DoDelete()
+{
+<%
+if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then
+	print("alert('"..RESULT_STR[-1].."'); return false;")
+end
+%>
+	var checkedlist = getCheckedList();
+	if(checkedlist != "")
+	{
+		if(confirm("<%=LANG['str_delweblinks_tip']%>?"))
+		{
+			ajaxRequest("admin_delete_weblink","weblinks="+urlEncode(checkedlist)+"&is_uplink="+is_uplink);
+		}
+	}
+	else
+	{
+		if(selectedRow == null)
+		{
+			alert("<%=LANG['str_norow_tip']%>");
+			return;
+		}
+
+		var weblink = selectedRow.cells[1].innerHTML;
+		if(confirm("<%=LANG['str_delweblink_tip']%> \""+weblink+"\"?"))
+			ajaxRequest("admin_delete_weblink","weblinks="+weblink+"&is_uplink="+is_uplink);
+	}
+}
+
+function DoSelect()
+{
+	selectAll = !selectAll;
+	var checkboxs = document.getElementsByTagName("input");
+	for(var i=0;i<checkboxs.length;i++)
+	{
+		if(checkboxs[i].type == "checkbox")
+		{
+			if(selectAll)
+				checkboxs[i].checked = true;
+			else
+				checkboxs[i].checked = false;
+		}
+	}
+}
+
+function getCheckedList()
+{ 
+	var checkedlist = "";
+	var checkboxs = document.getElementsByTagName("input");
+	for(var i=0;i<checkboxs.length;i++)
+	{
+		if(checkboxs[i].type == "checkbox" && checkboxs[i].checked == true)
+		{
+			try
+			{
+				var cid = checkboxs[i].getAttribute("cid");
+				if(checkedlist != "") checkedlist += "||";
+				checkedlist += htmldecode($("td_"+cid).innerHTML);
+			}
+			catch (e){}
+		}
+	}
+	return checkedlist;
+}
+
+function SearchWeblink()
+{
+<%
+if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then
+	print("alert('"..RESULT_STR[-1].."'); return false;")
+end
+%>
+	strWeblink = trim($("searchword").value.replace(/\'/g,"").replace(/\"/g,"").replace(/\*/g,"%"));
+
+	if(strWeblink != "")
+	{
+		if(is_uplink == "1" && strWeblink.charAt(0) == "/")
+		{
+			strWeblink = strWeblink.substr(1);
+		}
+
+		var beginChar = $("searchword").value.charAt(0);
+		var endChar = right($("searchword").value,1);
+
+		if((beginChar == "'" || beginChar == "\"") && (endChar == "'" || endChar == "\""))
+			filters = " 1=1 and (f_weblink = '"+strWeblink+"' or f_filename = '"+strWeblink+"' or f_username = '"+strWeblink+"') ";
+		else
+			filters = " 1=1 and (f_weblink like '%"+strWeblink+"%' or f_filename like '%"+strWeblink+"%' or f_username like '%"+strWeblink+"%') ";
+	}
+	else
+	{
+		filters = "";
+	}
+
+	lastsortcol = -1;
+	sortArrow = false;
+	if(lastArrow != null)
+		lastArrow.style.backgroundImage="";
+
+	nowpage = 1;
+	getloglistpage(nowpage);
+	$("page_selector").value = 1;
+}
+
+function DoCopyLink()
+{
+	var strResult = "";
+	var baseURL = "<%=strBaseURL%>";
+	if(window.location.hostname != "127.0.0.1" && baseURL.lastIndexOf("127.0.0.1") != -1)
+	{
+		baseURL = baseURL.replace(/127.0.0.1/g, window.location.hostname); 
+	}
+
+	var checkedlist = getCheckedList();
+	if(checkedlist != "")
+	{
+		var checkedArray = checkedlist.split("||");
+		for(var i=0;i<checkedArray.length;i++)
+		{
+			if(is_uplink == "1")
+				strResult += baseURL+"uploadlink.html?linkid="+checkedArray[i]+"\n";
+			else
+				strResult += baseURL+"main.html?download&weblink="+checkedArray[i]+"\n";
+		}		
+	}
+	else
+	{
+		if(selectedRow == null)
+		{
+			alert("<%=LANG['str_norow_tip']%>");
+			return;
+		}
+
+		var weblink = selectedRow.cells[1].innerHTML;
+		if(is_uplink == "1")
+			strResult = baseURL+"uploadlink.html?linkid="+weblink;
+		else
+			strResult = baseURL+"main.html?download&weblink="+weblink;
+	}
+
+
+	if(window.clipboardData)
+	{
+		window.clipboardData.setData("Text", strResult);
+	}
+	else
+	{
+		try
+		{
+			if(isFirefox || (isSafari && !isChrome))
+			{
+				$("ffcopy").value = strResult;
+				$("ffcopy").select();
+				$("ffcopy").setSelectionRange(0, $("ffcopy").value.length);
+				document.execCommand("copy");
+				$("ffcopy").value = "";
+			}
+			else
+			{
+				var copy = function (e) {
+					e.preventDefault();
+					if(e.clipboardData)
+						e.clipboardData.setData("text/plain", strResult);
+				}
+				window.addEventListener("copy", copy);
+				document.execCommand("copy");
+				window.removeEventListener("copy", copy);
+			}
+		}
+		catch(e){}
+	}
+
+	DoRefresh();
+
+}
+
+if(isOpera)
+{
+	top.document.onkeypress = myKeyDown;
+	document.onkeypress = myKeyDown;
+}
+else
+{
+	top.document.onkeydown = myKeyDown;
+	document.onkeydown = myKeyDown;
+}
+
+function CtrlPressed(e) {
+	if (window.event) {
+		return (window.event.ctrlKey);
+	} else {
+		return (e.ctrlKey || (e.modifiers==2) || (e.modifiers==3) || (e.modifiers>5));
+	}
+}
+
+function myKeyDown(e)
+{
+	try
+	{
+		if(!e){	// if IE
+			e=event;
+		}
+
+		if(CtrlPressed(e))
+		{
+			var letter = String.fromCharCode(e.keyCode).toLowerCase();
+			if(letter == "c")
+			{
+				DoCopyLink();
+				return false;
+			}
+		}
+	}
+	catch(e)
+	{
+	}
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#777; filter:alpha(opacity=60); -moz-opacity: 0.60; opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:40%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<div style="padding-top:2px; overflow-x:hidden;">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+	<tr>
+	<td width="70%" style="padding-left:2px;">
+		<button onclick="DoSelect();"><span><em><img src="images/ico_selectall.png" align="absmiddle"> <%=LANG["str_chkbox_select"]%></em></span></button>
+		<button onclick="DoDelete();"><span><em><img src="images/ico_delete.png" align="absmiddle"> <%=LANG["button_delete"]%></em></span></button>
+		<button onclick="DoRefresh();"><span><em><img src="images/ico_refresh.png" align="absmiddle"> <%=LANG["button_refresh"]%></em></span></button>
+		<button id="button_copy" onclick="DoCopyLink();" title="<%=LANG["str_copy_weblink"]%> (Ctrl+C)"><span><em><img src="images/ico_downloadlink.png" align="absmiddle"> <%=LANG["button_copy"]%></em></span></button>
+	</td>
+	<td align="right" style="padding-right:10px;"><span><%=LANG["str_domain"]%>:<b><%=specialhtml_encode(unescape(_GET["domain"]))%></b><span>
+	</td>
+	</tr>
+	</table>
+
+</div>
+
+<div style="background-color:#E6E6E6;">
+	<div style="margin-top:3px; margin-left:5px; border:1px solid #919B9C; border-bottom:0px; width:98%;">
+		<table id="listhead" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+			<tr style="background-color: #EFEFEF;">
+			<td class="listhead" width="8%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,'f_id')"><%=LANG["title_id"]%></td>
+			<td class="listhead" width="20%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,'f_weblink')"><%=LANG["str_weblink"]%></td>
+			<td class="listhead" width="13%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,'f_username')"><%=LANG["title_username"]%></td>
+			<td class="listhead" width="13%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,'f_update_time')"><%=LANG["str_modify_date"]%></td>
+			<td class="listhead" width="24%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,'f_filename')"><%=filename_title%></td>
+			<td class="listhead" width="12%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,'f_count')"><%=count_title%></td>
+			<td class="listhead" width="10%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortSQLTable(this,'f_expire_time')"><%=LANG["str_expired"]%></td>
+			<td class="listhead3">&nbsp;</td>
+			</tr>
+		</table>
+	</div>
+	<div id="listview_div" style="background-color:#FFF; margin-left:5px; border:1px solid #919B9C; border-top:0px; width:98%; height:420px; overflow:auto; overflow-x:hidden;">
+		<table id="listtable" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;">
+		<thead><tr height="0">
+		<td width="8%"></td>
+		<td width="20%"></td>
+		<td width="13%"></td>
+		<td width="13%"></td>
+		<td width="24%"></td>
+		<td width="12%"></td>
+		<td width="10%"></td>
+		<td></td>
+		</tr></thead>
+		<tbody id="maintable">
+		</tbody>
+		</table>
+	</div>
+</div>
+
+<div style="padding-left:5px; padding-top:2px; ">
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+	<tr>
+
+	<td align="left">
+	<input type='text' id='searchword' value='' onmouseover="this.focus();" style="width:250px;">&nbsp;<button onclick='SearchWeblink();'><span><em><%=LANG["button_search"]%></em></span></button>
+	</td>
+
+	<td align="right" style="padding-right:5px;">
+
+	<button onclick='jumpprevious();'><span><em><%=LANG["button_previous_page"]%></em></span></button>
+	<select id='page_selector' onchange="pagejump(this.value)">
+		<option value="1">1</option>
+	</select>
+	<span id="page_number" style="*vertical-align:20%;"></span>
+	<button onclick='jumpnext();'><span><em><%=LANG["button_next_page"]%></em></span></button>
+
+	</td>
+	</tr>
+	</table>
+
+<script language="javascript">
+pagejump(nowpage);
+
+
+function jumpprevious()
+{
+	page = nowpage-1;
+	pagejump(page);
+}
+
+function jumpnext()
+{
+	page = nowpage+1;
+	pagejump(page);
+}
+
+function pagejump(page)
+{
+	page = parseInt(page);
+	if(page > totalpages)
+		page = totalpages;
+	if(page < 1)
+		page = 1;
+	nowpage = page;
+	getloglistpage(nowpage);
+
+	$("page_selector").value = nowpage;
+	$("page_number").innerHTML = nowpage + " / " + totalpages;
+}
+</script>
+</div>
+<input id="ffcopy" style="position:absolute; left:-100px; outline:none; border:0px; color:rgba(0,0,0,0.0); background-color:transparent;">
+</body>
+</html>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

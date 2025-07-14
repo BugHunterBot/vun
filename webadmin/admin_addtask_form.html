@@ -1,0 +1,590 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<%
+local result = nil
+local taskname = nil
+if _GET["taskname"] ~= nil then
+	taskname = _GET["taskname"]
+	result = c_GetTask(taskname)
+	if result == nil then
+		print("<script>alert('Task does not exist!');top.closewindow();</script>")
+		exit()
+	end
+end
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Add/Modify Task Scheduler</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html, body {height: 100%;}
+a {text-decoration:none;}
+a,a:visited {color:#000;background:inherit;}
+html, body {height: 100%;margin:0px;padding:0px;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:11px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+input,select,textarea{margin:4px;}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:18px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:18px;
+}
+
+
+#tabDiv {
+	width: 720px;
+	margin: 0px auto 0px auto;
+	position: relative;
+	border:1px solid transparent;
+	border:1px solid #E6E6E6;
+}
+#tabDiv ul {
+	padding: 0px;
+	position: absolute;
+	margin: 4px;
+}
+#tabDiv li {
+	list-style-type: none;
+	float: left;
+	margin-right: 1px;
+	height: 24px;
+	line-height: 24px;
+	padding: 0px;
+}
+#tabDiv li a {
+	display: block;
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+.tagContent {
+	clear:both;
+	float:none;
+	margin-top: 27px;
+	border: 1px solid #919B9C;
+}
+.tagContent div {
+	margin-top: 0px;
+	height: 430px;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	background-image: url('images/tabbg.gif');
+	background-repeat: repeat-x;
+	background-color: #fff;
+	padding: 12px;
+	display: none;
+}
+.selectedTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+.selectedTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right top;
+	color:#000;
+}
+.normalTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left bottom;
+}
+.normalTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right bottom;
+	color:#49658F
+}
+.emptyTag { width:20px;}
+
+.selectContent{margin:0;padding:0;position:absolute;background:#eee;top:130px;left:120px;border:1px solid #333;overflow:hidden;color:#999;}
+.selectContent ul{margin:0;padding:0;border:0;background:none;cursor:pointer;padding:0;color:#666}
+.selectContent ul li{margin:0;padding:0;padding:0 5px;line-height:20px;}
+.optionSelected{background:#666;color:#eef}
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript" src="edit_area/edit_area_full.js"></script>
+<script language="javascript">
+var taskname = "";
+var ajaxlock = false;
+var selectInput = "";
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+editAreaLoader.init({
+	id : "script"
+	,language: "en"
+	,fullscreen: false
+	,allow_toggle: false
+	,start_highlight: true
+	,syntax: "lua"
+	,smooth_selection: false
+	,toolbar: ""
+	,font_size: 10
+	,font_family: "sans-serif, verdana, monospace"
+	,replace_tab_by_spaces: 2
+	,EA_load_callback: "EA_load_callback"
+	,max_undo: 50
+});
+
+function EA_load_callback() 
+{
+	try
+	{
+		window.frames["frame_script"].document.getElementById("toolbar_1").style.display = "none";
+		window.frames["frame_script"].document.getElementById("toolbar_2").style.display = "none";
+	}
+	catch(e)
+	{
+	}
+}
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	ajaxlock = false;
+	if (xmlhttp.readyState == 4)
+	{
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_add_task':	doSubmit_result();break;
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+		}
+		else
+		{
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+function doSubmit(bReset)
+{
+	<%
+	local nType = c_GetLicenseInfo()
+	if nType == LICENSE_STANDARD or nType == LICENSE_SECURE or nType == LICENSE_FREE then
+	%>
+	alert("<%=LANG['str_notsupport_feature3']%>");
+	return false;
+	<%
+	end
+	%>
+
+	var paramStr = "";
+
+	if($("taskname").value.length == 0 || $("taskname").value.search(/[\\\/\<\>\:\?\"\'\|\*\&\%]/i) != -1)
+	{
+		alert("<%=LANG['str_invalid_taskname']%>");
+		return false;
+	}
+	taskname = encodeURIComponent(trim($("taskname").value));
+
+	var type = $("type").value;
+	var day = 1;
+	if(type == "3")
+		day = $("day_week").value;
+	else if(type == "4")
+		day = $("day_month").value;
+	var datefrom = $("datefrom").value;
+	var timefrom = $("timefrom").value;
+
+	//var script = encodeURIComponent($("script").value);
+	var script = encodeURIComponent(editAreaLoader.getValue("script"));
+	if(script.length == 0)
+	{
+		alert("<%=LANG['str_lua_empty']%>");
+		return false;
+	}
+
+	paramStr += "taskname="+taskname+"&type="+type+"&day="+day+"&datefrom="+datefrom+"&timefrom="+timefrom+"&script="+script+"&r="+Math.random();
+	<%
+	if _GET["taskname"] ~= nil then
+		print("paramStr += '&modify=1';")
+	end
+	%>
+	ajaxRequest("admin_add_task",paramStr);
+}
+
+function doSubmit_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "0" || result == 0)
+	{
+		alert("<%=LANG['str_existed_taskname']%>");
+	}
+	else if(result == "1" || result == 1)
+	{
+		top.closewindow(name);
+	}
+	else if(result == "2" || result == 2)
+	{
+		alert("<%=RESULT_STR[-1] %>");
+	}
+	else
+	{
+		alert("<%=LANG['str_lua_error']%>\n"+result);
+	}
+}
+
+function selectTime()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_selecttime']%>","<iframe src='admin_time_selector.html?mydate="+$("datefrom").value+"&mytime="+$("timefrom").value+"&seeds=" + Math.random() +"' width=280 height=320 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",selectTime_callback,280,320);
+}
+
+function selectTime_callback(str)
+{
+	if(str != "" && str != null)
+	{
+		var dateArray = str.split(" ");
+		$("datefrom").value = dateArray[0];
+		var timeArray = dateArray[1].split(":");
+		$("timefrom").value = timeArray[0]+":"+timeArray[1]+":00";
+	}
+	$("hiddenInput").focus();
+}
+
+function insertText(strText)
+{
+	editAreaLoader.setSelectedText("script", strText);
+	return;
+
+    var input = $("script");
+    var len = input.value.length;
+    input.focus();
+    if(typeof(document.selection) !="undefined")
+    {
+        document.selection.createRange().text = strText; 
+    }
+    else
+    {
+        input.value = input.value.substr(0,input.selectionStart)+strText+input.value.substring(input.selectionStart,len);
+    }
+}
+
+function luaHelp()
+{
+	window.open("help/english/index.html?server_lua_api.htm","_blank");
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;">
+
+<div id="tabDiv">
+  <ul id="tags">
+  	<li class="emptyTag"></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent1',this)"><%=LANG["str_taskeditor"]%></a></li>
+  </ul>
+  <div id="tagContent" class="tagContent">
+	<div id="tagContent1">
+		<table width="100%" cellSpacing="0" cellPadding="0" border="0">
+		<tr><td width="120"><%=LANG["title_taskname"]%>:</td><td><input id="taskname" type="text" <% if taskname ~= nil then print("value='"..taskname.."' disabled") end%> style="width:420px;">
+		<input id="hiddenInput" type="text" style="width:0px;height:0px; border:0px;">
+		</td></tr>
+		<tr><td><%=LANG["title_type"]%>:</td><td>
+		<select id="type" onchange="switchType();">
+		<option value="0" <% if result ~= nil then if result["type"] == 0 then print("selected") end end%>><%=TASK_TYPE_STR[0]%></option>
+		<option value="5" <% if result ~= nil then if result["type"] == 5 then print("selected") end end%>><%=TASK_TYPE_STR[5]%></option>
+		<option value="1" <% if result ~= nil then if result["type"] == 1 then print("selected") end end%>><%=TASK_TYPE_STR[1]%></option>
+		<option value="2" <% if result ~= nil then if result["type"] == 2 then print("selected") end end%>><%=TASK_TYPE_STR[2]%></option>
+		<option value="3" <% if result ~= nil then if result["type"] == 3 then print("selected") end end%>><%=TASK_TYPE_STR[3]%></option>
+		<option value="4" <% if result ~= nil then if result["type"] == 4 then print("selected") end end%>><%=TASK_TYPE_STR[4]%></option>
+		</select>
+		<span id="byweek" style="display:none;">
+		&nbsp;<%=LANG["str_on"]%>:
+		<select id="day_week">
+		<script>
+		var weekdays = [<%=LANG["calendar_weekdays"]%>];
+		var selectday = '<% if result ~= nil then if result["type"] == 3 then print(result["day"]) else print("0") end end%>';
+		selectday = parseInt(selectday);
+		var temp = "";
+		for (var i=0;i<weekdays.length;i++) 
+		{
+			if(selectday == i)
+				temp += "<option value=\""+i+"\" selected>"+weekdays[i]+"</option>";
+			else
+				temp += "<option value=\""+i+"\" >"+weekdays[i]+"</option>";
+		}
+		document.write(temp);
+		</script>
+		</select>
+		</span>
+		<span id="bymonth" style="display:none;">
+		&nbsp;<%=LANG["str_on"]%>:
+		<select id="day_month">
+		<script>
+		var selectday = '<% if result ~= nil then if result["type"] == 4 then print(result["day"]) else print("1") end end%>';
+		selectday = parseInt(selectday);
+		var temp = "";
+		for (var i=1;i<32;i++) 
+		{
+			if(selectday == i)
+				temp += "<option value=\""+i+"\" selected>"+i+"</option>";
+			else
+				temp += "<option value=\""+i+"\" >"+i+"</option>";
+		}
+		document.write(temp);
+		</script>
+		</select>
+		</span>
+		</td></tr>
+		<tr><td><%=LANG["title_fromdate"]%>:</td><td><input id="datefrom" type="text" value="<% if result ~= nil then print(result["datefrom"]) else print(os.date("%Y-%m-%d",os.time()+3600)) end%>" onclick="selectTime();" style="width:220px;" readonly></td></tr>
+		<tr><td><%=LANG["title_starttime"]%>:</td><td><input id="timefrom" type="text" value="<% if result ~= nil then print(result["timefrom"]) else print(os.date("%H:%M:00",os.time()+3600)) end%>" onclick="selectTime();" style="width:220px;" readonly></td></tr>
+		<tr><td colspan="2" height="5">&nbsp;</td></tr>
+		<tr><td valign="top">
+		<table width="100%" cellSpacing="0" cellPadding="0" border="0">
+		<tr><td>
+		<%=LANG["str_luascript"]%>:
+		</td></tr>
+		<tr><td>
+		<button id="selectHead" onclick="drawSelect('selectHead','selectContent',insertText)"><span style="vertical-align:middle;"><em> <%=LANG["str_commonapi"]%></em></span></button>
+		</td></tr>
+		<tr><td valign="bottom" height="100">
+		<span style="cursor:pointer;" onclick="luaHelp();"><img src="images/ico_question.gif"><%=LANG["str_luahelp"]%></span>
+		</td></tr>	
+		</table>
+		</td>
+		<td><textarea id="script" style="width:560px;height:320px;"><% if result ~= nil then print(result["script"]) end%></textarea>
+		</td></tr>
+		</table>
+	</div>
+  </div>	
+</div>
+
+<div id="selectContent" class="selectContent" style="display:none;">
+	<ul>
+	<%
+		local i = 0
+		for key,value in ipairs(FUNCTION_KEY) do
+			print("<li title='"..FUNCTION_VALUE[i+1].."'>"..value.."</li>")
+			i = i + 1
+		end
+	%>
+	</ul>
+</div>
+
+<div style="padding:3px;text-align:right;margin-right:10px;">
+<button type='submit' onclick='doSubmit(0);'><span><em><%=LANG["button_submit"]%></em></span></button>&nbsp;
+<button onclick='top.closewindow();'><span><em><%=LANG["button_cancel"]%></em></span></button>
+</div>
+
+<script type="text/javascript">
+
+$("tagContent1").style.display="block";
+$("tags").getElementsByTagName("li")[1].className="selectedTag";
+$("hiddenInput").focus();
+
+function switchTag(tagContent,obj){
+
+	for(var i=1; i<$("tags").getElementsByTagName("li").length; i++)
+	{
+		$("tags").getElementsByTagName("li")[i].className="normalTag";
+	}
+	obj.parentNode.className="selectedTag";
+	
+	for(var j=0; j<$("tagContent").getElementsByTagName("div").length; j++)
+	{
+		$("tagContent").getElementsByTagName("div")[j].style.display="none";
+	}
+	$(tagContent).style.display="block";
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function switchType()
+{
+	if($("type").value == 3)
+	{
+		$("byweek").style.display = "";
+		$("bymonth").style.display = "none";
+	}
+	else if($("type").value == 4)
+	{
+		$("byweek").style.display = "none";
+		$("bymonth").style.display = "";
+	}
+	else
+	{
+		$("byweek").style.display = "none";
+		$("bymonth").style.display = "none";
+	}
+}
+
+switchType();
+
+
+
+var TextAreaTab = 
+{ 
+   Register : function(obj) 
+   {
+       obj.onclick = new Function('TextAreaTab.CreateInsertPosition(this)'); 
+       obj.onselect = new Function('TextAreaTab.CreateInsertPosition(this)'); 
+       obj.onkeyup = new Function('TextAreaTab.CreateInsertPosition(this)'); 
+       obj.onkeydown = new Function('TextAreaTab.InsertTab(this)'); 
+   },
+   CreateInsertPosition : function(obj) 
+   { 
+       if (obj.createTextRange) // IE 
+       { 
+           obj.InsertPosition = document.selection.createRange().duplicate();
+       } 
+   }, 
+   InsertTab : function(obj) 
+   { 
+       var evt = this.GetEvent();
+       if (evt.keyCode == 9)
+       { 
+           if (obj.createTextRange && obj.InsertPosition) // IE 
+           {
+               obj.InsertPosition.text = '\t'; 
+               evt.returnValue = false; 
+           } 
+           else if (window.getSelection) // FF 
+           { 
+               var scrollTop = obj.scrollTop;
+               var start = obj.selectionStart;
+
+               var pre = obj.value.substr(0, obj.selectionStart);
+               var next = obj.value.substr(obj.selectionEnd);
+               obj.value = pre + '\t' + next; 
+
+               evt.preventDefault(); 
+
+               obj.selectionStart = start + 1; 
+               obj.selectionEnd = start + 1; 
+               obj.scrollTop = scrollTop; 
+           } 
+       } 
+   }, 
+   GetEvent : function() 
+   { 
+       if(document.all) // IE 
+       { 
+           return window.event; 
+       } 
+
+       func = this.GetEvent.caller; 
+       while(func != null) 
+       { 
+           var arg0 = func.arguments[0]; 
+           if(arg0) 
+           { 
+               if((arg0.constructor == Event || arg0.constructor == MouseEvent) 
+                   ||(typeof(arg0) == "object" && arg0.preventDefault && arg0.stopPropagation)) 
+               { 
+                   return arg0; 
+               } 
+           } 
+           func = func.caller; 
+       } 
+       return null; 
+   } 
+} 
+var textarea = document.getElementById("script"); 
+TextAreaTab.Register(textarea); 
+</script>
+</body>
+</html>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

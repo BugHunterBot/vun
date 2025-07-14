@@ -1,0 +1,2410 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Add/Edit User</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<%
+local domain = ""
+if _GET["domain"] ~= nil then
+	local domain = _GET["domain"]
+	local user = ""
+	local expired = false
+	if _GET["username"] ~= nil then
+		user = c_GetUser(domain, _GET["username"])
+		if user == nil then
+			print("<script>alert('User does not exist!');top.closewindow();</script>")
+			exit()
+		else
+			if _SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1 then
+				user.password = ""
+				user.two_factor_code = ""
+			end
+
+			local enable_expire = user.enable_expire
+			local expiretime = user.expiretime
+			user = json.encode(user)
+
+			if enable_expire == true and expiretime ~= "" and expiretime ~= " " then
+
+				local expiretime_t = c_TranslateTime(expiretime)
+				if (os.time() > expiretime_t) then
+					expired = true
+				end
+
+			end
+		end
+	end
+%>
+
+<style type="text/css">
+a {text-decoration:none;}
+a,a:visited {color:#000;background:inherit;}
+img {border:0px;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {margin:0;padding:0;font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {margin:0;padding:0;font:11px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+input,select,textarea{margin:3px;}
+input,textarea{background-color:expression((this.disabled && this.disabled==true)?"#D4D0C8":"")}
+td{line-height:24px;}
+fieldset {  
+    border-color: #999;  
+    border-style: solid;  
+    border-width: 1px;  
+}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:18px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:18px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+
+
+#tabDiv {
+	width: 810px;
+	margin: 0px auto 0px auto;
+	position: relative;
+	border:1px solid transparent;
+	border:1px solid #E6E6E6;
+}
+
+#tabDiv ul {
+	padding: 0px;
+	position: absolute;
+	margin-left: 0px;
+	margin-top: 4px;
+}
+#tabDiv li {
+	list-style-type: none;
+	float: left;
+	margin-right: 1px;
+	height: 24px;
+	line-height: 24px;
+	padding: 0px;
+}
+#tabDiv li a {
+	display: block;
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+.tagContent {
+	clear:both;
+	float:none;
+	margin-top: 27px;
+	border: 1px solid #919B9C;
+}
+.tagContent div {
+	margin-top: 0px;
+	height: 440px;
+	overflow-y:auto;
+	background-image: url('images/tabbg.gif');
+	background-repeat: repeat-x;
+	background-color: #fff;
+	padding: 12px;
+	display: none;
+}
+.selectedTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+.selectedTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right top;
+	color:#000;
+}
+.normalTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left bottom;
+}
+.normalTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right bottom;
+	color:#49658F
+}
+.emptyTag { width:10px;}
+
+.longtd
+{
+	padding-right: 2px;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript" src="include/json.js"></script>
+<script language="javascript">
+var ajaxlock = false;
+var selectedRow = null;
+var lastObj = null;
+var lastObjIndex = -1;
+var resetStatistic = false;
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+	}
+}
+
+function ajaxResponse()
+{
+	if (xmlhttp.readyState == 4)
+	{
+		ajaxlock = false;
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_adduser':		addUser_result();break;
+					case 'admin_modifyuser':	modifyUser_result();break;
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+		}
+		else
+		{
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+
+var directories = new Array();
+var ipmasks = new Array();
+var filemasks = new Array();
+var usergroups = new Array();
+var schedules = new Array();
+var subdir_perm = new Array();
+var last_dir_id = null;
+var last_subdir_id = null;
+var last_schedule_id = null;
+var weekdays = [<%=LANG["calendar_weekdays"]%>];
+
+function addUserSubmit()
+{
+	var domain = $("domain").value;
+	var username = $("username").value;
+	var password = $("password").value;
+	if(domain.length == 0)
+	{
+		alert("<%=LANG['str_no_domain']%>");
+		return false;
+	}
+	if(username.length <= 0 || username.length > 64 || username.search(/[\\\/\<\>\:\?\"\'\|\[\]\{\}\*\&\=\%]/i) != -1 || username == " ")
+	{
+		alert("<%=LANG['str_invalid_username']%>");
+		return false;
+	}
+	//if(password.search(/[\\\/\<\>\:\?\"\'\|]/i) != -1)
+	//{
+	//	alert("<%=LANG['str_invalid_pass']%>");
+	//	return false;
+	//}
+	password = password.replace(/\\/g,'\\\\');
+	password = password.replace(/\"/g,'\\"');
+
+	if(password.length < 32)
+	{
+		var checkPassResult = checkPass(password);
+		if(checkPassResult != '')
+		{
+			alert(checkPassResult);
+			return false;
+		}
+	}
+
+	//if(txt2html($("note_address").value).length > 255 || txt2html($("note_memo").value).length > 255)
+	//{
+	//	alert("<%=LANG['str_adduser_warning1']%>");
+	//	return false;
+	//}
+	if(Number($("current_quota").value) > Number($("max_quota").value))
+	{
+		alert("<%=LANG['str_adduser_warning2']%>");
+		return false;
+	}
+	if(Number($("cur_upload_size").value) > Number($("max_upload_size").value))
+	{
+		alert("<%=LANG['str_adduser_warning3']%>");
+		return false;
+	}
+	if(Number($("cur_download_size").value) > Number($("max_download_size").value))
+	{
+		alert("<%=LANG['str_adduser_warning4']%>");
+		return false;
+	}
+	
+	var PubKeyPath = "";
+	PubKeyPath = $("ssh_pubkey_path").value;
+	PubKeyPath = PubKeyPath.replace(/\\/ig, "/");
+
+
+	if($("enable_ssh_pubkey_auth").checked)
+	{
+		if(PubKeyPath == "")
+		{
+			alert("<%=LANG['str_no_ssh_pubkey']%>");
+			return false;
+		}
+	}
+
+	if(password.length == 0 && username != "anonymous")
+	{
+		if(confirm("<%=LANG['str_empty_password']%>") == false)
+			return false;
+	}
+	
+	var protocols = ($("protocol_ftp").checked ? 1:0)+($("protocol_ftps_tls").checked ? 2:0)+($("protocol_ftps_ssl").checked ? 4:0)+($("protocol_http").checked ? 8:0)+($("protocol_https").checked ? 16:0)+($("protocol_ssh").checked ? 32:0)
+	var user = {
+	username:trim($("username").value),
+	password: password,
+	oldpassword:$("oldpassword").value,
+	max_download:$("max_download").value,
+	max_upload:$("max_upload").value,
+	max_download_account:$("max_download_account").value,
+	max_upload_account:$("max_upload_account").value,
+	max_connection:$("max_connection").value,
+	connect_timeout:$("connect_timeout").value,
+	idle_timeout:$("idle_timeout").value,
+	connect_per_ip:$("connect_per_ip").value,
+	pass_length:$("pass_length").value,
+	show_hidden_file:($("show_hidden_file").checked ? 1:0),
+	change_pass:($("change_pass").checked ? 1:0),
+	send_message:$("send_message").value,
+	enable_weblink:($("enable_weblink").checked ? 1:0),
+	enable_uplink:($("enable_uplink").checked ? 1:0),
+	ratio_credit:$("ratio_credit").value,
+	ratio_download:$("ratio_download").value,
+	ratio_upload:$("ratio_upload").value,
+	ratio_count_method:($("ratio_count_method0").checked ? 0:1),
+	enable_ratio:($("enable_ratio").checked ? 1:0),
+	current_quota:$("current_quota").value,
+	max_quota:$("max_quota").value,
+	enable_quota:($("enable_quota").checked ? 1:0),
+	note_name:txt2html($("note_name").value),
+	note_address:txt2html($("note_address").value),
+	note_zip:txt2html($("note_zip").value),
+	note_phone:txt2html($("note_phone").value),
+	note_fax:txt2html($("note_fax").value),
+	note_email:txt2html($("note_email").value),
+	note_memo:txt2html($("note_memo").value),
+	ipmasks:ipmasks,
+	filemasks:filemasks,
+	directories:directories,
+	usergroups:usergroups,
+	subdir_perm:subdir_perm,
+	enable_schedule:($("enable_schedule").checked ? 1:0),
+	schedules:schedules,
+	limit_reset_type:$("limit_reset_type").value,
+	limit_enable_upload:($("limit_enable_upload").checked ? 1:0),
+	cur_upload_size:$("cur_upload_size").value,
+	max_upload_size:$("max_upload_size").value,
+	limit_enable_download:($("limit_enable_download").checked ? 1:0),
+	cur_download_size:$("cur_download_size").value,
+	max_download_size:$("max_download_size").value,
+	enable_expire:($("enable_expire").checked ? 1:0),
+	expiretime:$("expiretime").value,
+	protocol_type:protocols,
+	enable_password:($("enable_password").checked ? 1:0),
+	enable_account:($("enable_account").checked ? 1:0),
+	ssh_pubkey_path:PubKeyPath,
+	enable_ssh_pubkey_auth:($("enable_ssh_pubkey_auth").checked ? 1:0),
+	ssh_auth_method:($("ssh_auth_method0").checked ? 0:1),
+	enable_two_factor:($("enable_two_factor").checked ? 1:0),
+	two_factor_code:$("two_factor_code").value
+	};
+
+	var userString = encodeURIComponent(JSON.stringify(user));
+	var modifyuser = '<%=user%>';
+	var oldname = '<%=_GET["username"]%>';
+	if(modifyuser != "")
+	{
+		if(resetStatistic)
+			ajaxRequest("admin_modifyuser","resetstat=1&domain="+domain+"&oldname="+oldname+"&user="+userString+"&r=" + Math.random());
+		else
+			ajaxRequest("admin_modifyuser","domain="+domain+"&oldname="+oldname+"&user="+userString+"&r=" + Math.random());
+	}
+	else
+	{
+		ajaxRequest("admin_adduser","domain="+domain+"&user="+userString+"&r=" + Math.random());
+	}
+}
+
+function addUser_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "0" || result == 0)
+	{
+		alert("<%=LANG['str_existed_username']%>");
+	}
+	else if(result == "4" || result == 4)
+	{
+		alert("<%=LANG['str_existed_aduser']%>");
+	}
+	else if(result == "-1" || result == -1)
+	{
+		alert("<%=LANG['session_expire']%>");
+		top.location = "admin_login.html";
+	}
+	else
+	{
+		top.closewindow(1);
+	}
+}
+
+function modifyUser_result()
+{
+	var result = xmlhttp.responseText;
+	if(result == "0" || result == 0)
+	{
+		alert("<%=LANG['str_existed_username']%>");
+	}
+	else if(result == "4" || result == 4)
+	{
+		alert("<%=LANG['str_existed_aduser']%>");
+	}
+	else if(result == "-1" || result == -1)
+	{
+		alert("<%=LANG['session_expire']%>");
+		top.location = "admin_login.html";
+	}
+	else
+	{
+		top.closewindow(1);
+	}
+}
+
+function resetUserStatistic()
+{
+	$("total_received").innerHTML = "0.0 B";
+	$("total_sent").innerHTML = "0.0 B";
+	$("login_count").innerHTML = "0";
+	$("file_download").innerHTML = "0";
+	$("file_upload").innerHTML = "0";
+	$("failed_download").innerHTML = "0";
+	$("failed_upload").innerHTML = "0";
+	$("last_loginip").innerHTML = "";
+	resetStatistic = true;
+}
+
+function userInit()
+{
+	var user = '<%=user%>';
+	if(user != "")
+	{
+		try
+		{
+			var userObject = JSON.parse(user);
+			$("username").value = userObject["username"];
+			$("enable_account").checked = userObject["enable_account"];
+			$("password").value = userObject["password"];
+			$("oldpassword").value = userObject["password"];
+			$("enable_password").checked = userObject["enable_password"];
+			$("enable_expire").checked = userObject["enable_expire"];
+			if(userObject["expiretime"] != null && userObject["expiretime"] != "")
+				$("expiretime").value = userObject["expiretime"];
+			$("total_received").innerHTML = fileSize(userObject["total_received"]);
+			$("total_sent").innerHTML = fileSize(userObject["total_sent"]);
+			$("login_count").innerHTML = userObject["login_count"];
+			$("file_download").innerHTML = userObject["file_download"];
+			$("file_upload").innerHTML = userObject["file_upload"];
+			$("failed_download").innerHTML = userObject["failed_download"];
+			$("failed_upload").innerHTML = userObject["failed_upload"];
+			$("last_loginip").innerHTML = userObject["last_loginip"];
+			$("last_logintime").innerHTML = userObject["last_logintime"];
+			$("max_download").value = userObject["max_download"];
+			$("max_upload").value = userObject["max_upload"];
+			$("max_download_account").value = userObject["max_download_account"];
+			$("max_upload_account").value = userObject["max_upload_account"];
+			$("max_connection").value = userObject["max_connection"];
+			$("connect_timeout").value = userObject["connect_timeout"];
+			$("idle_timeout").value = userObject["idle_timeout"];
+			$("connect_per_ip").value = userObject["connect_per_ip"];
+			$("pass_length").value = userObject["pass_length"];
+			$("show_hidden_file").checked = userObject["show_hidden_file"];
+			$("change_pass").checked = userObject["change_pass"];
+			$("send_message").value = (userObject["send_message"] == true ? 1:0);
+			$("enable_weblink").checked = userObject["enable_weblink"];
+			$("enable_uplink").checked = userObject["enable_uplink"];
+			$("ratio_credit").value = userObject["ratio_credit"];
+			$("ratio_download").value = userObject["ratio_download"];
+			$("ratio_upload").value = userObject["ratio_upload"];
+			$("ratio_count_method0").checked = (userObject["ratio_count_method"] == 0 ? true:false);
+			$("ratio_count_method1").checked = (userObject["ratio_count_method"] == 1 ? true:false);
+			ChangeRatioMethod(userObject["ratio_count_method"]);
+			$("enable_ratio").checked = userObject["enable_ratio"];
+			$("current_quota").value = userObject["current_quota"];
+			$("max_quota").value = userObject["max_quota"];
+			$("enable_quota").checked = userObject["enable_quota"];
+			$("note_name").value = html2txt(userObject["note_name"]);
+			$("note_address").value = html2txt(userObject["note_address"]);
+			$("note_zip").value = html2txt(userObject["note_zip"]);
+			$("note_phone").value = html2txt(userObject["note_phone"]);
+			$("note_fax").value = html2txt(userObject["note_fax"]);
+			$("note_email").value = html2txt(userObject["note_email"]);
+			$("note_memo").value = html2txt(userObject["note_memo"]);
+			ipmasks = (userObject["ipmasks"] != null ? userObject["ipmasks"] : new Array());
+			filemasks = (userObject["filemasks"] != null ? userObject["filemasks"] : new Array());
+			directories = (userObject["directories"] != null ? userObject["directories"] : new Array());
+			usergroups = (userObject["usergroups"] != null ? userObject["usergroups"] : new Array());
+			subdir_perm = (userObject["subdir_perm"] != null ? userObject["subdir_perm"] : new Array());
+			$("enable_schedule").checked = userObject["enable_schedule"];
+			schedules = (userObject["schedules"] != null ? userObject["schedules"] : new Array());
+
+			$("limit_reset_type").value = userObject["limit_reset_type"];
+			$("limit_enable_upload").checked = userObject["limit_enable_upload"];
+			$("cur_upload_size").value = userObject["cur_upload_size"];
+			$("max_upload_size").value = userObject["max_upload_size"];
+			$("limit_enable_download").checked = userObject["limit_enable_download"];
+			$("cur_download_size").value = userObject["cur_download_size"];
+			$("max_download_size").value = userObject["max_download_size"];
+			$("ssh_pubkey_path").value = userObject["ssh_pubkey_path"];
+			$("enable_ssh_pubkey_auth").checked = userObject["enable_ssh_pubkey_auth"];
+			$("ssh_auth_method0").checked = (userObject["ssh_auth_method"] == 0 ? true:false);
+			$("ssh_auth_method1").checked = (userObject["ssh_auth_method"] == 1 ? true:false);
+
+			$("enable_two_factor").checked = userObject["enable_two_factor"];
+			if(userObject["two_factor_code"] != null && userObject["two_factor_code"] != "")
+				$("two_factor_code").value = userObject["two_factor_code"];
+			
+			var protocols = parseInt(userObject["protocol_type"]);
+			$("protocol_ftp").checked = protocols & 1;
+			$("protocol_ftps_tls").checked = protocols & 2;
+			$("protocol_ftps_ssl").checked = protocols & 4;
+			$("protocol_http").checked = protocols & 8;
+			$("protocol_https").checked = protocols & 16;
+			$("protocol_ssh").checked = protocols & 32;
+
+			AddBlockIP_updateview();
+			AddBlockfile_updateview();
+			AddDirectory_updateview();
+			AddGroup_updateview();
+			AddSchedule_updateview();
+			AddSubfolder_updateview();
+			checkSchedule();
+		}
+		catch(e)
+		{
+			alert("<%=LANG['str_loaduser_fail']%>");
+		}
+	}
+	checkSchedule();
+	checkExpireTime();
+}
+
+
+function AddDirectory()
+{
+	var homedir_check = 1;
+	for(var i=0;i<directories.length;i++)
+	{
+		if(directories[i].is_home_dir)
+		{
+			homedir_check = 0;
+			break;
+		}
+	}
+
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_adddir']%>","<iframe src='admin_add_directory.html?homedir="+homedir_check+"' width=450 height=320 border=0 frameborder=0 id='add"+frametag+"'></iframe>",AddDirectory_callback,450,320);
+}
+
+function AddSubfolder()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_subfolder_rule']%>","<iframe src='admin_add_subdir.html' width=450 height=300 border=0 frameborder=0 id='subdir"+frametag+"'></iframe>",AddSubfolder_callback,450,300);
+}
+
+function AddDirectory_updateview()
+{
+	var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'>";
+	for(var i=0;i<directories.length;i++)
+	{
+		var rightmask = "";
+		if(directories[i].is_home_dir) rightmask += "H";
+		rightmask += " ";
+		if(directories[i].fileread) rightmask += "R";
+		if(directories[i].filewrite) rightmask += "W";
+		if(directories[i].fileappend) rightmask += "A";
+		if(directories[i].filedelete) rightmask += "D";
+		if(directories[i].filerename) rightmask += "Rn";
+		rightmask += " ";
+		if(directories[i].dirlist) rightmask += "L";
+		if(directories[i].dirmake) rightmask += "M";
+		if(directories[i].dirdelete) rightmask += "D";
+		if(directories[i].dirrename) rightmask += "Rn";
+		rightmask += " ";
+		if(directories[i].zipfile) rightmask += "Z";
+		if(directories[i].unzipfile) rightmask += "U";
+		htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td width='50%' f_id='"+i+"' class='longtd'>"+directories[i].dir+"</td><td width='30%' class='longtd'>"+directories[i].alias+"</td><td width='20%'>"+rightmask+"</td></tr>";
+	}
+	htmltext += "</table>";
+	clear("listview_div");
+	write("listview_div",htmltext);
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function AddSubfolder_updateview()
+{
+	var htmltext = "<table id='listtable6' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'>";
+	for(var i=0;i<subdir_perm.length;i++)
+	{
+		var rightmask = "";
+		if(subdir_perm[i].is_home_dir) rightmask += "H";
+		rightmask += " ";
+		if(subdir_perm[i].fileread) rightmask += "R";
+		if(subdir_perm[i].filewrite) rightmask += "W";
+		if(subdir_perm[i].fileappend) rightmask += "A";
+		if(subdir_perm[i].filedelete) rightmask += "D";
+		if(subdir_perm[i].filerename) rightmask += "Rn";
+		rightmask += " ";
+		if(subdir_perm[i].dirlist) rightmask += "L";
+		if(subdir_perm[i].dirmake) rightmask += "M";
+		if(subdir_perm[i].dirdelete) rightmask += "D";
+		if(subdir_perm[i].dirrename) rightmask += "Rn";
+		rightmask += " ";
+		if(subdir_perm[i].zipfile) rightmask += "Z";
+		if(subdir_perm[i].unzipfile) rightmask += "U";
+		htmltext += "<tr class='listtr01' onmouseup='do_list_click6(this);'><td width='75%' f_id='"+i+"' class='longtd'>"+subdir_perm[i].dir+"</td><td width='25%'>"+rightmask+"</td></tr>";
+	}
+	htmltext += "</table>";
+	clear("listview_div6");
+	write("listview_div6",htmltext);
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function AddDirectory_callback(dirObject)
+{
+	if(typeof(dirObject) == "object")
+	{
+		if(dirObject.is_home_dir)
+		{
+			for(var i=0;i<directories.length;i++)
+			{
+				if(directories[i].is_home_dir)
+				{
+					dirObject = null;
+					AddDirectory_updateview();
+					alert("<%=LANG['str_existed_homedir']%>");
+					return;
+				}
+			}
+		}
+
+		directories.push(dirObject);
+		dirObject = null;
+		AddDirectory_updateview();
+	}
+}
+
+function AddSubfolder_callback(dirObject)
+{
+	if(typeof(dirObject) == "object")
+	{
+		subdir_perm.push(dirObject);
+		dirObject = null;
+		AddSubfolder_updateview();
+	}
+}
+
+function do_list_click(obj)
+{
+	var row_index = obj.rowIndex;
+	if(selectedRow != $("listtable").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("listtable").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifyDirectory();
+	}
+
+	return false;
+}
+
+function do_list_click6(obj)
+{
+	var row_index = obj.rowIndex;
+	if(selectedRow != $("listtable6").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("listtable6").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifySubfolder();
+	}
+
+	return false;
+}
+
+function ModifyDirectory()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	last_dir_id = f_id;
+	var f_dir = urlEncode(JSON.stringify(directories[f_id]));
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_modifydir']%>","<iframe src='admin_add_directory.html?dir="+f_dir+"&seeds=" + Math.random() +"' width=450 height=320 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",ModifyDirectory_callback,450,320);
+}
+
+function ModifyDirectory_callback(dirObject)
+{
+	if(typeof(dirObject) == "object" && last_dir_id >= 0)
+	{
+		if(dirObject.is_home_dir == true && directories[last_dir_id].is_home_dir == false)
+		{
+			for(var i=0;i<directories.length;i++)
+			{
+				if(directories[i].is_home_dir)
+				{
+					dirObject = null;
+					AddDirectory_updateview();
+					alert("<%=LANG['str_existed_homedir']%>");
+					return;
+				}
+			}
+		}
+
+		directories[last_dir_id] = dirObject;
+		dirObject = null;
+		AddDirectory_updateview();
+	}
+}
+
+function DeleteDirectory()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	directories.splice(f_id,1);
+	AddDirectory_updateview();
+}
+
+function UpDirectory()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id > 0)
+	{
+		var temp = directories[f_id-1]; 
+		directories[f_id-1] = directories[f_id];
+		directories[f_id] = temp;
+	}
+
+	AddDirectory_updateview();
+
+	if(f_id > 0)
+	{
+		for(var i=0; i < directories.length; i++)
+		{
+			var tempID = parseInt($("listtable").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id-1)
+			{
+				$("listtable").rows[i].className = "listtr02";
+				lastObj = $("listtable").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+function DownDirectory()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id < directories.length-1)
+	{
+		var temp = directories[f_id+1]; 
+		directories[f_id+1] = directories[f_id];
+		directories[f_id] = temp;
+	}
+
+	AddDirectory_updateview();
+
+	if(f_id < directories.length-1)
+	{
+		for(var i=0; i < directories.length; i++)
+		{
+			var tempID = parseInt($("listtable").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id+1)
+			{
+				$("listtable").rows[i].className = "listtr02";
+				lastObj = $("listtable").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+
+
+
+
+function ModifySubfolder()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	last_subdir_id = f_id;
+	var f_dir = urlEncode(JSON.stringify(subdir_perm[f_id]));
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_subfolder_rule']%>","<iframe src='admin_add_subdir.html?dir="+f_dir+"&seeds=" + Math.random() +"' width=450 height=300 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",ModifySubfolder_callback,450,300);
+}
+
+function ModifySubfolder_callback(dirObject)
+{
+	if(typeof(dirObject) == "object" && last_subdir_id >= 0)
+	{
+		subdir_perm[last_subdir_id] = dirObject;
+		dirObject = null;
+		AddSubfolder_updateview();
+	}
+}
+
+function DeleteSubfolder()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	subdir_perm.splice(f_id,1);
+	AddSubfolder_updateview();
+}
+
+function UpSubfolder()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id > 0)
+	{
+		var temp = subdir_perm[f_id-1]; 
+		subdir_perm[f_id-1] = subdir_perm[f_id];
+		subdir_perm[f_id] = temp;
+	}
+
+	AddSubfolder_updateview();
+
+	if(f_id > 0)
+	{
+		for(var i=0; i < subdir_perm.length; i++)
+		{
+			var tempID = parseInt($("listtable6").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id-1)
+			{
+				$("listtable6").rows[i].className = "listtr02";
+				lastObj = $("listtable6").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+function DownSubfolder()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id < subdir_perm.length-1)
+	{
+		var temp = subdir_perm[f_id+1]; 
+		subdir_perm[f_id+1] = subdir_perm[f_id];
+		subdir_perm[f_id] = temp;
+	}
+
+	AddSubfolder_updateview();
+
+	if(f_id < subdir_perm.length-1)
+	{
+		for(var i=0; i < subdir_perm.length; i++)
+		{
+			var tempID = parseInt($("listtable6").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id+1)
+			{
+				$("listtable6").rows[i].className = "listtr02";
+				lastObj = $("listtable6").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+
+
+
+function AddBlockIP()
+{
+	showMessagebox("<%=LANG['str_addblockip']%>","<span style='padding:5px;'><%=LANG['str_ipmask_tip']%><span><br><br><%=LANG['str_ip']%>: <input type='text' style='width:190px' id='blockip'><br><input type='radio' name='radio' id='radio_deny' checked><%=LANG['str_denied']%> <input type='radio' name='radio' id='radio_allow'><%=LANG['str_allowed']%><br><br><br><button id='btn_submit' type='submit' onclick='return AddBlockIP_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button>",null,340,190);
+	top.$("blockip").focus();
+
+	top.$("btn_submit").onclick = function(){return AddBlockIP_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function AddBlockIP_updateview()
+{
+	var htmltext = "<table id='listtable2' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'><tbody>";
+	for(var i=0;i<ipmasks.length;i++)
+	{
+		var refuse = ipmasks[i].refuse ? "<font color='red'><%=LANG['str_deny']%></font>":"<font color='green'><%=LANG['str_allow']%></font>";
+		htmltext += "<tr class='listtr01' onmouseup='do_list_click2(this);'><td width='70%' f_id='"+i+"'>"+ipmasks[i].ip+"</td><td width='30%'>"+refuse+"</td></tr>";
+	}
+	htmltext += "</tbody></table>";
+	clear("listview_div2");
+	write("listview_div2",htmltext);
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function AddBlockIP_submit()
+{
+	var blockip = htmldecode(top.$("blockip").value);
+	if(blockip.length == 0 || blockip.search(/[\<\>\"\']/i) != -1)
+	{
+		alert("<%=LANG['str_invalidip']%>");
+		top.$("blockip").focus();
+		return;
+	}
+	var mask = new Object();
+	mask.ip = blockip;
+	mask.refuse = top.$("radio_deny").checked ? true:false;
+	ipmasks.push(mask);
+	mask = null;
+	AddBlockIP_updateview();
+	top.closewindow();
+}
+
+function do_list_click2(obj)
+{
+	var row_index = obj.rowIndex;
+	if(selectedRow != $("listtable2").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("listtable2").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifyBlockIP();
+	}
+
+	return false;
+}
+
+function ModifyBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	var f_ip = ipmasks[f_id].ip;
+	var f_deny = ipmasks[f_id].refuse ? "checked":"";
+	var f_allow = ipmasks[f_id].refuse ? "":"checked";
+	showMessagebox("<%=LANG['str_modifyblockip']%>","<span style='padding:5px;'><%=LANG['str_ipmask_tip']%><span><br><input type='hidden' id='blockip_id' value='"+f_id+"'><br><%=LANG['str_ip']%>: <input type='text' style='width:190px' id='blockip' value='"+f_ip+"'><br><input type='radio' name='radio' id='radio_deny' "+f_deny+"><%=LANG['str_denied']%> <input type='radio' name='radio' id='radio_allow' "+f_allow+"><%=LANG['str_allowed']%><br><br><br><button id='btn_submit' type='submit' onclick='return ModifyBlockIP_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button>",null,340,190);
+
+	top.$("btn_submit").onclick = function(){return ModifyBlockIP_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function ModifyBlockIP_submit()
+{
+	var f_id = parseInt(htmldecode(top.$("blockip_id").value));
+	var blockip = htmldecode(top.$("blockip").value);
+	if(blockip.length == 0 || blockip.search(/[\<\>\"\']/i) != -1)
+	{
+		alert("<%=LANG['str_invalidip']%>");
+		top.$("blockip").focus();
+		return;
+	}
+	ipmasks[f_id].ip = blockip;
+	ipmasks[f_id].refuse = top.$("radio_deny").checked ? true:false;
+	AddBlockIP_updateview();
+	top.closewindow();
+}
+
+function DeleteBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	ipmasks.splice(f_id,1);
+	AddBlockIP_updateview();
+}
+
+function UpBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id > 0)
+	{
+		var temp = ipmasks[f_id-1]; 
+		ipmasks[f_id-1] = ipmasks[f_id];
+		ipmasks[f_id] = temp;
+	}
+
+	AddBlockIP_updateview();
+
+	if(f_id > 0)
+	{
+		for(var i=0; i < ipmasks.length; i++)
+		{
+			var tempID = parseInt($("listtable2").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id-1)
+			{
+				$("listtable2").rows[i].className = "listtr02";
+				lastObj = $("listtable2").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+function DownBlockIP()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id < ipmasks.length-1)
+	{
+		var temp = ipmasks[f_id+1]; 
+		ipmasks[f_id+1] = ipmasks[f_id];
+		ipmasks[f_id] = temp;
+	}
+
+	AddBlockIP_updateview();
+
+	if(f_id < ipmasks.length-1)
+	{
+		for(var i=0; i < ipmasks.length; i++)
+		{
+			var tempID = parseInt($("listtable2").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id+1)
+			{
+				$("listtable2").rows[i].className = "listtr02";
+				lastObj = $("listtable2").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+
+
+
+
+function AddBlockfile()
+{
+	showMessagebox("<%=LANG['str_addblockfile']%>","<span style='padding:5px;'><%=LANG['str_filemask_tip']%><span><br><br><%=LANG['str_filemask']%>: <input type='text' style='width:190px' id='blockfilename'><br><input type='radio' name='radio' id='radio_deny' checked><%=LANG['str_denied']%> <input type='radio' name='radio' id='radio_allow'><%=LANG['str_allowed']%><br><br><br><button id='btn_submit' type='submit' onclick='return AddBlockfile_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button>",null,340,190);
+	top.$("blockfilename").focus();
+
+	top.$("btn_submit").onclick = function(){return AddBlockfile_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function AddBlockfile_updateview()
+{
+	var htmltext = "<table id='listtable3' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'><tbody>";
+	for(var i=0;i<filemasks.length;i++)
+	{
+		var refuse = filemasks[i].refuse ? "<font color='red'><%=LANG['str_deny']%></font>":"<font color='green'><%=LANG['str_allow']%></font>";
+		htmltext += "<tr class='listtr01' onmouseup='do_list_click3(this);'><td width='70%' f_id='"+i+"'>"+filemasks[i].filename+"</td><td width='30%'>"+refuse+"</td></tr>";
+	}
+	htmltext += "</tbody></table>";
+	clear("listview_div3");
+	write("listview_div3",htmltext);
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function AddBlockfile_submit()
+{
+	var blockfilename = htmldecode(top.$("blockfilename").value);
+	if(blockfilename.length == 0 || blockfilename.search(/[\<\>\"\']/i) != -1)
+	{
+		alert("<%=LANG['str_invalid_filename']%>");
+		top.$("blockfilename").focus();
+		return;
+	}
+	var mask = new Object();
+	mask.filename = blockfilename;
+	mask.refuse = top.$("radio_deny").checked ? true:false;
+	filemasks.push(mask);
+	mask = null;
+	AddBlockfile_updateview();
+	top.closewindow();
+}
+
+function do_list_click3(obj)
+{
+	var row_index = obj.rowIndex;
+	if(selectedRow != $("listtable3").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("listtable3").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifyBlockfile();
+	}
+
+	return false;
+}
+
+function ModifyBlockfile()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	var f_filename = filemasks[f_id].filename;
+	var f_deny = filemasks[f_id].refuse ? "checked":"";
+	var f_allow = filemasks[f_id].refuse ? "":"checked";
+	showMessagebox("<%=LANG['str_modifyblockfile']%>","<span style='padding:5px;'><%=LANG['str_filemask_tip']%><span><br><input type='hidden' id='blockfileid' value='"+f_id+"'><br><%=LANG['str_filemask']%>: <input type='text' style='width:190px' id='blockfilename' value='"+f_filename+"'><br><input type='radio' name='radio' id='radio_deny' "+f_deny+"><%=LANG['str_denied']%> <input type='radio' name='radio' id='radio_allow' "+f_allow+"><%=LANG['str_allowed']%><br><br><br><button id='btn_submit' type='submit' onclick='return ModifyBlockfile_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button>",null,340,190);
+
+	top.$("btn_submit").onclick = function(){return ModifyBlockfile_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function ModifyBlockfile_submit()
+{
+	var f_id = parseInt(htmldecode(top.$("blockfileid").value));
+	var blockfilename = htmldecode(top.$("blockfilename").value);
+	if(blockfilename.length == 0 || blockfilename.search(/[\<\>\"\']/i) != -1)
+	{
+		alert("<%=LANG['str_invalid_filename']%>");
+		top.$("blockfilename").focus();
+		return;
+	}
+	filemasks[f_id].filename = blockfilename;
+	filemasks[f_id].refuse = top.$("radio_deny").checked ? true:false;
+	AddBlockfile_updateview();
+	top.closewindow();
+}
+
+function DeleteBlockfile()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	filemasks.splice(f_id,1);
+	AddBlockfile_updateview();
+}
+
+function UpBlockfile()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id > 0)
+	{
+		var temp = filemasks[f_id-1]; 
+		filemasks[f_id-1] = filemasks[f_id];
+		filemasks[f_id] = temp;
+	}
+
+	AddBlockfile_updateview();
+
+	if(f_id > 0)
+	{
+		for(var i=0; i < filemasks.length; i++)
+		{
+			var tempID = parseInt($("listtable3").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id-1)
+			{
+				$("listtable3").rows[i].className = "listtr02";
+				lastObj = $("listtable3").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+function DownBlockfile()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id < filemasks.length-1)
+	{
+		var temp = filemasks[f_id+1]; 
+		filemasks[f_id+1] = filemasks[f_id];
+		filemasks[f_id] = temp;
+	}
+
+	AddBlockfile_updateview();
+
+	if(f_id < filemasks.length-1)
+	{
+		for(var i=0; i < filemasks.length; i++)
+		{
+			var tempID = parseInt($("listtable3").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id+1)
+			{
+				$("listtable3").rows[i].className = "listtr02";
+				lastObj = $("listtable3").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+
+
+
+
+function AddGroup()
+{
+	showMessagebox("<%=LANG['str_addusergroup']%>","<iframe src='admin_group_selector.html?domain=<%=domain%>' width=300 height=350 border=0 frameborder=0></iframe>",AddGroup_callback,300,350);
+}
+
+function AddGroup_callback(groupname)
+{	
+	if(groupname != null && groupname != "")
+	{
+		var groupArray = groupname.split("||");
+		for(var i=0;i<groupArray.length;i++)
+		{
+			var bExist = false;
+			for(var n=0;n<usergroups.length;n++)
+			{
+				if(usergroups[n].groupname == groupArray[i])
+				{
+					bExist = true;
+				}
+			}
+
+			if(bExist == false)
+			{
+				var group = new Object();
+				group.groupname = groupArray[i];
+				usergroups.push(group);
+				group = null;
+			}
+		}
+		AddGroup_updateview();
+	}
+}
+
+function AddGroup_updateview()
+{
+	var htmltext = "<table id='listtable4' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'>";
+	for(var i=0;i<usergroups.length;i++)
+	{
+		htmltext += "<tr class='listtr01' onmouseup='do_list_click4(this);'><td f_id='"+i+"' colspan=2>"+usergroups[i].groupname+"</td></tr>";
+	}
+	htmltext += "</table>";
+	clear("listview_div4");
+	write("listview_div4",htmltext);
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function do_list_click4(obj)
+{
+	var row_index = obj.rowIndex;
+	if(selectedRow != $("listtable4").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("listtable4").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+
+	return false;
+}
+
+function DeleteGroup()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	usergroups.splice(f_id,1);
+	AddGroup_updateview();
+}
+
+function UpGroup()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id > 0)
+	{
+		var temp = usergroups[f_id-1]; 
+		usergroups[f_id-1] = usergroups[f_id];
+		usergroups[f_id] = temp;
+	}
+
+	AddGroup_updateview();
+
+	if(f_id > 0)
+	{
+		for(var i=0; i < usergroups.length; i++)
+		{
+			var tempID = parseInt($("listtable4").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id-1)
+			{
+				$("listtable4").rows[i].className = "listtr02";
+				lastObj = $("listtable4").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+function DownGroup()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	if(f_id < usergroups.length-1)
+	{
+		var temp = usergroups[f_id+1]; 
+		usergroups[f_id+1] = usergroups[f_id];
+		usergroups[f_id] = temp;
+	}
+
+	AddGroup_updateview();
+
+	if(f_id < usergroups.length-1)
+	{
+		for(var i=0; i < usergroups.length; i++)
+		{
+			var tempID = parseInt($("listtable4").rows[i].cells[0].getAttribute("f_id"));
+			if(tempID == f_id+1)
+			{
+				$("listtable4").rows[i].className = "listtr02";
+				lastObj = $("listtable4").rows[i];
+				selectedRow = lastObj;
+			}
+		}
+	}
+}
+
+
+
+function AddSchedule()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_addschedule']%>","<iframe src='admin_add_schedule.html' width=390 height=240 border=0 frameborder=0 id='add"+frametag+"'></iframe>",AddSchedule_callback,390,240);
+}
+
+function AddSchedule_updateview()
+{
+	var htmltext = "<table id='listtable5' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'>";
+	for(var i=0;i<schedules.length;i++)
+	{
+		var dayindex = parseInt(schedules[i].weekday);
+		if(dayindex < 0 || dayindex > 6)
+			dayindex = 0;
+
+		if(schedules[i].timefrom == "-1:-1:-1" && schedules[i].timeto == "-1:-1:-1")
+		{
+			htmltext += "<tr class='listtr01' onmouseup='do_list_click5(this);'><td width='40%' f_id='"+i+"' f_weekday='"+dayindex+"' >"+weekdays[dayindex]+"</td><td width='30%'><%=LANG['str_disallow_allday']%></td><td width='30%'><%=LANG['str_disallow_allday']%></td></tr>";
+		}
+		else
+		{
+			htmltext += "<tr class='listtr01' onmouseup='do_list_click5(this);'><td width='40%' f_id='"+i+"' f_weekday='"+dayindex+"' >"+weekdays[dayindex]+"</td><td width='30%'>"+schedules[i].timefrom+"</td><td width='30%'>"+schedules[i].timeto+"</td></tr>";
+		}
+	}
+	htmltext += "</table>";
+	clear("listview_div5");
+	write("listview_div5",htmltext);
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+function AddSchedule_callback(str)
+{
+	if(str != "" && str != null)
+	{
+		if(schedules.length > 50)
+		{
+			AddSchedule_updateview();
+			alert("<%=LANG['str_toomany_schedule']%>");
+			return;
+		}
+
+		var strArray = str.split(",");
+		var scheduleObj = new Object();
+		scheduleObj.weekday = parseInt(strArray[0]);
+		scheduleObj.timefrom = strArray[1];
+		scheduleObj.timeto = strArray[2];
+		var alldays = strArray[3];
+
+		for(var i=0;i<schedules.length;i++)
+		{
+			if(schedules[i].weekday == scheduleObj.weekday && schedules[i].timefrom == scheduleObj.timefrom && schedules[i].timeto == scheduleObj.timeto)
+			{
+				scheduleObj = null;
+				AddSchedule_updateview();
+				alert("<%=LANG['str_existed_schedule']%>");
+				return;
+			}
+		}
+		if(alldays != null && alldays == "1")
+		{
+			for(var j=0;j<7;j++)
+			{
+				var tempObj = new Object();
+				tempObj.weekday = j;
+				tempObj.timefrom = strArray[1];
+				tempObj.timeto = strArray[2];
+				schedules.push(tempObj);
+				tempObj = null;
+			}
+		}
+		else
+		{
+			schedules.push(scheduleObj);
+		}
+		scheduleObj = null;
+		AddSchedule_updateview();
+	}
+}
+
+function do_list_click5(obj)
+{
+	if($("enable_schedule").checked == false)
+		return false;
+
+	var row_index = obj.rowIndex;
+	if(selectedRow != $("listtable5").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("listtable5").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].innerHTML);
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifySchedule();
+	}
+
+	return false;
+}
+
+function ModifySchedule()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	try
+	{
+		var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+		var f_weekday = selectedRow.cells[0].getAttribute("f_weekday");
+		var f_timefrom = urlEncode(selectedRow.cells[1].innerHTML);
+		var f_timeto = urlEncode(selectedRow.cells[2].innerHTML);
+		last_schedule_id = f_id;
+		var frametag = new Date().getTime();
+		showMessagebox("<%=LANG['str_addschedule']%>","<iframe src='admin_add_schedule.html?weekday="+f_weekday+"&timefrom="+f_timefrom+"&timeto="+f_timeto+"&seeds=" + Math.random() +"' width=390 height=240 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",ModifySchedule_callback,390,240);
+	}
+	catch(e){}
+}
+
+function ModifySchedule_callback(str)
+{
+	if(str != "" && str != null)
+	{
+		if(last_schedule_id >= 0)
+		{
+			var strArray = str.split(",");
+			var scheduleObj = new Object();
+			scheduleObj.weekday = parseInt(strArray[0]);
+			scheduleObj.timefrom = strArray[1];
+			scheduleObj.timeto = strArray[2];
+			schedules[last_schedule_id] = scheduleObj;
+			scheduleObj = null;
+		}
+		AddSchedule_updateview();
+	}
+}
+
+function DeleteSchedule()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_norow_tip']%>");
+		return;
+	}
+
+	var f_id = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	schedules.splice(f_id,1);
+	AddSchedule_updateview();
+}
+
+function DeleteAllSchedule()
+{
+	schedules = null;
+	schedules = new Array();
+	AddSchedule_updateview();
+}
+
+
+var charArray = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','~','!','@','#','$','%','^','&','*','_','-','+','=','(',')','{','}','[',']','<','>','?'];
+function generateRandom(len) 
+{
+	len = <%=c_GetOptionInt(domain,DOPTION_PASSWORD_LEN_INT)%>;
+	if(len < 8)
+	{
+		len = 8;
+	}
+	if(parseInt($("pass_length").value) > 0)
+	{
+		len = parseInt($("pass_length").value);
+	}
+	var password_complexity = <%=c_GetOptionInt(domain,DOPTION_INC_NONALPHANUMERIC_INT)%>;
+    var result = "";
+
+	for(var n=0; n<100; n++) 
+	{
+		for(var i=0; i<len; i++) 
+		{
+			var index = 0;
+			if(password_complexity)
+				index = Math.ceil(Math.random()*(charArray.length-1) );
+			else
+				index = Math.ceil(Math.random()*61 );
+			result += charArray[index];
+		}
+
+		if(checkPass(result) == "")
+			return result;
+		else
+			result = "";
+	}
+    return result;
+}
+
+function checkPass(s)
+{   
+	var len = <%=c_GetOptionInt(domain,DOPTION_PASSWORD_LEN_INT)%>;
+	var password_complexity1 = <%=c_GetOptionInt(domain,DOPTION_INC_NUMBER_INT)%>;
+	var password_complexity2 = <%=c_GetOptionInt(domain,DOPTION_INC_LOWERCASE_INT)%>;
+	var password_complexity3 = <%=c_GetOptionInt(domain,DOPTION_INC_UPPERCASE_INT)%>;
+	var password_complexity4 = <%=c_GetOptionInt(domain,DOPTION_INC_NONALPHANUMERIC_INT)%>;
+
+	if(parseInt($("pass_length").value) > 0)
+	{
+		len = parseInt($("pass_length").value);
+	}
+
+	if(s.length < len)
+		return '<%=LANG["str_min_password"]%> >='+len;
+
+	if(password_complexity1 && !s.match(/([0-9])+/))
+		return '<%=LANG["str_password_complexity"]%> <%=LANG["str_password_complexity1"]%>';
+
+	if(password_complexity2 && !s.match(/([a-z])+/))
+		return '<%=LANG["str_password_complexity"]%> <%=LANG["str_password_complexity2"]%>';
+
+	if(password_complexity3 && !s.match(/([A-Z])+/))
+		return '<%=LANG["str_password_complexity"]%> <%=LANG["str_password_complexity3"]%>';
+
+	if(password_complexity4 && !s.match(/[^a-zA-Z0-9]+/))
+		return '<%=LANG["str_password_complexity"]%> <%=LANG["str_password_complexity4"]%>';
+   
+
+	return '';
+ } 
+
+function changePassInputType()
+{
+	if($("password").value == $("oldpassword").value)
+	{
+		$("passdiv").innerHTML = "<input id='password' type='text' style='width:305px;'>";
+		$("password").value = "";
+		$("password").focus();
+		$("password").focus();
+		checkPassword();
+	}
+}
+
+function chooseDirectory()
+{
+	showMessagebox("<%=LANG['str_choosefile']%>","<iframe src='admin_file_selector.html' width=550 height=500 border=0 frameborder=0></iframe>",callback_return,550,500);
+}
+
+function callback_return(value)
+{
+	$("ssh_pubkey_path").focus();
+	if(value != null)
+		$("ssh_pubkey_path").value = value;
+}
+
+function reset2FACode()
+{
+	$("two_factor_code").value = "";
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;">
+
+<div id="tabDiv">
+  <ul id="tags">
+  	<li class="emptyTag"></li>
+    <li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent1',this)"><%=LANG["title_general"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent2',this)"><%=LANG["title_directory"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent10',this)"><%=LANG["title_subdir"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent3',this)"><%=LANG["title_group"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent4',this)"><%=LANG["title_limit"]%></a></li>
+    <li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent5',this)"><%=LANG["title_ratioquota"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent6',this)"><%=LANG["title_blockip"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent7',this)"><%=LANG["title_blockfile"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent8',this)"><%=LANG["title_accesstime"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent9',this)"><%=LANG["title_notes"]%></a></li>
+  </ul>
+  <div id="tagContent" class="tagContent">
+  	<div id="tagContent1" style="overflow:auto; overflow-x:hidden;">
+		<input id="domain" type="hidden" value="<%=domain%>">
+		<input id="oldpassword" type="hidden">
+		<input id="send_message" type="hidden">
+		<table cellSpacing="0" cellPadding="0" border="0">
+
+		<tr><td colspan="2">
+		<table cellSpacing="0" cellPadding="0" border="0"><tr>
+		<td><img src="images/user48.png">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_adduser_tip"]%></td>
+		</tr></table>
+		</td></tr>
+
+		<tr><td><b><%=LANG["str_username"]%>:</b></td><td><input id="username" type="text" style="width:305px;" maxlength="64" autocomplete="off"><input id="enable_account" type="checkbox" checked><%=LANG["str_enable_account"]%> <% if _GET["username"] == nil then %><input id="anonymous" type="checkbox" onclick="checkAnonymous();"><%=LANG["str_anonymous"]%><% end %></td></tr>
+		<tr><td><%=LANG["str_password"]%>:</td><td>
+		<% if _GET["username"] == nil then %>
+		<input id="password" type="text" style="width:260px;" autocomplete="off"> 
+		<button onclick="$('password').value = generateRandom(8);" title="<%=LANG["str_generate_pass"]%>"><span><em><img src="images/password.gif" align="absmiddle">&nbsp;</em></span></button>
+		<% else %>
+		<span id="passdiv"><input id="password" type="password" style="width:305px;" onclick="changePassInputType();" onfocus="changePassInputType();" autocomplete="new-password"></span>
+		<button onclick="changePassInputType();$('password').value = generateRandom(8);" title="<%=LANG["str_generate_pass"]%>"><span style="vertical-align:middle;"><em><img src="images/password.gif" align="absmiddle">&nbsp;</em></span></button>
+		<% end %>
+		<input id="enable_password" type="checkbox" onclick="checkPassword();" checked><%=LANG["str_enablepass"]%><td></tr>
+		<tr><td><input id="enable_expire" type="checkbox" onclick="checkExpireTime();"><%=LANG["str_expire_on"]%>:</td><td><input id="expiretime" type="text" value="<%=os.date("%Y-%m-%d %H:%M:%S",os.time()+3600*24*30)%>" onclick="selectTime(this.value);" style="width:160px;" readonly>
+		<% if expired == true then %>
+		<span><b><font color=red>(<%=LANG["str_expired"]%>)</font></b></span>
+		<% end %>
+		</td></tr>
+		<tr><td colspan=2><input id="show_hidden_file" type="checkbox"><%=LANG["str_show_hiddenfile"]%></td></tr>
+		<tr><td colspan=2><input id="change_pass" type="checkbox"><%=LANG["str_change_pass"]%>.
+		<%=LANG["str_password_len"]%>:<input id="pass_length" type="text" value="0" style="width:60px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> (0 = <%=LANG["str_nolimit"]%>)		
+		</td></tr>
+		<tr><td colspan=2>
+		<input id="enable_weblink" type="checkbox" checked><%=LANG["str_enable_weblink"]%> / <input id="enable_uplink" type="checkbox" checked><%=LANG["str_enable_uploadlink"]%>
+		</td></tr>
+		<tr><td colspan=2>
+		<input id="enable_two_factor" type="checkbox"><%=LANG["str_enable_2fa_auth"]%> <input id="two_factor_code" type="text" value="" style="width:160px;" disabled>
+		<button onclick="reset2FACode();"><span style="vertical-align:middle;"><em><%=LANG["str_reset_totp_secret"]%></em></span></button>
+		</td></tr>
+
+		<tr><td colspan=2 style="padding-top:10px;">
+		<%=LANG["str_enabled_protocol"]%>:
+		<input id="protocol_ftp" type="checkbox" checked>FTP
+		<input id="protocol_ftps_tls" type="checkbox" checked>FTPES(Explicit SSL)
+		<input id="protocol_ftps_ssl" type="checkbox" checked>FTPS(Implicit SSL)
+		<input id="protocol_http" type="checkbox" checked>HTTP
+		<input id="protocol_https" type="checkbox" checked>HTTPS
+		<input id="protocol_ssh" type="checkbox" checked>SFTP
+		</td></tr>
+
+		<% if _GET["username"] ~= nil then %>
+		<tr><td colspan=2 style="padding-top:5px;">
+		<fieldset>
+			<legend><b><%=LANG["str_user_statistics"]%></b>&nbsp;&nbsp; 
+			<button onclick="resetUserStatistic();"><span style="vertical-align:middle;"><em><img src="images/reset.png" align="absmiddle"> <%=LANG["button_resetstat"]%></em></span></button>&nbsp;&nbsp; 
+			</legend>
+			<table width="100%" border="0" cellpadding="2" cellspacing="1">
+			<tr>
+			<td width="60%"><%=LANG["str_lastlogin"]%>: <span id="last_logintime"></span> (<%=LANG["str_ip"]%>:<span id="last_loginip"></span>)</td>
+			<td><%=LANG["str_logincount"]%>: <span id="login_count">0</span></td>
+			</tr>
+			<tr>
+			<td><%=LANG["str_file_downloaded"]%>: <span id="file_download">0</span></td><td><%=LANG["str_file_uploaded"]%>: <span id="file_upload">0</span></td>
+			</tr>
+			<tr>
+			<td><%=LANG["str_fail_download"]%>: <span id="failed_download">0</span></td><td><%=LANG["str_fail_upload"]%>: <span id="failed_upload">0</span></td>
+			</tr>
+			<tr>
+			<td><%=LANG["str_sent"]%>: <span id="total_sent">0</span></td><td><%=LANG["str_received"]%>: <span id="total_received">0</span></td>
+			</tr>
+			</table>
+		</fieldset>
+		</td></tr>
+		<% end %>
+		</table>
+	</div>
+	<div id="tagContent2">
+		<table id="listhead" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+
+		<tr><td>
+		<table cellSpacing="0" cellPadding="0" border="0"><tr>
+		<td><img src="images/folder48.png">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_userdir_tip"]%></td>
+		</tr></table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+			<tr>
+			<td class="listhead" width="50%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_directory"]%></td>
+			<td class="listhead" width="30%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_virtualpath"]%></td>
+			<td class="listhead" width="20%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_attributes"]%></td>
+			</tr>
+			<tr>
+			<td colspan="3">
+			<span id="listview_div" style="float:left; height:280px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+			<table id="listtable" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;"></table>
+			</span>
+			</td></tr>
+		</table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<button onclick="AddDirectory();"><span><em><%=LANG["button_adddir"]%></em></span></button><button onclick="ModifyDirectory();"><span><em><%=LANG["button_modify"]%></em></span></button><button onclick="DeleteDirectory();"><span><em><%=LANG["button_delete"]%></em></span></button><button onclick="UpDirectory();"><span><em><%=LANG["button_up"]%></em></span></button><button onclick="DownDirectory();"><span><em><%=LANG["button_down"]%></em></span></button>	
+		</td>
+		</tr>
+		</table>
+
+	</div>
+
+	<div id="tagContent10">
+		<table id="listhead6" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+
+		<tr><td>
+		<table cellSpacing="0" cellPadding="0" border="0"><tr>
+		<td><img src="images/task48.png">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_subfolder_tip"]%></td>
+		</tr></table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+			<tr>
+			<td class="listhead" width="75%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_directory"]%></td>
+			<td class="listhead" width="25%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_attributes"]%></td>
+			</tr>
+			<tr>
+			<td colspan="2">
+			<span id="listview_div6" style="float:left; height:280px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+			<table id="listtable6" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;"></table>
+			</span>
+			</td></tr>
+		</table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<button onclick="AddSubfolder();"><span><em><%=LANG["button_subfolder"]%></em></span></button><button onclick="ModifySubfolder();"><span><em><%=LANG["button_modify"]%></em></span></button><button onclick="DeleteSubfolder();"><span><em><%=LANG["button_delete"]%></em></span></button><button onclick="UpSubfolder();"><span><em><%=LANG["button_up"]%></em></span></button><button onclick="DownSubfolder();"><span><em><%=LANG["button_down"]%></em></span></button>	
+		</td>
+		</tr>
+		</table>
+
+	</div>
+
+
+	<div id="tagContent3">
+		<table id="listhead4" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+
+		<tr><td>
+		<table cellSpacing="0" cellPadding="0" border="0"><tr>
+		<td><img src="images/group48.png">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_usergroup_tip"]%></td>
+		</tr></table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+			<tr>
+			<td class="listhead" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_group"]%></td>
+			</tr>
+			<tr>
+			<td>
+			<span id="listview_div4" style="float:left; height:280px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+			<table id="listtable4" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;"></table>
+			</span>
+			</td></tr>
+		</table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<button id="addgroup_btn" onclick="AddGroup();"><span><em><%=LANG["button_addgroup"]%></em></span></button><button id="delgroup_btn" onclick="DeleteGroup();"><span><em><%=LANG["button_delete"]%></em></span></button><button id="upgroup_btn" onclick="UpGroup();"><span><em><%=LANG["button_up"]%></em></span></button><button id="downgroup_btn" onclick="DownGroup();"><span><em><%=LANG["button_down"]%></em></span></button>
+		</td>
+		</tr>
+		</table>
+
+	</div>
+	<div id="tagContent4" style="overflow:auto; overflow-x:hidden;">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td>
+		<fieldset>
+		<legend><b><%=LANG["title_connection_limit"]%>(0 = <%=LANG["str_nolimit"]%>)</b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td><%=LANG["str_connectionlimit3"]%>:</td><td><input id="max_connection" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></td></tr>
+		<tr><td><%=LANG["str_connectionlimit4"]%>:</td><td><input id="connect_per_ip" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"></td></tr>
+		<tr><td><%=LANG["str_connectionlimit5"]%>:</td><td><input id="connect_timeout" type="text" value="<%=c_GetOptionInt(domain,DOPTION_COMMAND_TIMEOUT_INT)%>" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> <%=LANG["str_minute"]%></td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+		<tr><td style="padding-top:10px;">
+		<fieldset>
+		<legend><b><%=LANG["title_transfer_limit"]%>(0 = <%=LANG["str_nolimit"]%>)</b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td><%=LANG["str_session_downspeed"]%>:</td><td><input id="max_download" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> KB/s</td></tr>
+		<tr><td><%=LANG["str_session_upspeed"]%>:</td><td><input id="max_upload" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> KB/s</td></tr>
+		<tr><td><%=LANG["str_account_downspeed"]%>:</td><td><input id="max_download_account" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> KB/s</td></tr>
+		<tr><td><%=LANG["str_account_upspeed"]%>:</td><td><input id="max_upload_account" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> KB/s</td></tr>
+		<tr><td><%=LANG["str_transferlimit7"]%>:</td><td><input id="idle_timeout" type="text" value="<%=c_GetOptionInt(domain,DOPTION_TRANSFER_TIMEOUT_INT)%>" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> <%=LANG["str_minute"]%></td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+		
+		<tr><td style="padding-top:10px;">
+		<fieldset>
+			<legend><b><input id="enable_ssh_pubkey_auth" type="checkbox" onclick="checkSSHAuth();"><%=LANG["str_enable_pubkey_auth"]%></b></legend>
+			<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+			<tr><td colspan=2><%=LANG["str_ssh_pubkey"]%>: 
+			<input type="text" style="width:260px" id="ssh_pubkey_path">
+			<button id="btn_directory" onclick="chooseDirectory();"><span><em><%=LANG["button_choose"]%></em></span></button>
+			</td></tr>
+			<tr><td align="left"><%=LANG["str_ssh_auth_method"]%></td><td><input type="radio" id="ssh_auth_method0" name="ssh_auth_method" value="0" checked><%=LANG["str_ssh_auth_method1"]%></td><td>
+			<tr><td>&nbsp;</td><td><input type="radio" id="ssh_auth_method1" name="ssh_auth_method" value="1"><%=LANG["str_ssh_auth_method2"]%></td></tr>
+			</table>
+		</fieldset>	
+		</td></tr>
+		
+		</table>	
+	</div>
+  	<div id="tagContent5">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td>
+		<fieldset>
+			<legend><b><input id="enable_ratio" type="checkbox" onclick="checkRatio();"> <%=LANG["str_enable_ratio"]%></b></legend>
+			<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+			<tr><td align="right">&nbsp;&nbsp;<%=LANG["str_ratio"]%>: </td><td><input id="ratio_upload" type="text" value="1" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" style="width:60px;"><%=LANG["str_uploads"]%> / <input id="ratio_download" type="text" value="1" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" style="width:60px;"><%=LANG["str_downloads"]%></td></tr>
+			<tr><td align="right">&nbsp;&nbsp;<%=LANG["str_current_credit"]%>: </td><td><input id="ratio_credit" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> <span id="ratio_credit_lable"><%=LANG["str_files"]%></span></td></tr>
+			<tr><td>&nbsp;</td><td><input type="radio" id="ratio_count_method0" name="ratio_count_method" value="0" onclick="ChangeRatioMethod(0);" checked><%=LANG["str_countfiles"]%>
+			</td></tr>
+			<tr><td>&nbsp;</td><td><input type="radio" id="ratio_count_method1" name="ratio_count_method" value="1" onclick="ChangeRatioMethod(1);"><%=LANG["str_countbytes"]%>
+			</td></tr>
+			</table>
+		</fieldset>	
+		</td></tr>
+
+		<tr><td style="padding-top:15px;">
+		<fieldset>
+			<legend><b><input id="enable_quota" type="checkbox" onclick="checkQuota();"> <%=LANG["str_enable_quota"]%></b></legend>
+			<table width="100%" cellSpacing="0" cellPadding="2" border="0">		
+			<tr><td align="right"><%=LANG["str_current_quota"]%>:</td><td><input id="current_quota" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> KB</td></tr>
+			<tr><td align="right"><%=LANG["str_max_quota"]%>:</td><td><input id="max_quota" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> KB</td></tr>
+			</table>
+		</fieldset>	
+		</td></tr>
+
+		<tr><td style="padding-top:15px;">
+		<fieldset>
+			<legend><b><%=LANG["str_transfer_limit"]%></b></legend>
+			<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+			<tr><td width="130">
+			<%=LANG["str_reset"]%>&nbsp;&nbsp;<select id='limit_reset_type'><option value='0'><%=LANG["str_never"]%></option><option value='1'><%=LANG["str_hourly"]%></option><option value='2'><%=LANG["str_daily"]%></option><option value='3'><%=LANG["str_weekly"]%></option><option value='4'><%=LANG["str_monthly"]%></option></select>		
+			</td><td> <b><%=LANG["str_current"]%></b></td><td> <b><%=LANG["str_max"]%></b></td></tr>
+			<tr><td><input id="limit_enable_download" type="checkbox" onclick="checkDownloadLimit();"> <%=LANG["str_download"]%></td><td><input id="cur_download_size" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" style="width:100px;">MB </td><td><input id="max_download_size" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" style="width:100px;">MB</td></tr>
+			<tr><td><input id="limit_enable_upload" type="checkbox" onclick="checkUploadLimit();"> <%=LANG["str_upload"]%></td><td><input id="cur_upload_size" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" style="width:100px;">MB </td><td><input id="max_upload_size" type="text" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" style="width:100px;">MB</td></tr>
+			</table>
+		</fieldset>	
+		</td></tr>
+		</table>		
+	</div>
+	<div id="tagContent6">
+		<table id="listhead2" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+
+		<tr><td>
+		<table cellSpacing="0" cellPadding="0" border="0"><tr>
+		<td><img src="images/ip48.png">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_userip_tip"]%></td>
+		</tr></table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+			<tr>
+			<td class="listhead" width="70%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable2', 0);"><%=LANG["title_ip"]%></td>
+			<td class="listhead" width="30%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable2', 1);"><%=LANG["title_allowdeny"]%></td>
+			</tr>
+			<tr>
+			<td colspan="2">
+			<span id="listview_div2" style="float:left; height:280px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+			<table id="listtable2" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;"></table>
+			</span>
+			</td></tr>
+		</table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<button onclick="AddBlockIP();"><span><em><%=LANG["button_addblockip"]%></em></span></button><button onclick="ModifyBlockIP();"><span><em><%=LANG["button_modify"]%></em></span></button><button onclick="DeleteBlockIP();"><span><em><%=LANG["button_delete"]%></em></span></button><button onclick="UpBlockIP();"><span><em><%=LANG["button_up"]%></em></span></button><button onclick="DownBlockIP();"><span><em><%=LANG["button_down"]%></em></span></button>
+		</td>
+		</tr>
+		</table>
+
+	</div>
+	<div id="tagContent7">
+		<table id="listhead3" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+
+		<tr><td>
+		<table cellSpacing="0" cellPadding="0" border="0"><tr>
+		<td><img src="images/file48.png">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_userfile_tip"]%></td>
+		</tr></table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+			<tr>
+			<td class="listhead" width="70%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable3', 0);"><%=LANG["title_file"]%></td>
+			<td class="listhead" width="30%" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable3', 1);"><%=LANG["title_allowdeny"]%></td>
+			</tr>
+			<tr>
+			<td colspan="2">
+			<span id="listview_div3" style="float:left; height:280px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+			<table id="listtable3" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;"></table>
+			</span>
+			</td></tr>
+		</table>
+		</td></tr>
+
+		<tr>
+		<td>
+		<button onclick="AddBlockfile();"><span><em><%=LANG["button_addblockfile"]%></em></span></button><button onclick="ModifyBlockfile();"><span><em><%=LANG["button_modify"]%></em></span></button><button onclick="DeleteBlockfile();"><span><em><%=LANG["button_delete"]%></em></span></button><button onclick="UpBlockfile();"><span><em><%=LANG["button_up"]%></em></span></button><button onclick="DownBlockfile();"><span><em><%=LANG["button_down"]%></em></span></button>			
+		</td>
+		</tr>
+		</table>
+
+	</div>
+
+	<div id="tagContent8">
+		<table id="listhead5" width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+
+		<tr><td colspan="3">
+		<table cellSpacing="0" cellPadding="0" border="0"><tr>
+		<td><img src="images/activity48.png">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_userschedule_tip"]%></td>
+		</tr></table>
+		</td></tr>
+
+		<tr>
+		<td colspan="3">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+			<tr>
+			<td class="listhead" width="40%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_weekday"]%></td>
+			<td class="listhead" width="30%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_from"]%></td>
+			<td class="listhead" width="30%" onmouseover="className='listhead2';" onmouseout="className='listhead';"><%=LANG["title_to"]%></td>
+			</tr>
+			<tr>
+			<td colspan="3">
+			<span id="listview_div5" style="float:left; height:280px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+			<table id="listtable5" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;"></table>
+			</span>
+			</td></tr>
+		</table>
+		</td></tr>
+
+		<tr>
+		<td colspan="2">
+		<button id="addschedule_btn" onclick="AddSchedule();"><span><em><%=LANG["button_addschedule"]%></em></span></button><button id="modschedule_btn" onclick="ModifySchedule();"><span><em><%=LANG["button_modify"]%></em></span></button><button id="delschedule_btn" onclick="DeleteSchedule();"><span><em><%=LANG["button_delete"]%></em></span></button><button id="delallschedule_btn" onclick="DeleteAllSchedule();"><span><em><%=LANG["button_deleteall"]%></em></span></button>	
+		</td>
+		<td align="right">
+		<input id="enable_schedule" type="checkbox" onclick="checkSchedule();"> <b><%=LANG["str_enable_schedule"]%></b>
+		</td>
+		</tr>
+		</table>
+
+	</div>
+	<div id="tagContent9">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td width="100"><%=LANG["str_note_name"]%>:</td><td><input id="note_name" type="text" style="width:320px"></td></tr>
+		<tr><td><%=LANG["str_note_address"]%>:</td><td><textarea id="note_address" style="width:320px;height:50px;"></textarea></td></tr>
+		<tr><td><%=LANG["str_note_zip"]%>:</td><td><input id="note_zip" type="text" style="width:320px"></td></tr>
+		<tr><td><%=LANG["str_note_phone"]%>:</td><td><input id="note_phone" type="text" style="width:320px"></td></tr>
+		<tr><td><%=LANG["str_note_fax"]%>:</td><td><input id="note_fax" type="text" style="width:320px"></td></tr>
+		<tr><td><%=LANG["str_note_email"]%>:</td><td><input id="note_email" type="text" style="width:320px"></td></tr>
+		<tr><td><%=LANG["str_note_memo"]%>:</td><td><textarea id="note_memo" style="width:320px;height:100px;"></textarea></td></tr>
+		</table>		
+	</div>
+  </div>	
+</div>
+
+<div style="padding:3px;text-align:right;margin-top:5px;margin-right:10px;">
+<button type='submit' onclick='addUserSubmit();'><span><em><%=LANG["button_submit"]%></em></span></button>&nbsp;
+<button onclick='top.closewindow();'><span><em><%=LANG["button_cancel"]%></em></span></button>
+</div>
+
+<script type="text/javascript">
+
+$("tagContent1").style.display="block";
+$("tags").getElementsByTagName("li")[1].className="selectedTag";
+
+if(!isFirefox)
+	$("username").focus();
+
+userInit();
+
+
+<% if _GET["username"] == nil then %>
+$("password").value = generateRandom(8);
+<% end %>
+
+
+function switchTag(tagContent,obj)
+{
+	for(var i=1; i<$("tags").getElementsByTagName("li").length; i++)
+	{
+		$("tags").getElementsByTagName("li")[i].className="normalTag";
+	}
+	obj.parentNode.className="selectedTag";
+	
+	for(var j=0; j<$("tagContent").getElementsByTagName("div").length; j++)
+	{
+		$("tagContent").getElementsByTagName("div")[j].style.display="none";
+	}
+	$(tagContent).style.display="block";
+	selectedRow = null;
+	lastsortcol = -1;
+	if(lastObj != null)
+		lastObj.className = "listtr01";
+}
+
+function ChangeRatioMethod(value)
+{
+	if(value == 0)
+	{
+		$("ratio_credit_lable").innerHTML = "<%=LANG["str_files"]%>";
+	}
+	else
+	{
+		$("ratio_credit_lable").innerHTML = "Bytes";
+	}
+}
+
+function checkSchedule()
+{
+	if($("enable_schedule").checked)
+	{
+		$("listview_div5").disabled = false;
+		$("addschedule_btn").disabled = false;
+		$("modschedule_btn").disabled = false;
+		$("delschedule_btn").disabled = false;
+		$("delallschedule_btn").disabled = false;
+	}
+	else
+	{
+		$("listview_div5").disabled = true;
+		$("addschedule_btn").disabled = true;
+		$("modschedule_btn").disabled = true;
+		$("delschedule_btn").disabled = true;
+		$("delallschedule_btn").disabled = true;
+	}
+}
+
+function checkExpireTime()
+{
+	if($("enable_expire").checked)
+	{
+		$("expiretime").disabled = false;
+	}
+	else
+	{
+		$("expiretime").disabled = true;
+	}
+}
+
+function checkAnonymous()
+{
+	if($("anonymous").checked)
+	{
+		$("username").value = "anonymous";
+		$("username").disabled = true;
+		$("password").value = "";
+		$("password").disabled = true;
+		$("enable_password").checked = false;
+	}
+	else
+	{
+		$("username").value = "";
+		$("username").disabled = false;
+		$("password").disabled = false;
+		$("enable_password").checked = true;
+	}
+	checkPassword();
+}
+
+function checkPassword()
+{
+	if($("enable_password").checked)
+	{
+		$("password").disabled = false;
+	}
+	else
+	{
+		$("password").disabled = true;
+	}
+}
+
+function checkDownloadLimit()
+{
+	if($("limit_enable_download").checked)
+	{
+		$("cur_download_size").disabled = false;
+		$("max_download_size").disabled = false;
+	}
+	else
+	{
+		$("cur_download_size").disabled = true;
+		$("max_download_size").disabled = true;
+	}
+}
+
+function checkUploadLimit()
+{
+	if($("limit_enable_upload").checked)
+	{
+		$("cur_upload_size").disabled = false;
+		$("max_upload_size").disabled = false;
+	}
+	else
+	{
+		$("cur_upload_size").disabled = true;
+		$("max_upload_size").disabled = true;
+	}
+}
+
+function checkSSHAuth()
+{
+	if($("enable_ssh_pubkey_auth").checked)
+	{
+		$("ssh_pubkey_path").disabled = false;
+		$("btn_directory").disabled = false;
+		$("ssh_auth_method0").disabled = false;
+		$("ssh_auth_method1").disabled = false;
+	}
+	else
+	{
+		$("ssh_pubkey_path").disabled = true;
+		$("btn_directory").disabled = true;
+		$("ssh_auth_method0").disabled = true;
+		$("ssh_auth_method1").disabled = true;
+	}
+}
+
+function checkRatio()
+{
+	if($("enable_ratio").checked)
+	{
+		$("ratio_upload").disabled = false;
+		$("ratio_download").disabled = false;
+		$("ratio_credit").disabled = false;
+		$("ratio_count_method0").disabled = false;
+		$("ratio_count_method1").disabled = false;
+	}
+	else
+	{
+		$("ratio_upload").disabled = true;
+		$("ratio_download").disabled = true;
+		$("ratio_credit").disabled = true;
+		$("ratio_count_method0").disabled = true;
+		$("ratio_count_method1").disabled = true;
+	}
+}
+
+function checkQuota()
+{
+	if($("enable_quota").checked)
+	{
+		$("current_quota").disabled = false;
+		$("max_quota").disabled = false;
+	}
+	else
+	{
+		$("current_quota").disabled = true;
+		$("max_quota").disabled = true;
+	}
+}
+
+function selectTime(timevalue)
+{
+	var timeArray = timevalue.split(" ");
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_selecttime']%>","<iframe src='admin_time_selector.html?mydate="+timeArray[0]+"&mytime="+timeArray[1]+"&seeds=" + Math.random() +"' width=280 height=320 border=0 frameborder=0 id='modify"+frametag+"'></iframe>",selectTime_callback,280,320);
+}
+
+function selectTime_callback(str)
+{
+	if(str != "" && str != null)
+		$("expiretime").value = str;
+
+	$("username").focus();
+}
+
+checkPassword();
+checkDownloadLimit();
+checkUploadLimit();
+checkRatio();
+checkQuota();
+checkSSHAuth();
+
+<%
+local nType = c_GetLicenseInfo()
+if nType == LICENSE_STANDARD or nType == LICENSE_SECURE or nType == LICENSE_FREE then
+%>
+$("enable_two_factor").onclick = function()
+{
+	if($("enable_two_factor").checked)
+	{
+		$("enable_two_factor").checked = false;
+		alert("<%=LANG['str_notsupport_2fa']%>");
+	}
+}
+<% 
+end
+%>
+
+</script>
+</body>
+</html>
+
+<% end %>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

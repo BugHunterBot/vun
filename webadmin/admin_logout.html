@@ -1,0 +1,18 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache, must-revalidate" />
+<body>
+<%
+	if _SESSION_ID ~= nil and _SESSION["admin"] ~= nil then
+		if _SESSION["logined"] ~= nil then
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' logged out. (IP:".._REMOTE_IP..")",ADMIN_LOG_OK)
+		end
+		c_AdminLogout(_SESSION_ID)
+		SessionModule.delete(_SESSION_ID)
+		_SETCOOKIE = _SETCOOKIE.."Set-Cookie: UIDADMIN=; expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n"
+	end
+	print("<script>top.location='admin_login.html';</script>")
+%>
+</body>
+</html>

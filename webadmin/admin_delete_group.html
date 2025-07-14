@@ -1,0 +1,8 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local groupname = _POST["groupname"]
+	c_DeleteGroup(domain, groupname)
+	--c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted group '"..groupname.."' ["..unescape(domain).."]",ADMIN_LOG_OK)
+end
+%>

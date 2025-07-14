@@ -1,0 +1,11 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local groupname = _POST["groupname"]
+	local newname = _POST["newname"]
+	local result = c_CopyGroup(domain,groupname,newname)
+	if result ~= nil then
+		print(tostring(result))
+	end
+end
+%>

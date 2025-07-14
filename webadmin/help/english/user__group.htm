@@ -1,0 +1,495 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Advanced Features &gt; Server Lua API &gt; User &amp; Group</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="">
+   <meta name="description" content="User and Group">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?user__group.htm"; }
+  else { parent.quicksync('a6.3.1'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Advanced Features &gt; <a href="server_lua_api.htm">Server Lua API</a>&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">User and Group</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="server_lua_api.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="server_lua_api.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="domain_function.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddUser</span>(string strDomain,string strUsername,string strPassword,int nProtocolType,int bEnablePassword,int bEnableAccount,int nMaxDownloadSpeed,int nMaxUploadSpeed,int nMaxConnection,int nConnectTimeout,int nIdleTimeout,int nConnectPerIp,int nPassLength,int bShowHiddenFile,int bChangePass,int bSendMessage,int nRatioCredit, int nRatioDownload, int nRatioUpload, int nRatioCountMethod,int bEnableRatio,int nCurrentQuota,int nMaxQuota,int bEnableQuota, string strNoteName, string strNoteAddress,string strNoteZip,string strNotePhone,string strNoteFax,string strNoteEmail, string strNoteMemo, table tabUserDirectory, table tabUserIpmasks, table tabUserFilemasks, table tabUserUsergroups,int bEnableSchedule, table tabUserSchedules, int nLimitResetType, int bLimitEnableUpload, int nCurUploadSize,int nMaxUploadSize, int bLimitEnableDownload, int nCurDownloadSize, int nMaxDownloadSize,int bEnableExpire, string strExpireTime, int nMaxDownloadSpeedPerUser, int nMaxUploadSpeedPerUser,string strSSHPubKey, table tabSubFolderPerm, int bEnableSSHPubKey, int nSSHAuthMethod, int bEnableWeblink, int bEnableUplink, int bEnable2FA, string str2FACode, string strExtraInfo)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name </p>
+<p>[2]string &nbsp; the user name</p>
+<p>[3]string &nbsp; password with MD5/SHA256 encryption</p>
+<p>[4]int &nbsp; enabled protocols mask, FTP=1, FTPES(explicit SSL)=2, FTPS(implicit SSL)=4, HTTP=8, HTTP(SSL)=16, SSH=32, if only FTP and HTTP are allowed, the mask number will be 1+8=9.</p>
+<p>[5]int &nbsp; enable password, 1=yes, 0=no</p>
+<p>[6]int &nbsp; enable account, 1=yes, 0=no</p>
+<p>[7]int &nbsp; max download speed for one session </p>
+<p>[8]int &nbsp; max upload speed for one session </p>
+<p>[9]int &nbsp; max number of connections</p>
+<p>[10]int &nbsp; ftp connection timeout value </p>
+<p>[11]int &nbsp; ftp idle timeout value </p>
+<p>[12]int &nbsp; max number of connections per Ip</p>
+<p>[13]int &nbsp; max password length</p>
+<p>[14]int &nbsp; show the hidden file?, 1=show,0=hide</p>
+<p>[15]int &nbsp; user can change password?, 1=allow,0=deny</p>
+<p>[16]int &nbsp; send chat message?, 1=allow,0=deny</p>
+<p>[17]int &nbsp; credit ratio</p>
+<p>[18]int &nbsp; download ratio</p>
+<p>[19]int &nbsp; upload ratio</p>
+<p>[20]int &nbsp; ratio count method, 0=count for files,1=count for bytes</p>
+<p>[21]int &nbsp; enable ratio, 1=yes, 0=no</p>
+<p>[22]int &nbsp; current quota size </p>
+<p>[23]int &nbsp; max quota size </p>
+<p>[24]int &nbsp; enable quota, 1=yes,0=no</p>
+<p>[25]string &nbsp; note name </p>
+<p>[26]string &nbsp; note address</p>
+<p>[27]string &nbsp; note zipcode</p>
+<p>[28]string &nbsp; note phone number</p>
+<p>[29]string &nbsp; note fax number</p>
+<p>[30]string &nbsp; note email</p>
+<p>[31]string &nbsp; note memo</p>
+<p>[32]table &nbsp; a table list of user directory, {user directory} is a table structure which is formated as: <span style="font-style: italic;">{m_strDir,m_strAlias,m_bIsHomeDir,m_bFileRead,m_bFileWrite,m_bFileAppend,m_bFileDelete,m_bDirectoryList,m_bDirectoryMake,m_bDirectoryDelete,m_bDirectoryRename,m_bFileRename,m_bZipFile,m_bUnzipFile}</span></p>
+<p>[33]table &nbsp; a table list of user ipmask, {user ipmask} is a table structure which is formated as:<span style="font-style: italic;"> {m_strIp,m_bRefuse}</span></p>
+<p>[34]table &nbsp; a table list of user filemask, {user filemask} is a table structure which is formated as: <span style="font-style: italic;">{m_strMask,m_bRefuse}</span></p>
+<p>[35]table &nbsp; a table list of user group, {user group} is a table structure which is formated as: <span style="font-style: italic;">{m_strGroupname}</span></p>
+<p>[36]int &nbsp; enable access schedule, 1=yes,0=no</p>
+<p>[37]table &nbsp;a table list of access scheduler, {access scheduler} is a table structure which is formated as: <span style="font-style: italic;">{m_nWeekday,m_strTimefrom, m_strTimeto}</span></p>
+<p>[38]int &nbsp; transfer limit reset type, 0=reset never,1=reset hourly,2=reset daily,3=reset weekly,4=reset monthly</p>
+<p>[39]int &nbsp; enable upload limit, 1=yes, 0=no</p>
+<p>[40]int &nbsp; current upload size</p>
+<p>[41]int &nbsp; max upload size</p>
+<p>[42]int &nbsp; enable download limit, 1=yes, 0=no</p>
+<p>[43]int &nbsp; current download size</p>
+<p>[44]int &nbsp; max download size</p>
+<p>[45]int &nbsp; enable account expire, 1=yes, 0=no</p>
+<p>[46]string &nbsp; account expire time string, e.g. "2010-04-01 13:30:01"</p>
+<p>[47]int &nbsp; max download speed for user</p>
+<p>[48]int &nbsp; max upload speed for user</p>
+<p>[49]string &nbsp; ssh public key path</p>
+<p>[50]table &nbsp; subfolder access rules</p>
+<p>[51]int &nbsp; enable ssh public key authentication, 1=yes,0=no</p>
+<p>[52]int &nbsp; ssh authentication method, 1=Use both public key and password authentication,0=Only use public key authentication</p>
+<p>[53]int &nbsp; enable web download link, 1=yes,0=no</p>
+<p>[54]int &nbsp; enable web request (upload) link, 1=yes,0=no</p>
+<p>[55]int &nbsp; enable two-factor authentication (TOTP) for Web Client, 1=yes,0=no</p>
+<p>[56]string &nbsp; TOTP secret code</p>
+<p>[57]string &nbsp; extra information for the user account</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add or modify a user account.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_UserExist</span>(string strDomain, string strUsername)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the user name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if the specified user exists in the specified domain, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the specified user exists.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetUser</span>(string strDomain,string strUsername)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the user name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a user data table formated as: <span style="font-style: italic;">{username,password,max_download,max_upload,max_download_account,max_upload_account,max_connection,connect_timeout,idle_timeout,connect_per_ip,pass_length,show_hidden_file,change_pass,send_message,ratio_credit,ratio_download,ratio_upload,ratio_count_method,enable_ratio,current_quota,max_quota,enable_quota,note_name,note_address,note_zip,note_phone,note_fax,note_email,note_memo,{Directories table},{Ipmasks table},{Filemasks table},{Usergroups table},enable_group,enable_schedule,{Scheduler table},limit_reset_time,limit_reset_type,limit_enable_upload,cur_upload_size,max_upload_size,limit_enable_download,cur_download_size,max_download_size,enable_expire,expiretime,total_received,total_sent,login_count,file_download,file_upload,failed_download,failed_upload,last_loginip,last_logintime,protocol_type,enable_password,enable_account,</span><span style="font-style: italic;">ssh_pubkey_path</span><span style="font-style: italic;">,enable_ssh_pubkey_auth,ssh_auth_method,enable_weblink,enable_uplink,enable_two_factor,two_factor_code,extra_info,{Subfolder rules table} }</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return a table of user data.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteUser</span>(string strDomain, string strUsername)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the user name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete a user account.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CopyUser</span>(string strDomain, string strUsername, string strNewUsername)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the source user name</p>
+<p>[3]string &nbsp; the new user name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the result code, 1=success, -1=source user not exists, -2=new user already exists.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Copy a user account.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddUserDirectory</span>(string strDomain,string strUsername, string strDirectory,string strAlias,bool bIsHomeDir,bool bFileRead,bool bFileWrite,bool bFileAppend,bool bFileDelete,bool bDirectoryList,bool bDirectoryMake,bool bDirectoryDelete,bool bDirectoryRename,bool bFileRename,bool bZipFile,bool bUnzipFile)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name </p>
+<p>[2]string &nbsp; the user name</p>
+<p>[3]string &nbsp; the directory path </p>
+<p>[4]string &nbsp; the directory alias, "/" is for home directory</p>
+<p>[5]bool &nbsp; &nbsp; &nbsp; &nbsp;is home directory?</p>
+<p>[6]bool &nbsp; &nbsp; &nbsp; &nbsp;can download files?</p>
+<p>[7]bool &nbsp;can upload files?</p>
+<p>[8]bool &nbsp;can resume file uploading?</p>
+<p>[9]bool &nbsp;can delete files?</p>
+<p>[10]bool &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;can see the file listing?</p>
+<p>[11]bool &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;can make a directory?</p>
+<p>[12]bool &nbsp; can remove a directory?</p>
+<p>[13]bool &nbsp; can rename a directory?</p>
+<p>[14]bool &nbsp; can rename a file?</p>
+<p>[15]bool &nbsp; can zip files?</p>
+<p>[16]bool &nbsp; can unzip file?</p>
+<p>[16]bool &nbsp; can user unzip a zip file?</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add a home/virtual directory for user account.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ResetUserStatistic</span>(string strDomain, string strUsername)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the user name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Reset user's statistics.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetUserList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; user list string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns user list, username in the list is separated with a carriage return sign.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetUserListPage</span>(string strDomain, int nPageNum)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the page number</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; user list string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is similar to c_GetUserList(), this API will be used when storing user data via database, and the 2nd parameter tells records offset (100 records/page, 0=1~100, 1=101~200...).</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetUserPageCount</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the total records of users</p>
+<p>[2]int &nbsp; the total pages (100 records per page)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns the total records of users in database, and the total pages (100 records per page).</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddGroup</span>(string strDomain,string strGroupname, int nMaxDownloadSpeed,int nMaxUploadSpeed,int nMaxConnection,int nConnectTimeout,int nIdleTimeout,int nConnectPerIp,int nConnectPerUser,int nConnectPerIpForUser,int bShowHiddenFile,int bSendMessage,table tabUserDirectory, table tabUserIpmasks, table tabUserFilemasks, int nMaxDownloadSpeedPerUser,int nMaxUploadSpeedPerUser,int nMaxDownloadSpeedPerGroup,int nMaxUploadSpeedPerGroup, table tabUserList, table tabSubfolderPerm)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name </p>
+<p>[2]string &nbsp; the group name</p>
+<p>[3]int &nbsp; max download speed for one session </p>
+<p>[4]int &nbsp; max upload speed for one session </p>
+<p>[5]int &nbsp; max number of connections</p>
+<p>[6]int &nbsp; ftp connect timeout value </p>
+<p>[7]int &nbsp; ftp idle timeout value </p>
+<p>[8]int &nbsp; max number of connections per IP for group</p>
+<p>[9]int &nbsp; max number of connections per user account</p>
+<p>[10]int &nbsp; max number of connections per IP for user account</p>
+<p>[11]int &nbsp; whether to show the hidden file, 1=show, 0=hide</p>
+<p>[12]int &nbsp; whether to send message, 1=allow, 0=deny</p>
+<p>[13]table &nbsp;a table list of group directory, {group directory} is a table structure which is formated as: <span style="font-style: italic;">{m_strDir,m_strAlias,m_bIsHomeDir,m_bFileRead,m_bFileWrite,m_bFileAppend,m_bFileDelete,m_bDirectoryList,m_bDirectoryMake,m_bDirectoryDelete,m_bDirectoryRename,m_bFileRename,m_bZipFile,m_bUnzipFile}</span></p>
+<p>[14]table &nbsp;a table list of group ipmask, {group ipmask} is a table structure which is formated as: <span style="font-style: italic;">{m_strIp,m_bRefuse}</span></p>
+<p>[15]table &nbsp;a table list of group filemask, {group filemask} is a table structure which is formated as: <span style="font-style: italic;">{m_strMask,m_bRefuse}</span></p>
+<p>[16]int &nbsp; max download speed for specified user</p>
+<p>[17]int &nbsp; max upload speed for specified user</p>
+<p>[18]int &nbsp; max download speed for this group</p>
+<p>[19]int &nbsp; max upload speed for this group</p>
+<p>[20]table &nbsp;userlist belong to this group, like { {"aa"}, {"bb"}, {"cc"} }</p>
+<p>[21]table &nbsp;subfolder access rules</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add or modify a user group.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GroupExist</span>(string strDomain, string strGroupname)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the group name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if the specified group exists in the specified domain, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the specified group exists.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGroup</span>(string strDomain, string strGroupname)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the group name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a table of group, its structure is formated as:<span style="font-style: italic;"> {groupname,max_download,max_upload,max_download_account,max_upload_account,max_connection,connect_timeout, idle_timeout,connect_per_ip, </span><span style="font-style: italic;">max_session_per_user, max_ipsession_for_user, </span><span style="font-style: italic;">show_hidden_file,send_message,{directory table},{Ipmask table},{Fil</span><span style="font-style: italic;">emask table}, </span><span style="font-style: italic;">total_received, total_sent, login_count, file_download, file_upload, failed_download, failed_upload,</span><span style="font-style: italic;">{Userlist table},</span><span style="font-style: italic;">{Subfolder rules table}</span><span style="font-style: italic;"> }</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return a table of group data.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteGroup</span>(string strDomain, string strGroupname)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the group name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete a group.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CopyGroup</span>(string strDomain, string strGroupname, string strNewGroupname)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the source group name</p>
+<p>[3]string &nbsp; the new group name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the result code, 1=success, -1=source group not exists, -2=new group already exists.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Copy a group.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddGroupDirectory</span>(string strDomain,string strGroupname, string strDirectory,string strAlias,bool bIsHomeDir,bool bFileRead,bool bFileWrite,bool bFileAppend,bool bFileDelete,bool bDirectoryList,bool bDirectoryMake,bool bDirectoryDelete,bool bDirectoryRename,bool bFileRename,bool bZipFile,bool bUnzipFile)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name </p>
+<p>[2]string &nbsp; the group name</p>
+<p>[3]string &nbsp; the directory path </p>
+<p>[4]string &nbsp; the directory alias, "/" is for home directory</p>
+<p>[5]bool &nbsp; &nbsp; &nbsp; &nbsp;is home directory?</p>
+<p>[6]bool &nbsp; &nbsp; &nbsp; &nbsp;can download files?</p>
+<p>[7]bool &nbsp;can upload files?</p>
+<p>[8]bool &nbsp;can resume file uploading?</p>
+<p>[9]bool &nbsp;can delete files?</p>
+<p>[10]bool &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;can see the file listing?</p>
+<p>[11]bool &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;can make a directory?</p>
+<p>[12]bool &nbsp; can remove a directory?</p>
+<p>[13]bool &nbsp; can rename a directory?</p>
+<p>[14]bool &nbsp; can rename a file?</p>
+<p>[15]bool &nbsp; can zip files?</p>
+<p>[16]bool &nbsp; can unzip file?</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add a virtual directory for a group.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ResetGroupStatistic</span>(string strDomain, string strGroupname)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the group name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Reset group's statistics.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGroupList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; group list string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns the group list, and group name in the list is separated with a carriage return sign.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGroupListPage</span>(string strDomain, int nPageNum)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the page number</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; group list string</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is similar to c_GetGroupList(), this API will be used when storing group data via database, and the 2nd parameter tells records offset (100 records/page, 0=1~100, 1=101~200...).</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetGroupPageCount</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the total records of groups</p>
+<p>[2]int &nbsp; the total pages (100 records per page)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns the total records of groups in database, and the total pages (100 records per page).</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

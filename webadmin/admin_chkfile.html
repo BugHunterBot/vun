@@ -1,0 +1,36 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local file = _POST["file"] or ""
+	local result = "0"
+
+	local CanChangedir = true
+	if _SESSION["admin_basefolder"] ~= nil and _SESSION["admin_basefolder"] ~= "" then
+		if c_StringLength(file) < c_StringLength(_SESSION["admin_basefolder"]) then
+			CanChangedir = false
+		else
+			if c_StringFind(file, _SESSION["admin_basefolder"]) == -1 then
+				CanChangedir = false
+			end
+		end
+	end
+
+	if _SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1 then
+		print(result)
+		exit()
+	end
+
+	if _SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1 then
+		if c_StringFind(file.gsub(file,"//", "/"), c_GetAppPath() ) > -1 then
+			print(result)
+			exit()
+		end
+	end
+
+	if file ~= nil and file ~= "" and CanChangedir == true then
+		if c_FileExist(file) == true then
+			result = "1"
+		end
+	end
+	print(result)
+end
+%>

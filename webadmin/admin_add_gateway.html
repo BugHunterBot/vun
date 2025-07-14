@@ -1,0 +1,44 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local host = _POST["host"]
+	local port = _POST["port"]
+	local pass = _POST["pass"]
+	local description = _POST["description"]
+	local enable = _POST["enable"]
+	local failover = _POST["failover"]
+	local singleip = _POST["singleip"]
+	local modify = _POST["modify"]
+	local test = _POST["test"]
+	if test ~= nil then
+		local result = c_CheckGateway(host,port,pass)
+		if result == true then
+			print("GATEWAY_OK")
+		else
+			print("GATEWAY_ERR")
+		end	
+	elseif modify == nil then
+		local result = c_GetGateway(host)
+		if result ~= nil then
+			print("0")
+		else
+			local retval = c_AddGateway(host,port,pass,description,enable,failover,singleip)
+			if retval == false then
+				print("-1")
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' added gateway ["..host.."] failed.",ADMIN_LOG_ERROR)
+			else
+				print("1")
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' added gateway ["..host.."]",ADMIN_LOG_OK)
+			end
+		end
+	else
+		local retval = c_AddGateway(host,port,pass,description,enable,failover,singleip)
+		if retval == false then
+			print("-1")
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' modified gateway ["..host.."] failed.",ADMIN_LOG_ERROR)
+		else
+			print("1")
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' modified gateway ["..host.."]",ADMIN_LOG_OK)
+		end
+	end
+end
+%>

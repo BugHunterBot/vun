@@ -1,0 +1,58 @@
+<%
+include("language.html")
+
+if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
+	if _SESSION["cut_filename"] ~= nil and _SESSION["cut_dirname"] ~= nil then
+		local nowdir = string.gsub(_SESSION["currentpath"],":{{","%[")
+		nowdir = string.gsub(nowdir,"}}:","%]")
+		local cut_filename = string.gsub(_SESSION["cut_filename"],":{{","%[")
+		cut_filename = string.gsub(cut_filename,"}}:","%]")
+		local cut_dirname = string.gsub(_SESSION["cut_dirname"],":{{","%[")
+		cut_dirname = string.gsub(cut_dirname,"}}:","%]")
+
+		local status = false
+		if string.find(cut_filename, "||") then
+			status = c_MoveMultipleFile(_SESSION["username"],cut_filename,cut_dirname,nowdir,_SESSION_ID)
+		else
+			status = c_MoveFile(_SESSION["username"],cut_filename,cut_dirname,nowdir,_SESSION_ID)
+			if status == 1 then
+				c_AddWebLog("Moved file(folder) '"..cut_dirname.."/"..cut_filename.."' to '"..nowdir.."' successfully",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+			else
+				c_AddWebLog("Moved file(folder) '"..cut_dirname.."/"..cut_filename.."' to '"..nowdir.."' failed",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+			end
+		end
+		print(RESULT_STR[tonumber(status)])
+		rawset(_SESSION,"cut_filename",nil)
+		rawset(_SESSION,"cut_dirname",nil)
+		SessionModule.save(_SESSION_ID)
+	elseif _SESSION["copy_filename"] ~= nil and _SESSION["copy_dirname"] ~= nil then
+		local nowdir = string.gsub(_SESSION["currentpath"],":{{","%[")
+		nowdir = string.gsub(nowdir,"}}:","%]")
+		local copy_filename = string.gsub(_SESSION["copy_filename"],":{{","%[")
+		copy_filename = string.gsub(copy_filename,"}}:","%]")
+		local copy_dirname = string.gsub(_SESSION["copy_dirname"],":{{","%[")
+		copy_dirname = string.gsub(copy_dirname,"}}:","%]")
+
+		local status = false
+		if string.find(copy_filename, "||") then
+			status = c_CopyMultipleFile(_SESSION["username"],copy_filename,copy_dirname,nowdir,_SESSION_ID,_REMOTE_IP)
+		else
+			status = c_CopyFile(_SESSION["username"],copy_filename,copy_dirname,nowdir,_SESSION_ID,_REMOTE_IP)
+			if status == 1 then
+				c_AddWebLog("Copied file(folder) '"..copy_dirname.."/"..copy_filename.."' to '"..nowdir.."' successfully",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+			else
+				c_AddWebLog("Copied file(folder) '"..copy_dirname.."/"..copy_filename.."' to '"..nowdir.."' failed",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+			end
+		end
+		print(RESULT_STR[tonumber(status)])
+		rawset(_SESSION,"copy_filename",nil)
+		rawset(_SESSION,"copy_dirname",nil)
+		SessionModule.save(_SESSION_ID)
+	else
+		print(LANG["error_no_filename"])
+	end
+else
+	print("session expired")
+end
+
+%>

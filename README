@@ -1,0 +1,37 @@
+* Installation
+-------------------
+Wing FTP Server Linux edition ships in a gzipped tar archive. You can extract it with the following command line:
+tar xzvf wftpserver-linux-64bit.tar.gz
+
+That will extract the files from the package into a directory named "wftpserver". Change your current working directory to this directory via command:
+cd wftpserver
+
+Then launch the setup script via command:
+sudo ./setup.sh
+
+When installation is completed, you can launch web browser and open "http://YourServerIP:5466" for the web administration. Here, 5466 is the default web admin port, you can change it during the installation.
+
+
+* How to upgrade?
+-----------------
+Jump to the parent folder of WingFTP's folder
+wget --no-check-certificate https://www.wftpserver.com/download/wftpserver-linux-64bit.tar.gz
+tar xzvf wftpserver-linux-64bit.tar.gz
+sudo /etc/init.d/wftpserver restart
+
+
+* How to start WingFTP service?
+-----------------------------------
+Go to WingFTP's installation folder and execute: sudo ./wftpserver
+Or you can start WingFTP service via command: sudo /etc/init.d/wftpserver start
+
+
+* How to stop WingFTP service?
+-----------------------------------
+You can stop WingFTP service via command: sudo /etc/init.d/wftpserver stop
+Or execute the command "shutdown" in the administration console.
+
+
+* Uninstallation
+-----------------------
+Stop the WingFTP service first, then remove the installation directory of Wing FTP Server.

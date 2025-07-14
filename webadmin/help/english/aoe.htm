@@ -1,0 +1,220 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Quick Start &gt; Quick Start Guide</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="Quick Start Guide">
+   <meta name="description" content="Quick Start Guide">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?aoe.htm"; }
+  else { parent.quicksync('a2.1'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Quick Start&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Quick Start Guide</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="purchase.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="uoeoeia.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="router__firewall.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p><span style="font-size: 11pt;">We will help you setup Wing FTP Server in a few minutes.</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold;">Installation</span></p>
+<p>&nbsp;</p>
+<p style="line-height: 1.50;">First, you need to download Wing FTP Server's installer file through our website: <a href="https://www.wftpserver.com/download.htm" target="_blank" class="weblink">https://www.wftpserver.com/download.htm</a></p>
+<p style="line-height: 1.50;">For Windows version, launch the installer file "WingFtpServer.exe", and fill out the required options to finish the installation.</p>
+<p style="line-height: 1.50;">For Linux version, you can extract the downloaded installer file "wftpserver-linux-64bit.tar.gz" with the following command line:</p>
+<p style="line-height: 1.50;"><span style="font-weight: bold;">$ tar xzvf wftpserver-linux-64bit.tar.gz</span></p>
+<p style="line-height: 1.50;">That will extract the files from the package into a directory named "wftpserver", then jump into this directory and setup Wing FTP Server:</p>
+<p style="line-height: 1.50;"><span style="font-weight: bold;">$ cd wftpserver</span></p>
+<p style="line-height: 1.50;"><span style="font-weight: bold;">$ sudo ./setup.sh</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold;">Login A</span><span style="font-size: 12pt; font-weight: bold;">dministration</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">When the installation of Wing FTP Server is completed, you can launch a web browser and type in</span><span style="font-size: 11pt;"> </span><span style="font-size: 11pt; color: #0000ff; text-decoration: underline;">http://127.0.0.1:5466</span><span style="font-size: 11pt;"> to start the web-based administration</span><span style="font-size: 11pt;">. 5466 here is the default listener port for web administrator, and you can change it during</span><span style="font-size: 11pt;"> installation</span><span style="font-size: 11pt;">. </span></p>
+<p><span style="font-size: 11pt;">Windows users can launch the </span><span style="font-size: 11pt;">administration</span><span style="font-size: 11pt;"> simply by double-clicking the Wing FTP Server icon in the system tray or on the desktop. </span><span style="font-size: 11pt;">Enter your admin name and password created during installation, then click the "Login" button.</span></p>
+<p>&nbsp;</p>
+<p><img id="1" src="admin_login.png" width="571" height="523" border="0" alt="admin_login"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Creating Your First Domain</span></p>
+<p>&nbsp;</p>
+<p style="text-align: justify;">If no domain has been created before, then you will be asked whether you would like to create the first domain. Click "Yes" and it will open the domain creation window:</p>
+<p>&nbsp;</p>
+<p><img id="1" src="creatdomain.png" width="474" height="404" border="0" alt="creatdomain"></p>
+<p>&nbsp;</p>
+<p>You need to provide a unique name for the domain ID, and it is simply an identifier to distinguish the domain from others.</p>
+<p>&nbsp;</p>
+<p>If you want to keep all the default listeners, just click the button "OK".</p>
+<p>&nbsp;</p>
+<p>Now your first domain has been created successfully! It is so easy, right? More domain settings can be found and configured under "Domain -&gt; Settings".</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Creating Your First User Account</span></p>
+<p>&nbsp;</p>
+<p>After your first domain is created, you need to add a user account for this domain. Navigate to "Domains -&gt; YourDomain -&gt; Users", then click the button "Add User":</p>
+<p><img src="createuser.png" width="829" height="628" border="0" alt="createuser"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>You need to input the username/password for the user account. To create an anonymous account, just check the option "anonymous."</p>
+<p>&nbsp;</p>
+<p>Adding a home directory is also necessary. Just switch to the tab "Directory" and click the button "Add Directory," then choose a physical folder by clicking the "Browse" button (or enter a UNC path directly). The final step is to grant access rights for that folder, and the default access rights are "File Read" and "Directory List," which allows users to list files or download files.</p>
+<p>&nbsp;</p>
+<p><img src="userdir.png" width="879" height="624" border="0" alt="userdir"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold;">Testing</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">Congratulations! Your Wing FTP Server is now accessible and </span><span style="font-size: 11pt;">ready for file sharing. If you've enabled the HTTP protocol during </span><span style="font-size: 11pt;">domain creation</span><span style="font-size: 11pt;">, you can now test it with a web browser.</span></p>
+<p><span style="font-size: 11pt;">Enter <a href="http://127.0.0.1" target="_blank" class="weblink">http://127.0.0.1</a>, and you will be taken to the login page shown below:</span></p>
+<p>&nbsp;</p>
+<p><img src="login.png" width="493" height="432" border="0" alt="login"></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">Type your account name and password, and click the button "Login".</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><img src="webclient.png" width="1118" height="753" border="0" alt="webclient"></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">Once you can see the file listing like the above screenshot, you have installed Wing FTP Server successfully.</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

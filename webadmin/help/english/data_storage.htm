@@ -1,0 +1,278 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Domain &gt; Domain Settings &gt; Authentication Settings</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="Data Storage">
+   <meta name="description" content="Authentication Settings">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?data_storage.htm"; }
+  else { parent.quicksync('a5.2.2'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Domain &gt; Domain Settings&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Authentication Settings</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="compression.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="uoeoeia.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="ip_access.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>Wing FTP Server supports several authenticating/storage methods: XML files, ODBC database, MySQL database, Windows authentication (NTLM or Active Directory), and LDAP authentication.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 14pt; font-weight: bold;">Storage Way</span><span style="font-size: 12pt; font-weight: bold;">  </span><span style="font-size: 12pt;">  </span></p>
+<p> &nbsp; &nbsp;  <img src="store-way.png" width="704" height="534" border="0" alt="store-way"></p>
+<p>XML:   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Store your user/group data in XML files.</p>
+<p>ODBC: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Store your user/group data in ODBC database.</p>
+<p>MySQL: &nbsp; &nbsp; &nbsp; &nbsp;Store your user/group data in MySQL database.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold; color: #ff0000;">Note:</span><span style="font-weight: bold;"> </span>The server will automatically create all the database tables for the first time. If you use MySQL, please create a MySQL database first, the default database name is "wftp_database".</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 14pt; font-weight: bold;">ODBC setting</span><span style="font-size: 12pt;"> </span> &nbsp;  </p>
+<p> &nbsp; &nbsp;  <img src="odbc.png" width="704" height="534" border="0" alt="odbc"></p>
+<p>If you want to use ODBC database, just enter the ODBC source name (DSN), or username/password if you have.</p>
+<p>When everything is fine, user/group data can be stored in this database through using an ODBC driver. </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 14pt; font-weight: bold;">Mysql setting</span></p>
+<p> &nbsp; &nbsp;  <img src="mysql.png" width="704" height="534" border="0" alt="mysql"></p>
+<p>If your database system is MySQL, we suggest you use "MySQL" instead of "ODBC", because it can connect to MySQL database directly through C API, much faster than "ODBC".</p>
+<p>&nbsp;</p>
+<p>You need to create a MySQL database "wftp_database" for the first time.</p>
+<p>&nbsp;</p>
+<p>You need to fill the field "UnixSocket" if you are using Linux/Unix system. Otherwise, just keep it empty.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 14pt; font-weight: bold;">Windows Authentication</span></p>
+<p>&nbsp;</p>
+<p><span class="f_ImageCaption"> &nbsp; &nbsp; &nbsp; <img src="windows-auth.png" width="704" height="534" border="0" alt="windows-auth"></span></p>
+<p><span class="f_ImageCaption"> &nbsp; &nbsp; &nbsp; </span></p>
+<p>&nbsp;</p>
+<p>Wing FTP Server can handle Windows NTLM or Windows Active Directory authentication, without the need to import users or sync user data manually. </p>
+<p>&nbsp;</p>
+<p>If you enable "Windows Authentication", you need to specify a default home directory for the AD account. </p>
+<p>And if you want each AD account to have its own home directory, please enable the checkbox "Create a folder under default home dir using the login name for each user".</p>
+<p>&nbsp;</p>
+<p>If you want to have more control to the AD user like a local user of WingFTP, you can map the AD user to a local user. First, create a local user at "Domains -&gt; Users -&gt; Add User", then click the button "Add AD Users Mapping", input a new line in the format of "<span style="font-weight: bold;">ADUser:LocalUser</span>" (AD username and Local username is separated by a colon). Since the version 6.3.2, the wildcard "*" is supported for the Windows AD username, so you can write the mapping rule as: <span style="font-weight: bold;">Tester*:LocalTester</span></p>
+<p>&nbsp;</p>
+<p> &nbsp; &nbsp;  <img src="windows-auth-mapping.png" width="564" height="464" border="0" alt="windows-auth-mapping"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">NOTE:</span></p>
+<p>1) Domain Name</p>
+<p> &nbsp; &nbsp;Specify a domain name for the domain controller (DC), it is optional.</p>
+<p>&nbsp;</p>
+<p>2) Map the AD account to local</p>
+<p> &nbsp; &nbsp;For example:</p>
+<p> &nbsp; &nbsp;AD user name: Jack@domain.com</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; password: ad_password</p>
+<p>&nbsp;</p>
+<p> &nbsp; &nbsp;Local user name: Jack_Local</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; password: local_password</p>
+<p>&nbsp;</p>
+<p> &nbsp; &nbsp;After the mapping, you can log in the server with Jack@domain.com/ad_password or Jack_Local/local_password. If you log in with Jack@domain.com/ad_password, Jack@domain.com will have all the functions belong to the Jack_Local like virtual directories, group memberships, permissions, and other settings.</p>
+<p>&nbsp;</p>
+<p> &nbsp; &nbsp;Wing FTP server user authenticates sequence:</p>
+<p> &nbsp; &nbsp;1) User "BOB" login with password "BOB2010".</p>
+<p> &nbsp; &nbsp;2) Check the local user account to see if there is an account called "BOB". </p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp;2-1) if it exists, further checks the local password. If password is correct, your login is successful. Otherwise, login has failed.</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp;2-2) if the account does not exist, do AD authentication.</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2-2-1) After completing the AD authentication, check if BOB has been mapped to a local user.</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2-2-1-1) If "BOB" is mapped to a local user named "Local_BOB", then it will get all the attributes of "Local_BOB".</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2-2-1-2) If there is no mapping for "BOB", take the AD authentication "Default Home Dir" as its home directory. </p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2-2-2) If the AD authentication fails, the login fails too.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 14pt; font-weight: bold;">LDAP Authentication</span></p>
+<p>&nbsp;</p>
+<p><img src="ldap-auth.png" width="704" height="534" border="0" alt="ldap-auth"></p>
+<p><span class="f_ImageCaption" style="font-size: 10pt; font-weight: normal;">Wing FTP Server supports using an LDAP(or LDAPS) database for authenticating users, and we have tested it successfully with OpenLDAP and Microsoft's Active Directory.</span></p>
+<p>&nbsp;</p>
+<p><span class="f_ImageCaption" style="font-size: 10pt; font-weight: normal;">When you enable the option "LDAP Authentication", you need to provide the following information:</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Host</span>:  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;the IP address or domain name of the LDAP server.</p>
+<p><span style="font-weight: bold;">Port</span>: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;the port number of the LDAP server, the default value is 389 (if you use Microsoft's Active Directory, please use the port 3268).</p>
+<p><span style="font-weight: bold;">Base DN: &nbsp; &nbsp; &nbsp; &nbsp;</span>the base domain name of search starting point. The DN string would usually be "<span style="font-weight: bold;">dc=xxxx,dc=com</span>".</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">User Filter: &nbsp; &nbsp; &nbsp; &nbsp;</span>the filter to find the object for authenticating users. The special characters '%s' in the filter string will be replaced with the real username.  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+<p>Wing FTP Server uses default filter "<span style="font-style: italic; color: #0000ff;">(&amp;(objectClass=posixAccount)(uid=%s))</span>" for OpenLDAP. Or if you use Microsoft's Active Directory, the filter string would ususlly be "<span style="font-style: italic; color: #0000ff;">(&amp;(objectClass=user)(sAMAccountName=%s))</span>".</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">LDAP version</span>:  &nbsp; &nbsp; &nbsp; &nbsp;the version of LDAP server will be 3 in normal cases.</p>
+<p><span style="font-weight: bold;">Use SSL/TLS connection:</span> you can enable it if the LDAP server supports SSL/TLS connection.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Bind DN: &nbsp; &nbsp; &nbsp; &nbsp;   &nbsp; &nbsp; &nbsp; &nbsp;</span>the LDAP distinguished name string for simple authentication, e.g. "<span style="font-weight: bold;">cn=manager,dc=example,dc=com</span>".</p>
+<p><span style="font-weight: bold;">Bind Password:  &nbsp; &nbsp; &nbsp; &nbsp;</span>the bind password is the LDAP user password normally.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic; font-weight: bold;">Note1:</span><span style="font-style: italic;"> </span>The LDAP database (except Windows Active Directory) must have an attribute 'userPassword' (RFC 3112), and the attribute 'userPassword' must be accessible. The following password format is supported: plain text, {crypt}, &nbsp;{md5}, &nbsp;{sha}, &nbsp;{smd5}, {ssha}</p>
+<p><span style="font-style: italic; font-weight: bold;">Note2:</span><span style="font-style: italic;"> </span>The username in the LDAP database cannot contain some special characters: '%', '*', '?', ',', ''', '"'. For security purposes.</p>
+<p>&nbsp;</p>
+<p>You need to specify a default home directory for the LDAP account. And if you want each LDAP account to have its own home directory, please enable check box "Create a folder under default home dir using the login name for each user":</p>
+<p>&nbsp;</p>
+<p><img src="ldap-auth2.png" width="704" height="534" border="0" alt="ldap-auth2"></p>
+<p>&nbsp;</p>
+<p>If you want to have more control to LDAP user like a local user of WingFTP, you can map the LDAP user to a local user. First create a local user at "Domains -&gt; Users -&gt; Add User", then click the button "Add LDAP Users Mapping", input a new line in the format of "<span style="font-weight: bold;">LDAPUser:LocalUser</span>" (LDAP username and Local username is separated by colon). Since the version 6.3.2, the wildcard "*" is supported for the LDAP username, so you can write the mapping rule as: <span style="font-weight: bold;">Tester*:LocalTester</span></p>
+<p><img src="ldap-mapping.png" width="564" height="464" border="0" alt="ldap-mapping"></p>
+<p>Map the LDAP account to the local account</p>
+<p> &nbsp; &nbsp;For example:</p>
+<p> &nbsp; &nbsp;LDAP username: Jack</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; password: ldap_password</p>
+<p>&nbsp;</p>
+<p> &nbsp; &nbsp;Local username: Jack_local</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; password: local_password</p>
+<p>&nbsp;</p>
+<p> &nbsp; &nbsp;After the mapping, you can login the server with Jack/ldap_password or Jack_Local/local_password. Then LDAP user "Jack" will have all the attributes belong to the "Jack_Local" like virtual directories, group memberships, permissions and other settings.</p>
+<p>&nbsp;</p>
+<p> &nbsp; &nbsp;WingFTP user authenticates sequence:</p>
+<p> &nbsp; &nbsp;1) User "JOE" login with password "JOE2010".</p>
+<p> &nbsp; &nbsp;2) Check the local user account to see if there is a account called "JOE". </p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp;2-1) if it exists, further check the local password. If password is correct, your login is successful. Otherwise, login has failed.</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp;2-2) if the account does not exist, do LDAP authentication.</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2-2-1) After completing the LDAP authentication, check if "JOE" has been mapped to a local user.</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2-2-1-1) If "JOE" is mapped to a local user named "Local_JOE", then it will get all the attributes of "Local_JOE".</p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2-2-1-2) If there is no mapping for "JOE", take the LDAP authentication "Default Home Dir" as its home directory. </p>
+<p> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2-2-2) If the LDAP authentication fails, the login fails too.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>You can also map LDAP group to local user by clicking the button "Map LDAP group to local user", input a new line in the format of "LDAPGroup:LocalUser"(LDAP group name and Local username is separated by colon), then all the LDAP users belong to this LDAP group can have local user's permissions.</p>
+<p><img src="ldap-group-mapping.png" width="564" height="464" border="0" alt="ldap-group-mapping"></p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

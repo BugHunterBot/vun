@@ -1,0 +1,987 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+%>
+<%
+if _GET["domain"] ~= nil then
+	local domain = _GET["domain"]
+
+	if c_IsGrantedDomainAdmin(domain) == false then
+		exit()
+	end
+
+	local salt_string = specialhtml_encode(c_GetOptionStr(domain,DOPTION_SALTING_STRING))
+
+	if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then
+		salt_string = ""
+	end
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Domain General Setting</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+a {text-decoration:none;}
+a,a:visited {color:#000;background:inherit;}
+html, body {height: 100%;margin:0px;padding:0px;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:11px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+input,select,textarea{margin:4px;}
+input,textarea{background-color:expression((this.disabled && this.disabled==true)?"#D4D0C8":"")}
+fieldset {  
+    border-color: #999;  
+    border-style: solid;  
+    border-width: 1px;  
+}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:18px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:18px;
+}
+
+
+#tabDiv {
+	width: 838px;
+	margin: 0px auto 0px auto;
+	position: relative;
+	border:1px solid transparent;
+	border:1px solid #E6E6E6;
+}
+#tabDiv ul {
+	padding: 0px;
+	position: absolute;
+	margin-left: 0px;
+	margin-top: 4px;
+}
+#tabDiv li {
+	list-style-type: none;
+	float: left;
+	margin-right: 1px;
+	height: 24px;
+	line-height: 24px;
+	padding: 0px;
+}
+#tabDiv li a {
+	display: block;
+	text-decoration: none;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+.tagContent {
+	clear:both;
+	float:none;
+	margin-top: 27px;
+	border: 1px solid #919B9C;
+}
+.tagContent div {
+	margin-top: 0px;
+	height: 480px;
+	overflow-y:auto;
+	background-image: url('images/tabbg.gif');
+	background-repeat: repeat-x;
+	background-color: #fff;
+	padding: 12px;
+	display: none;
+}
+.selectedTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+.selectedTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right top;
+	color:#000;
+}
+.normalTag {
+	background-image: url('images/tableft.gif');
+	background-repeat: no-repeat;
+	background-position: left bottom;
+}
+.normalTag a {
+	background-image: url('images/tabright.gif');
+	background-repeat: no-repeat;
+	background-position: right bottom;
+	color:#49658F
+}
+.emptyTag { width:10px;}
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var strWelcomeMessage = "<%=specialhtml_encode(c_GetOptionStr(domain,DOPTION_WELCOME_MESSAGE))%>";
+strWelcomeMessage = strWelcomeMessage.replace(/&lt;BR&gt;/ig,"\n");
+
+var strOldSaltString = "<%=salt_string%>";
+
+var ajaxlock = false;
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+		$("waitingdiv").style.display = "";
+	}
+}
+
+function ajaxResponse()
+{
+	ajaxlock = false;
+	$("waitingdiv").style.display = "none";
+	if (xmlhttp.readyState == 4)
+	{
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_set_general':	doSubmit_result();break;
+				}
+			}
+			catch(e)
+			{
+				alert("<%=LANG['error_ajax']%>");
+			}
+		}
+		else
+		{
+			alert("<%=LANG['error_ajax']%>");
+		}
+	}
+}
+
+function doSubmit()
+{
+	var paramStr = "";
+	var domain = $("domain").value;
+	var enable_hammer = ($("enable_hammer").checked ? 1:0);
+	var send_message = ($("send_message").checked ? 1:0);
+	var block_time = $("block_time").value;
+	var failed_count = $("failed_count").value;
+	var failed_interval = $("failed_interval").value;
+	var enable_fxp = ($("enable_fxp").checked ? 1:0);
+	var enable_utf8_on = ($("enable_utf8_on").checked ? 1:0);
+	var enable_auth_tls = ($("enable_auth_tls").checked ? 1:0);
+	var enable_uploadlink = ($("enable_uploadlink").checked ? 1:0);
+	var enable_weblink = ($("enable_weblink").checked ? 1:0);
+	var show_subfolder = ($("show_subfolder").checked ? 1:0);
+	var keep_old_weblink = ($("keep_old_weblink").checked ? 1:0);
+	var anonymous_weblink = ($("anonymous_weblink").checked ? 1:0);
+	var uplink_overwrite = ($("uplink_overwrite").checked ? 1:0);
+	var weblink_domain = encodeURIComponent($("weblink_domain").value);
+	var enable_https_redirect = ($("enable_https_redirect").checked ? 1:0);
+	var https_redirect_port = $("https_redirect_port").value;
+	var buffer_size = $("buffer_size").value;
+	var sslcert = $("sslcert").value;
+	var sshkey = $("sshkey").value;
+	var smtpconfig = $("smtpconfig").value;
+	var listener_enable_upnp = 0;
+	var list_time_gmt = ($("list_time_gmt").checked ? 1:0);
+	var enable_log = ($("enable_log").checked ? 1:0);
+	var log_filename = encodeURIComponent($("log_filename").value);
+	var log_maxsize = $("log_maxsize").value;
+	var log_compress = ($("log_compress").checked ? 1:0);
+	var log_millisecond = ($("log_millisecond").checked ? 1:0);
+	var enable_modez = ($("enable_modez").checked ? 1:0);
+	var zlevel_default = parseInt($("zlevel_default").value);
+	if(zlevel_default < 1) zlevel_default = 1;
+	if(zlevel_default > 9) zlevel_default = 9;
+	var zlevel_min = parseInt($("zlevel_min").value);
+	if(zlevel_min < 1) zlevel_min = 1;
+	if(zlevel_min > 8) zlevel_min = 8;
+	var zlevel_max = parseInt($("zlevel_max").value);
+	if(zlevel_max < 8) zlevel_max = 8;
+	if(zlevel_max > 9) zlevel_max = 9;
+	var max_session = $("max_session").value;
+	var max_ipsession = $("max_ipsession").value;
+	var max_session_per_user = $("max_session_per_user").value;
+	var max_ipsession_for_user = $("max_ipsession_for_user").value;
+	var connection_timeout = $("connection_timeout").value;
+	var session_downspeed = $("session_downspeed").value;
+	var session_upspeed = $("session_upspeed").value;
+	var user_downspeed = $("user_downspeed").value;
+	var user_upspeed = $("user_upspeed").value;
+	var domain_downspeed = $("domain_downspeed").value;
+	var domain_upspeed = $("domain_upspeed").value;
+	var data_transfer_timeout = $("data_transfer_timeout").value;
+
+    var radios = document.getElementsByName("pasv_method");
+    var pasv_method = 0;
+    for(var i=0;i<radios.length;i++)
+	{
+        if(radios[i].checked)
+		{ 
+            pasv_method = radios[i].value; 
+            break; 
+        } 
+    }
+	var pasv_fixed_ip = $("pasv_fixed_ip").value;
+	var pasv_web_ip = $("pasv_web_ip").value;
+	var pasv_dns_ip = $("pasv_dns_ip").value;
+	var pasv_ip_refresh = $("pasv_ip_refresh").value;
+	var pasv_min_port = $("pasv_min_port").value;
+	var pasv_max_port = $("pasv_max_port").value;
+
+	var passive_listener_timeout = $("passive_listener_timeout").value;
+	var auto_pasv_ip = ($("auto_pasv_ip").checked ? 1:0);
+	var auto_passive_forward = ($("auto_passive_forward").checked ? 1:0);
+	var auto_active_forward = ($("auto_active_forward").checked ? 1:0);
+
+	var enable_logfile_message = ($("enable_logfile_message").checked ? 1:0);
+	var enable_logscrn_message = ($("enable_logscrn_message").checked ? 1:0);
+	var enable_logfile_security = ($("enable_logfile_security").checked ? 1:0);
+	var enable_logscrn_security = ($("enable_logscrn_security").checked ? 1:0);
+	var enable_logfile_ftpcmd = ($("enable_logfile_ftpcmd").checked ? 1:0);
+	var enable_logscrn_ftpcmd = ($("enable_logscrn_ftpcmd").checked ? 1:0);
+	var enable_logfile_ftpresp = ($("enable_logfile_ftpresp").checked ? 1:0);
+	var enable_logscrn_ftpresp = ($("enable_logscrn_ftpresp").checked ? 1:0);
+	var enable_logfile_webcmd = ($("enable_logfile_webcmd").checked ? 1:0);
+	var enable_logscrn_webcmd = ($("enable_logscrn_webcmd").checked ? 1:0);
+	var enable_logfile_webresp = ($("enable_logfile_webresp").checked ? 1:0);
+	var enable_logscrn_webresp = ($("enable_logscrn_webresp").checked ? 1:0);
+	var enable_logfile_sshcmd = ($("enable_logfile_sshcmd").checked ? 1:0);
+	var enable_logscrn_sshcmd = ($("enable_logscrn_sshcmd").checked ? 1:0);
+	var enable_logfile_sshresp = ($("enable_logfile_sshresp").checked ? 1:0);
+	var enable_logscrn_sshresp = ($("enable_logscrn_sshresp").checked ? 1:0);
+	var enable_logfile_odbcerr = ($("enable_logfile_odbcerr").checked ? 1:0);
+	var enable_logscrn_odbcerr = ($("enable_logscrn_odbcerr").checked ? 1:0);
+	var enable_logfile_mysqlerr = ($("enable_logfile_mysqlerr").checked ? 1:0);
+	var enable_logscrn_mysqlerr = ($("enable_logscrn_mysqlerr").checked ? 1:0);
+	var enable_logfile_luaerr = ($("enable_logfile_luaerr").checked ? 1:0);
+	var enable_logscrn_luaerr = ($("enable_logscrn_luaerr").checked ? 1:0);
+	var enable_logfile_mailerr = ($("enable_logfile_mailerr").checked ? 1:0);
+	var enable_logscrn_mailerr = ($("enable_logscrn_mailerr").checked ? 1:0);
+	var enable_logfile_fileerr = ($("enable_logfile_fileerr").checked ? 1:0);
+	var enable_logscrn_fileerr = ($("enable_logscrn_fileerr").checked ? 1:0);
+	var enable_logfile_normalerr = ($("enable_logfile_normalerr").checked ? 1:0);
+	var enable_logscrn_normalerr = ($("enable_logscrn_normalerr").checked ? 1:0);
+
+	var enable_domain_logo = ($("enable_domain_logo").checked ? 1:0);
+
+	var min_password = $("min_password").value;
+	var password_complexity1 = ($("password_complexity1").checked ? 1:0);
+	var password_complexity2 = ($("password_complexity2").checked ? 1:0);
+	var password_complexity3 = ($("password_complexity3").checked ? 1:0);
+	var password_complexity4 = ($("password_complexity4").checked ? 1:0);
+	var sha256_password = ($("sha256_password").checked ? 1:0);
+	var changepass_firstlogon = ($("changepass_firstlogon").checked ? 1:0);
+	var enable_symbolic_link = ($("enable_symbolic_link").checked ? 1:0);
+	var enable_welcome_message = ($("enable_welcome_message").checked ? 1:0);
+	var str_welcome_message =  strWelcomeMessage.replace(/\r\n/ig,"<BR>");
+	str_welcome_message = str_welcome_message.replace(/\n/ig,"<BR>");
+
+	var str_http_headers =  $("http_headers").value.replace(/(\n)+|(\r\n)+/g,"<br>");
+	if(str_http_headers.length > 2)
+	{
+		str_http_headers += "<br>";
+	}
+	str_http_headers = str_http_headers.replace( /(<br>)+$/, "<br>"); 
+	var http_headers = encodeURIComponent(str_http_headers);
+	var enable_passive_active = $("enable_passive_active").value;
+	var ssh_banner = encodeURIComponent($("ssh_banner").value);
+	var http_keepalive = ($("http_keepalive").checked ? 1:0);
+	var tls_session_timeout = $("tls_session_timeout").value;
+	var enable_salting = ($("enable_salting").checked ? 1:0);
+	var salting_string = encodeURIComponent($("salting_string").value);
+
+	if(strOldSaltString != removeXSS($("salting_string").value))
+	{
+		if(confirm("<%=LANG['str_saltchanged_tip']%>") == false)
+		{
+			top.closewindow(1);
+			return false;
+		}
+	}
+
+	paramStr = "domain="+domain+"&enable_hammer="+enable_hammer+"&send_message="+send_message+"&block_time="+block_time+"&failed_count="+failed_count+"&failed_interval="+failed_interval+"&enable_fxp="+enable_fxp+"&enable_utf8_on="+enable_utf8_on+"&enable_auth_tls="+enable_auth_tls+"&enable_uploadlink="+enable_uploadlink+"&buffer_size="+buffer_size+"&enable_weblink="+enable_weblink+"&show_subfolder="+show_subfolder+"&keep_old_weblink="+keep_old_weblink+"&anonymous_weblink="+anonymous_weblink+"&uplink_overwrite="+uplink_overwrite+"&weblink_domain="+weblink_domain+"&enable_https_redirect="+enable_https_redirect+"&https_redirect_port="+https_redirect_port+"&sslcert="+sslcert+"&sshkey="+sshkey+"&smtpconfig="+smtpconfig+"&listener_enable_upnp="+listener_enable_upnp+"&list_time_gmt="+list_time_gmt+"&enable_log="+enable_log+"&log_filename="+log_filename+"&log_maxsize="+log_maxsize+"&log_compress="+log_compress+"&log_millisecond="+log_millisecond+"&enable_modez="+enable_modez+"&zlevel_default="+zlevel_default+"&zlevel_min="+zlevel_min+"&zlevel_max="+zlevel_max+"&max_session="+max_session+"&max_ipsession="+max_ipsession+"&max_session_per_user="+max_session_per_user+"&max_ipsession_for_user="+max_ipsession_for_user+"&connection_timeout="+connection_timeout+"&session_downspeed="+session_downspeed+"&session_upspeed="+session_upspeed+"&user_downspeed="+user_downspeed+"&user_upspeed="+user_upspeed+"&domain_downspeed="+domain_downspeed+"&domain_upspeed="+domain_upspeed+"&data_transfer_timeout="+data_transfer_timeout+"&pasv_method="+pasv_method+"&pasv_fixed_ip="+pasv_fixed_ip+"&pasv_web_ip="+pasv_web_ip+"&pasv_dns_ip="+pasv_dns_ip+"&pasv_ip_refresh="+pasv_ip_refresh+"&pasv_min_port="+pasv_min_port+"&pasv_max_port="+pasv_max_port+"&enable_logfile_message="+enable_logfile_message+"&enable_logscrn_message="+enable_logscrn_message+"&enable_logfile_security="+enable_logfile_security+"&enable_logscrn_security="+enable_logscrn_security+"&enable_logfile_ftpcmd="+enable_logfile_ftpcmd+"&enable_logscrn_ftpcmd="+enable_logscrn_ftpcmd+"&enable_logfile_ftpresp="+enable_logfile_ftpresp+"&enable_logscrn_ftpresp="+enable_logscrn_ftpresp+"&enable_logfile_webcmd="+enable_logfile_webcmd+"&enable_logscrn_webcmd="+enable_logscrn_webcmd+"&enable_logfile_webresp="+enable_logfile_webresp+"&enable_logscrn_webresp="+enable_logscrn_webresp+"&enable_logfile_sshcmd="+enable_logfile_sshcmd+"&enable_logscrn_sshcmd="+enable_logscrn_sshcmd+"&enable_logfile_sshresp="+enable_logfile_sshresp+"&enable_logscrn_sshresp="+enable_logscrn_sshresp+"&enable_logfile_odbcerr="+enable_logfile_odbcerr+"&enable_logscrn_odbcerr="+enable_logscrn_odbcerr+"&enable_logfile_mysqlerr="+enable_logfile_mysqlerr+"&enable_logscrn_mysqlerr="+enable_logscrn_mysqlerr+"&enable_logfile_luaerr="+enable_logfile_luaerr+"&enable_logscrn_luaerr="+enable_logscrn_luaerr+"&enable_logfile_mailerr="+enable_logfile_mailerr+"&enable_logscrn_mailerr="+enable_logscrn_mailerr+"&enable_logfile_fileerr="+enable_logfile_fileerr+"&enable_logscrn_fileerr="+enable_logscrn_fileerr+"&enable_logfile_normalerr="+enable_logfile_normalerr+"&enable_logscrn_normalerr="+enable_logscrn_normalerr+"&enable_domain_logo="+enable_domain_logo+"&min_password="+min_password+"&password_complexity1="+password_complexity1+"&password_complexity2="+password_complexity2+"&password_complexity3="+password_complexity3+"&password_complexity4="+password_complexity4+"&sha256_password="+sha256_password+"&changepass_firstlogon="+changepass_firstlogon+"&enable_symbolic_link="+enable_symbolic_link+"&http_headers="+http_headers+"&enable_passive_active="+enable_passive_active+"&passive_listener_timeout="+passive_listener_timeout+"&auto_pasv_ip="+auto_pasv_ip+"&auto_passive_forward="+auto_passive_forward+"&auto_active_forward="+auto_active_forward+"&enable_welcome_message="+enable_welcome_message+"&str_welcome_message="+encodeURIComponent(str_welcome_message)+"&ssh_banner="+ssh_banner+"&http_keepalive="+http_keepalive+"&tls_session_timeout="+tls_session_timeout+"&enable_salting="+enable_salting+"&salting_string="+salting_string+"&r="+Math.random();
+	ajaxRequest("admin_set_general",paramStr);
+}
+
+function doSubmit_result()
+{
+	top.closewindow(1);
+}
+
+function AddSSLCert()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_addsslcert']%>","<iframe src='admin_addcert_form.html?seeds=" + Math.random() +"' width=480 height=350 border=0 frameborder=0 id='add"+frametag+"'></iframe>",callback_return,480,350);
+}
+
+function callback_return(value)
+{
+	if(value != null)
+	{
+		var objOption = document.createElement("OPTION");
+		if(!window.ActiveXObject)
+			objOption.innerHTML = value;
+		else
+			objOption.innerText = value;
+		objOption.value = value;
+		objOption.selected = true;
+		objOption.className = "true";
+		$("sslcert").appendChild(objOption);
+		$("icon_certvaild").src = "images/true.png";
+	}
+	return true;
+}
+
+function AddSSHKey()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_addsshkey']%>","<iframe src='admin_addkey_form.html?seeds=" + Math.random() +"' width=480 height=350 border=0 frameborder=0 id='add"+frametag+"'></iframe>",callback_return2,480,350);
+}
+
+function callback_return2(value)
+{
+	if(value != null)
+	{
+		var objOption = document.createElement("OPTION");
+		if(!window.ActiveXObject)
+			objOption.innerHTML = value;
+		else
+			objOption.innerText = value;
+		objOption.value = value;
+		objOption.selected = true;
+		objOption.className = "true";
+		$("sshkey").appendChild(objOption);
+		$("icon_keyvaild").src = "images/true.png";
+	}
+	return true;
+}
+
+function AddSMTP()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_addsmtp']%>","<iframe src='admin_addsmtp_form.html?seeds=" + Math.random() +"' width=480 height=400 border=0 frameborder=0 id='add"+frametag+"'></iframe>",callback_return3,480,400);
+}
+
+function callback_return3(value)
+{
+	if(value != null)
+	{
+		var objOption = document.createElement("OPTION");
+		if(!window.ActiveXObject)
+			objOption.innerHTML = value;
+		else
+			objOption.innerText = value;
+		objOption.value = value;
+		objOption.selected = true;
+		$("smtpconfig").appendChild(objOption);
+	}
+	return true;
+}
+
+function checkCertValid(index)
+{
+	if($("sslcert").options[index].className == "true")
+		$("icon_certvaild").src = "images/true.png";
+	else
+		$("icon_certvaild").src = "images/false.png";
+}
+
+function checkKeyValid(index)
+{
+	if($("sshkey").options[index].className == "true")
+		$("icon_keyvaild").src = "images/true.png";
+	else
+		$("icon_keyvaild").src = "images/false.png";
+}
+
+function checkUpnpPort(obj)
+{
+	try
+	{
+		if(obj != null)
+			obj.value = obj.value.replace(/\D/g,'')
+
+		var pasv_min_port = parseInt($("pasv_min_port").value);
+		var pasv_max_port = parseInt($("pasv_max_port").value);
+		if(pasv_min_port > 65535)
+			$("pasv_min_port").value = "65535";
+		if(pasv_max_port > 65535)
+			$("pasv_max_port").value = "65535";
+
+		if(pasv_max_port < pasv_min_port)
+		{
+			pasv_max_port = pasv_min_port;
+			$("pasv_max_port").value = pasv_min_port+50;
+		}
+
+		if(pasv_max_port > 65535)
+			$("pasv_max_port").value = "65535";
+	}
+	catch(e)
+	{
+	}
+}
+
+function makeLogo()
+{
+	var frametag = new Date().getTime();
+	showMessagebox("<%=LANG['str_makelogo']%>","<iframe src='admin_domainlogo_form.html?domain="+$("domain").value+"&seeds=" + Math.random() +"' width=540 height=390 border=0 frameborder=0 id='add"+frametag+"'></iframe>",null,540,390);
+}
+
+function welcomeMessage()
+{
+	showMessagebox("<%=LANG['str_welcome_message']%>","<table width='100%' height='100%' border='0' cellpadding='0' cellspacing='0' style='padding:10px;'><tr><td height=220 align='left'><textarea id='strWelcomeMessage' style='width:400px;height:220px;'>"+strWelcomeMessage+"</textarea></td></tr><tr align='center'><td><button id='btn_submit' type='submit' onclick='return welcomeMessage_submit();' tabindex='1'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;&nbsp;&nbsp;<button id='btn_cancel' onclick='top.closewindow();' tabindex='2'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>", null, 420, 300);
+
+	top.$("btn_submit").onclick = function(){return welcomeMessage_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function welcomeMessage_submit()
+{
+	strWelcomeMessage = top.$("strWelcomeMessage").value;
+	top.closewindow();
+}
+
+function resetBanner()
+{
+	$("ssh_banner").value = "WingFTPServer";
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#777; filter:alpha(opacity=60); opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:20%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<div id="tabDiv">
+  <ul id="tags">
+  	<li class="emptyTag"></li>
+    <li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent1',this)"><%=LANG["title_miscellaneous"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent2',this)"><%=LANG["title_domainlog"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent3',this)"><%=LANG["title_connection_limit"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent4',this)"><%=LANG["title_transfer_limit"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent5',this)"><%=LANG["title_pasvmode"]%></a></li>
+	<li class="normalTag"><a href="javascript:void(0)" onfocus="this.blur()" onclick="switchTag('tagContent6',this)"><%=LANG["str_password"]%> & <%=LANG["str_field_security"]%></a></li>
+  </ul>
+  <div id="tagContent" class="tagContent">
+  	<div id="tagContent1">
+		<input id="domain" type="hidden" value="<%=_GET["domain"]%>">
+		<table cellSpacing="0" cellPadding="0" border="0" width="95%">
+
+		<tr><td><input type="checkbox" id="enable_fxp" <%if c_GetOptionInt(domain,DOPTION_ENABLE_FXP_INT) == 1 then print("checked") end%>><%=LANG["str_enable_fxp"]%></td></tr>
+
+		<tr><td><input type="checkbox" id="enable_utf8_on" <%if c_GetOptionInt(domain,DOPTION_ENABLE_UTF8ON) == 1 then print("checked") end%>><%=LANG["str_enable_utf8_on"]%></td></tr>
+
+		<tr><td><input type="checkbox" id="enable_auth_tls" <%if c_GetOptionInt(domain,DOPTION_ENABLE_AUTH) == 1 then print("checked") end%>><%=LANG["str_enable_auth_tls"]%></td></tr>
+
+
+
+		<tr><td><input type="checkbox" id="list_time_gmt" <%if c_GetOptionInt(domain,DOPTION_LIST_TIME_GMT) == 1 then print("checked") end%>><%=LANG["str_listtimegmt"]%></td></tr>
+
+		<tr><td>
+		<input type="checkbox" id="enable_domain_logo" <%if c_GetOptionInt(domain,DOPTION_ENABLE_DOMAINLOGO_INT) == 1 then print("checked") end%>><%=LANG["str_customlogo"]%>&nbsp;&nbsp;&nbsp;
+		<button onclick='makeLogo();'><span><em><%=LANG["str_makelogo"]%></em></span></button>
+		</td></tr>
+
+		<tr><td>
+		<input type="checkbox" id="enable_welcome_message" <%if c_GetOptionInt(domain,DOPTION_ENABLE_WELCOME_MSG) == 1 then print("checked") end%>><%=LANG["enable_welcome_message"]%>&nbsp;&nbsp;&nbsp;
+		<button onclick='welcomeMessage();'><span><em><%=LANG["str_welcome_message"]%></em></span></button>
+		</td></tr>
+
+		<tr><td height="30" style="padding-top:10px;">
+		<%=LANG["str_buffer_size"]%>: <input id="buffer_size" type="text" value="<%=c_GetOptionInt(domain,DOPTION_BUFFERSIZE_INT)%>" style="width:200px;" onmouseover="this.focus();" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> <%=LANG["str_byte"]%>
+		</td></tr>
+
+		<tr><td height="30" style="padding-top:10px;">
+		SSH (SFTP) banner: <input id="ssh_banner" type="text" maxlength="30" value="<%=specialhtml_encode(c_GetOptionStr(domain,DOPTION_SSH_BANNER))%>" style="width:200px;">
+		<button onclick='resetBanner();'><span><em><%=LANG["button_resetdefault"]%></em></span></button>
+		</td></tr>
+
+		<tr><td style="padding-top:15px;">
+		<table width="100%" cellSpacing="0" cellPadding="0" border="0">
+		<tr><td height="40">
+		<%=LANG["str_sslcert"]%>:
+		</td><td>
+		<select id="sslcert" onchange="checkCertValid(this.selectedIndex);" style="width:200px;">
+		<%
+			local certexist = false
+			local stateimg = "ico_warning.gif"
+			local nowcert = c_GetOptionStr(domain,DOPTION_SSL_NAME_STR)
+			print("<option value='' class='false'></option>")
+			for _,cert in pairs(c_GetSSLCertList()) do
+				if nowcert == cert["name"] then
+					certexist = true
+					print("<option value='"..cert["name"].."' class='"..tostring(c_CheckSSLCertificate(cert["name"])).."' selected>"..cert["name"].."</option>")
+				else
+					print("<option value='"..cert["name"].."' class='"..tostring(c_CheckSSLCertificate(cert["name"])).."'>"..cert["name"].."</option>")
+				end
+			end
+
+			if c_CheckSSLCertificate(nowcert) == true then
+				stateimg = "true.png"
+			else
+				stateimg = "false.png"
+			end
+		%>	
+		</select>
+		<img src="images/<%=stateimg%>" id="icon_certvaild">&nbsp;&nbsp;<button onclick="AddSSLCert();"><span><em><%=LANG["button_addsslcert"]%></em></span></button>
+		</td></tr>
+		<tr><td height="40">
+		<%=LANG["str_sshkey"]%>:
+		</td><td>
+		<select id="sshkey" onchange="checkKeyValid(this.selectedIndex);" style="width:200px;">
+		<%
+			local keyexist = false
+			local stateimg2 = "ico_warning.gif"
+			local nowkey = c_GetOptionStr(domain,DOPTION_SSH_NAME_STR)
+			print("<option value='' class='false'></option>")
+			for _,key in pairs(c_GetSSHKeyList()) do
+				if nowkey == key["name"] then
+					keyexist = true
+					print("<option value='"..key["name"].."' class='"..tostring(c_CheckSSHKey(key["name"])).."' selected>"..key["name"].."</option>")
+				else
+					print("<option value='"..key["name"].."' class='"..tostring(c_CheckSSHKey(key["name"])).."'>"..key["name"].."</option>")
+				end
+			end
+
+			if c_CheckSSHKey(nowkey) == true then
+				stateimg2 = "true.png"
+			else
+				stateimg2 = "false.png"
+			end
+		%>	
+		</select>
+		<img src="images/<%=stateimg2%>" id="icon_keyvaild">&nbsp;&nbsp;<button onclick="AddSSHKey();"><span><em><%=LANG["button_addsshkey"]%></em></span></button>
+		</td></tr>
+		<tr><td height="40">
+		<%=LANG["str_smtpconfiure"]%>:
+		</td><td>
+		<select id="smtpconfig" style="width:200px;">
+		<%
+			local nowconf = c_GetOptionStr(domain,DOPTION_SMTP_NAME_STR)
+			local smtpconf = Split(c_GetSMTPList(),"\n")
+			print("<option value=''></option>")
+			for _,conf in pairs(smtpconf) do
+				if nowconf == conf then
+					print("<option value='"..conf.."' selected>"..conf.."</option>")
+				else
+					print("<option value='"..conf.."'>"..conf.."</option>")
+				end
+			end
+		%>	
+		</select>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onclick="AddSMTP();"><span><em><%=LANG["button_addsmtp"]%></em></span></button>
+		</td></tr>
+		</table>
+		</td></tr>
+
+		<tr><td style="padding-top:8px;">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td height="35" colspan="2"><input type="checkbox" id="enable_modez" <%if c_GetOptionInt(domain,DOPTION_ENABLE_MODEZ_INT) == 1 then print("checked") end%>><%=LANG["str_compression2"]%></td></tr>
+		<tr><td height="35"><%=LANG["str_compression3"]%>:</td><td><input id="zlevel_default" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" disabled value="<%=c_GetOptionInt(domain,DOPTION_DEFAULT_ZLEVEL_INT)%>"></td></tr>
+		<tr><td height="35"><%=LANG["str_compression4"]%>:</td><td><input id="zlevel_min" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" disabled value="<%=c_GetOptionInt(domain,DOPTION_MIN_ZLEVEL_INT)%>"></td></tr>
+		<tr><td height="35"><%=LANG["str_compression5"]%>:</td><td><input id="zlevel_max" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" disabled value="<%=c_GetOptionInt(domain,DOPTION_MAX_ZLEVEL_INT)%>"></td></tr>
+		</table>
+		</td></tr>
+
+		</table>
+	</div>
+	<div id="tagContent2" style="overflow:auto; overflow-x:hidden;">
+		<table cellSpacing="0" cellPadding="0" border="0" width="95%">
+		<tr><td>
+		<fieldset>
+		<legend><input type="checkbox" id="enable_log" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_ENABLE_INT) == 1 then print("checked") end%>><b><%=LANG["str_domainlog_enable"]%></b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td height="30"><%=LANG["str_log_filename"]%>:</td><td><input id="log_filename" type="text" style="width:240px;" disabled value="<%=c_GetOptionStr(domain,DOPTION_LOGFILE_NAME_STR)%>"></td></tr>
+		<tr><td height="20" colspan="2"><%=LANG["str_logwildcard_tip"]%>:</td></tr>
+		<tr><td height="20" colspan="2">%Y=<%=LANG["str_year"]%>&nbsp;&nbsp;&nbsp;%M=<%=LANG["str_month"]%>&nbsp;&nbsp;&nbsp;%D=<%=LANG["str_day"]%>&nbsp;&nbsp;&nbsp;%MM=<%=LANG["str_month"]%> (01-12)&nbsp;&nbsp;&nbsp;%DD=<%=LANG["str_day"]%> (01-31)&nbsp;&nbsp;&nbsp;%HH=<%=LANG["str_hour"]%> (00-23)</td></tr>
+		<tr><td height="30"><%=LANG["str_log_maxsize"]%>:</td><td><input id="log_maxsize" type="text" style="width:120px;" disabled value="<%=c_GetOptionInt(domain,DOPTION_LOGFILE_MAXSIZE_INT)%>">KB (0 = <%=LANG["str_nolimit"]%>)</td></tr>
+		<tr><td colspan="2"><input type="checkbox" id="log_compress" disabled <%if c_GetOptionInt(domain,DOPTION_LOGFILE_COMPRESS_INT) == 1 then print("checked") end%>><%=LANG["str_compress_log"]%></td></tr>
+		<tr><td colspan="2"><input type="checkbox" id="log_millisecond" disabled <%if c_GetOptionInt(domain,DOPTION_ENABLE_LOG_MILLISECOND) == 1 then print("checked") end%>><%=LANG["str_log_millisecond"]%></td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+
+		<tr><td height="30">&nbsp;</td></tr>
+		<tr><td>
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td width="40"><b><%=LANG["str_log_file"]%></b></td><td width="80"><b><%=LANG["str_log_screen"]%></b></td><td><b><%=LANG["str_log_field"]%></b></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_message" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_MESSAGE_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_message" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_MESSAGE_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_message"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_security" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_SECURITY_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_security" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_SECURITY_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_security"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_ftpcmd" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_FTP_COMMAND_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_ftpcmd" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_FTP_COMMAND_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_ftpcmd"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_ftpresp" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_FTP_RESPONSE_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_ftpresp" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_FTP_RESPONSE_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_ftpresp"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_webcmd" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_WEB_COMMAND_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_webcmd" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_WEB_COMMAND_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_webcmd"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_webresp" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_WEB_RESPONSE_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_webresp" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_WEB_RESPONSE_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_webresp"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_sshcmd" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_SSH_COMMAND_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_sshcmd" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_SSH_COMMAND_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_sshcmd"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_sshresp" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_SSH_RESPONSE_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_sshresp" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_SSH_RESPONSE_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_sshresp"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_odbcerr" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_ODBC_ERROR_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_odbcerr" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_ODBC_ERROR_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_odbcerr"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_mysqlerr" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_MYSQL_ERROR_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_mysqlerr" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_MYSQL_ERROR_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_mysqlerr"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_luaerr" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_LUA_ERROR_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_luaerr" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_LUA_ERROR_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_luaerr"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_mailerr" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_MAIL_ERROR_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_mailerr" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_MAIL_ERROR_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_mailerr"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_fileerr" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_FILE_ERROR_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_fileerr" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_FILE_ERROR_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_fileerr"]%></td></tr>
+		<tr><td><input type="checkbox" id="enable_logfile_normalerr" <%if c_GetOptionInt(domain,DOPTION_LOGFILE_NORMAL_ERROR_INT) == 1 then print("checked") end%>></td><td><input type="checkbox" id="enable_logscrn_normalerr" <%if c_GetOptionInt(domain,DOPTION_LOGSCREEN_NORMAL_ERROR_INT) == 1 then print("checked") end%>></td><td><%=LANG["str_field_normalerr"]%></td></tr>
+		</table>	
+		</td></tr>
+		</table>
+	</div>
+	<div id="tagContent3">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td>
+		<fieldset>
+		<legend><b><%=LANG["str_limitdomainspecial"]%>(0 = <%=LANG["str_nolimit"]%>)</b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td height="30"><%=LANG["str_connectionlimit1"]%>:</td><td><input id="max_session" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_DOMAIN_MAX_SESSION_INT)%>"></td></tr>
+		<tr><td height="30"><%=LANG["str_connectionlimit2"]%>:</td><td><input id="max_ipsession" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_DOMAIN_PER_IP_MAX_SESSION_INT)%>"></td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+		<tr><td height="30"></td></tr>
+		<tr><td>
+		<fieldset>
+		<legend><b><%=LANG["str_limitdomainoverride"]%>(0 = <%=LANG["str_nolimit"]%>)</b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td height="30"><%=LANG["str_connectionlimit3"]%>:</td><td><input id="max_session_per_user" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_PER_ACCOUNT_MAX_SESSIONS_INT)%>"></td></tr>
+		<tr><td height="30"><%=LANG["str_connectionlimit4"]%>:</td><td><input id="max_ipsession_for_user" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_PER_ACCOUNT_PER_IP_MAX_SESSIONS_INT)%>"></td></tr>
+		<tr><td height="30"><%=LANG["str_connectionlimit5"]%>:</td><td><input id="connection_timeout" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_COMMAND_TIMEOUT_INT)%>"><%=LANG["str_minute"]%></td></tr>
+		<tr><td height="30"><%=LANG["str_transferlimit7"]%>:</td><td><input id="data_transfer_timeout" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_TRANSFER_TIMEOUT_INT)%>"><%=LANG["str_minute"]%></td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+		<tr><td height="30"></td></tr>
+		<tr><td height="30">
+		<input type="checkbox" id="http_keepalive" <%if c_GetOptionInt(domain,DOPTION_HTTP_KEEP_ALIVE) == 1 then print("checked") end%>><%=LANG["str_http_keepalive"]%>
+		</td></tr>
+		<tr><td height="50">
+		&nbsp;&nbsp;<%=LANG["str_tls_session_timeout"]%>: <input id="tls_session_timeout" type="text" style="width:150px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_TLS_SESSION_TIMEOUT)%>"><%=LANG["str_second"]%>
+		</td></tr>
+
+		</table>
+	</div>
+	<div id="tagContent4">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td>
+		<fieldset>
+		<legend><b><%=LANG["str_limitdomainspecial"]%>(0 = <%=LANG["str_nolimit"]%>)</b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td height="30"><%=LANG["str_transferlimit1"]%>:</td><td><input id="domain_downspeed" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_DOMAIN_MAX_DOWN_SPEED_INT)%>">KB/s</td></tr>
+		<tr><td height="30"><%=LANG["str_transferlimit2"]%>:</td><td><input id="domain_upspeed" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_DOMAIN_MAX_UP_SPEED_INT)%>">KB/s</td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+		<tr><td>
+		<fieldset>
+		<legend><b><%=LANG["str_limitdomainoverride"]%>(0 = <%=LANG["str_nolimit"]%>)</b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td height="30"><%=LANG["str_transferlimit3"]%>:</td><td><input id="session_downspeed" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_PER_SESSION_MAX_DOWN_SPEED_INT)%>">KB/s</td></tr>
+		<tr><td height="30"><%=LANG["str_transferlimit4"]%>:</td><td><input id="session_upspeed" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_PER_SESSION_MAX_UP_SPEED_INT)%>">KB/s</td></tr>
+		<tr><td height="30"><%=LANG["str_transferlimit5"]%>:</td><td><input id="user_downspeed" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_PER_USER_MAX_DOWN_SPEED_INT)%>">KB/s</td></tr>
+		<tr><td height="30"><%=LANG["str_transferlimit6"]%>:</td><td><input id="user_upspeed" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_PER_USER_MAX_UP_SPEED_INT)%>">KB/s</td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+		<tr><td>
+		<fieldset>
+		<legend><b><%=LANG["str_weblink_options"]%></b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="2" border="0">
+		<tr><td>
+		<input type="checkbox" id="enable_weblink" <%if c_GetOptionInt(domain,DOPTION_ENABLE_WEBLINK_INT) == 1 then print("checked") end%>><%=LANG["str_enable_weblink"]%>
+		<input type="checkbox" id="enable_uploadlink" <%if c_GetOptionInt(domain,DOPTION_ENABLE_UPLOADLINK_INT) == 1 then print("checked") end%>><%=LANG["str_enable_uploadlink"]%>
+		</td></tr>
+		<tr><td><input type="checkbox" id="show_subfolder" <%if c_GetOptionInt(domain,DOPTION_ENABLE_WEBLINK_SUBFOLDER) == 1 then print("checked") end%>><%=LANG["str_show_subfolder"]%></td></tr>
+		<tr><td><input type="checkbox" id="keep_old_weblink" <%if c_GetOptionInt(domain,DOPTION_KEEP_OLD_WEBLINK) == 1 then print("checked") end%>><%=LANG["str_keep_weblink"]%></td></tr>
+		<tr><td><input type="checkbox" id="anonymous_weblink" <%if c_GetOptionInt(domain,DOPTION_ANONYMOUS_WEBLINK) == 1 then print("checked") end%>><%=LANG["str_anonymous_weblink"]%></td></tr>
+		<tr><td><input type="checkbox" id="uplink_overwrite" <%if c_GetOptionInt(domain,DOPTION_UPLINK_OVERWRITE) == 1 then print("checked") end%>><%=LANG["str_uplink_overwrite"]%></td></tr>
+		<tr><td>
+		&nbsp;
+		<%=LANG["str_weblink_domain"]%>: <input id="weblink_domain" type="text" style="width:250px;" value="<%=c_GetOptionStr(domain,DOPTION_WEBLINK_URL)%>"> e.g. http://YourDomain/
+		&nbsp;
+		</td></tr>
+		</table>
+		</fieldset>
+		</td></tr>
+		</table>
+	</div>
+	<div id="tagContent5">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<%
+		local pasv_method = c_GetOptionInt(domain,DOPTION_PASSTYPE_INT)
+		%>
+		<tr><td><%=LANG["str_pasvmode1"]%>:</td></tr>
+		<tr><td>
+			<select id="enable_passive_active">
+			<option value="1"><%=LANG["str_enable_passive_active"]%></option>
+			<option value="2"><%=LANG["str_enable_passive"]%></option>
+			<option value="3"><%=LANG["str_enable_active"]%></option>
+			</select>				
+		</td></tr>
+		<tr><td><input type="radio" name="pasv_method" value="0" onclick="ChangePasvMethod(0);" <%if pasv_method == 0 then print("checked") end%> > <%=LANG["str_pasvmode2"]%></td></tr>
+		<tr><td><input type="radio" name="pasv_method" value="1" onclick="ChangePasvMethod(1);" <%if pasv_method == 1 then print("checked") end%> > <%=LANG["str_pasvmode3"]%></td></tr>
+		<tr><td><input id="pasv_fixed_ip" type="text" style="width:300px;" disabled value="<%=c_GetOptionStr(domain,DOPTION_FIXEDIP_STR)%>"></td></tr>
+		<tr><td><input type="radio" name="pasv_method" value="2" onclick="ChangePasvMethod(2);" <%if pasv_method == 2 then print("checked") end%> > <%=LANG["str_pasvmode4"]%></td></tr>
+		<tr><td><input id="pasv_web_ip" type="text" style="width:300px;" disabled value="<%=c_GetOptionStr(domain,DOPTION_WEB_IP_STR)%>"></td></tr>
+		<tr><td><input type="radio" name="pasv_method" value="3" onclick="ChangePasvMethod(3);" <%if pasv_method == 3 then print("checked") end%> > <%=LANG["str_pasvmode5"]%></td></tr>
+		<tr><td><input id="pasv_dns_ip" type="text" style="width:300px;" disabled value="<%=c_GetOptionStr(domain,DOPTION_DNS_IP_STR)%>"></td></tr>
+		<tr><td><%=LANG["str_pasvmode6"]%>: <input id="pasv_ip_refresh" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"  value="<%=c_GetOptionInt(domain,DOPTION_PASV_IP_REFRESH_INTERVAL_INT)%>"><%=LANG["str_minute"]%></td></tr>
+		<tr><td> <%=LANG["passive_listener_timeout"]%>: <input id="passive_listener_timeout" type="text" style="width:100px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"  value="<%=c_GetOptionInt(domain,DOPTION_PASSIVE_LISTENER_TIMEOUT)%>"><%=LANG["str_second"]%></td></tr>
+		<tr><td><%=LANG["str_pasvmode8"]%>: <input id="pasv_min_port" type="text" style="width:100px;" onblur="checkUpnpPort(this);" onafterpaste="checkUpnpPort(this);"  value="<%=c_GetOptionInt(domain,DOPTION_PASSPORTMIN_INT)%>"> to <input id="pasv_max_port" type="text" style="width:100px;" onblur="checkUpnpPort(this);" onafterpaste="checkUpnpPort(this);" value="<%=c_GetOptionInt(domain,DOPTION_PASSPORTMAX_INT)%>"></td></tr> 
+		<tr><td><input type="checkbox" id="auto_pasv_ip" <%if c_GetOptionInt(domain,DOPTION_USE_LOCAL_IP_PASSIVE_INT) == 1 then print("checked") end%>><%=LANG["auto_pasv_ip"]%></td></tr>
+		<tr><td><input type="checkbox" id="auto_passive_forward" <%if c_GetOptionInt(domain,DOPTION_AUTO_PASSIVE_FORWARD) == 1 then print("checked") end%>><%=LANG["auto_passive_forward"]%></td></tr>
+		<tr><td><input type="checkbox" id="auto_active_forward" <%if c_GetOptionInt(domain,DOPTION_AUTO_ACTIVE_FORWARD) == 1 then print("checked") end%>><%=LANG["auto_active_forward"]%></td></tr>
+		</table>
+	</div>
+	<div id="tagContent6">
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr><td height="30" colspan="2"><input type="checkbox" id="enable_symbolic_link" <%if c_GetOptionInt(domain,DOPTION_ENABLE_SYMBOLIC_LINK) == 1 then print("checked") end%>><%=LANG["str_symbolic_link"]%></td></tr>
+		<tr><td height="30" colspan="2"><input type="checkbox" id="sha256_password" <%if c_GetOptionInt(domain,DOPTION_ENABLE_SHA256) == 1 then print("checked") end%>><%=LANG["str_sha256_password"]%></td></tr>
+		<tr><td height="30" colspan="2"><input type="checkbox" id="enable_salting" <%if c_GetOptionInt(domain,DOPTION_ENABLE_PASS_SALTING) == 1 then print("checked") end%>><%=LANG["str_enable_salting"]%>:
+		<input id="salting_string" type="text" style="width:150px;" maxlength="16" disabled value="<%=salt_string%>"></td></tr>
+		<tr><td height="30" colspan="2"><input type="checkbox" id="changepass_firstlogon" <%if c_GetOptionInt(domain,DOPTION_CHANGEPASS_FIRSTLOGON) == 1 then print("checked") end%>><b><%=LANG["str_changepass_firstlogon"]%> (HTTP/HTTPS)</b></td></tr>
+		<tr><td height="30" colspan="2"><%=LANG["str_min_password"]%>:<input id="min_password" type="text" value="<%=c_GetOptionInt(domain,DOPTION_PASSWORD_LEN_INT)%>" style="width:50px;" onmouseover="this.focus();" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"> (0 - 32, 0 = <%=LANG["str_nolimit"]%>)</td></tr>
+		<tr><td height="30" colspan="2"><%=LANG["str_password_complexity"]%></td></tr>
+		<tr><td colspan="2">
+		<input type="checkbox" id="password_complexity1" <%if c_GetOptionInt(domain,DOPTION_INC_NUMBER_INT) == 1 then print("checked") end%>><%=LANG["str_password_complexity1"]%>
+		<input type="checkbox" id="password_complexity2" <%if c_GetOptionInt(domain,DOPTION_INC_LOWERCASE_INT) == 1 then print("checked") end%>><%=LANG["str_password_complexity2"]%>
+		<input type="checkbox" id="password_complexity3" <%if c_GetOptionInt(domain,DOPTION_INC_UPPERCASE_INT) == 1 then print("checked") end%>><%=LANG["str_password_complexity3"]%>
+		<input type="checkbox" id="password_complexity4" <%if c_GetOptionInt(domain,DOPTION_INC_NONALPHANUMERIC_INT) == 1 then print("checked") end%>><%=LANG["str_password_complexity4"]%>
+		</td></tr>
+		<tr><td height="15" colspan="2"></td></tr>
+		<tr><td colspan="2">
+		<fieldset>
+		<legend><input type="checkbox" id="enable_hammer" <%if c_GetOptionInt(domain,DOPTION_ANTI_HAMMER_ENABLE_INT) == 1 then print("checked") end%>><b><%=LANG["str_enable_antihammer"]%></b></legend>
+		<table width="100%" cellSpacing="0" cellPadding="0" border="0">
+		<tr id="hammer_tr1" disabled><td>&nbsp;&nbsp;&nbsp;<input type="checkbox" id="send_message" <%if c_GetOptionInt(domain,DOPTION_ANTI_HAMMER_SEND_MESSAGE_INT) == 1 then print("checked") end%>><%=LANG["str_send_hammermsg"]%></td></tr>
+		<tr id="hammer_tr2" disabled><td height="35">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%=LANG["str_banip"]%><input type="text" id="block_time" value="<%=c_GetOptionInt(domain,DOPTION_ANTI_HAMMER_BLOCK_TIME_INT)%>" style="width:35px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"><%=LANG["str_second"]%> <%=LANG["str_if"]%> <input type="text" id="failed_count" value="<%=c_GetOptionInt(domain,DOPTION_ANTI_HAMMER_LOGIN_FAILED_COUNTS_INT)%>" style="width:35px;"  onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"><%=LANG["str_trylogin_fail"]%><input type="text" id="failed_interval" value="<%=c_GetOptionInt(domain,DOPTION_ANTI_HAMMER_INTERVAL_INT)%>" style="width:35px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"><%=LANG["str_second"]%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</table>
+		</fieldset>
+		</td></tr>
+		<tr><td height="15" colspan="2"></td></tr>
+		<tr><td height="40" colspan="2"><input type="checkbox" id="enable_https_redirect" <%if c_GetOptionInt(domain,DOPTION_ENABLE_HTTPS_REDIRECT) == 1 then print("checked") end%>><%=LANG["str_enable_https_redirect"]%> (HTTPS <%=LANG["str_port"]%>:<input id="https_redirect_port" type="text" style="width:60px;" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="<%=c_GetOptionInt(domain,DOPTION_HTTPS_REDIRECT_PORT)%>">)</td></tr>
+		<tr><td colspan="2">&nbsp;<b><%=LANG["str_http_headers"]%></b> (<%=LANG["str_http_headers_tip"]%>):</td></tr>
+		<tr><td colspan="2"><textarea id="http_headers" style="width:480px;height:50px;"><%=c_GetOptionStr(domain,DOPTION_HTTP_HEADER_STR)%></textarea></td>
+		</table>
+	</div>
+  </div>	
+</div>
+
+<div style="padding:3px;text-align:right;margin-right:10px;">
+<button type='submit' onclick='doSubmit();'><span><em><%=LANG["button_submit"]%></em></span></button>&nbsp;
+<button onclick='top.closewindow();'><span><em><%=LANG["button_cancel"]%></em></span></button>
+</div>
+
+<script type="text/javascript">
+
+$("tagContent1").style.display="block";
+$("tags").getElementsByTagName("li")[1].className="selectedTag";
+
+$("enable_passive_active").value = "<%=c_GetOptionInt(domain,DOPTION_ALLOW_PASSIVE_ACTIVE)%>";
+
+$("enable_hammer").onclick = function()
+{
+	$("hammer_tr1").disabled = ($("enable_hammer").checked ? false : true);
+	$("hammer_tr2").disabled = ($("enable_hammer").checked ? false : true);
+	if($("enable_hammer").checked)
+		$("block_time").focus();
+}
+
+if($("enable_hammer").checked)
+{
+	$("hammer_tr1").disabled = ($("enable_hammer").checked ? false : true);
+	$("hammer_tr2").disabled = ($("enable_hammer").checked ? false : true);
+}
+
+
+
+$("enable_log").onclick = function()
+{
+	$("log_filename").disabled = ($("enable_log").checked ? false : true);
+	$("log_maxsize").disabled = ($("enable_log").checked ? false : true);
+	$("log_compress").disabled = ($("enable_log").checked ? false : true);
+	$("log_millisecond").disabled = ($("enable_log").checked ? false : true);
+}
+
+if($("enable_log").checked)
+{
+	$("log_filename").disabled = ($("enable_log").checked ? false : true);
+	$("log_maxsize").disabled = ($("enable_log").checked ? false : true);
+	$("log_compress").disabled = ($("enable_log").checked ? false : true);
+	$("log_millisecond").disabled = ($("enable_log").checked ? false : true);
+}
+
+
+$("enable_modez").onclick = function()
+{
+	$("zlevel_default").disabled = ($("enable_modez").checked ? false : true);
+	$("zlevel_min").disabled = ($("enable_modez").checked ? false : true);
+	$("zlevel_max").disabled = ($("enable_modez").checked ? false : true);
+}
+
+if($("enable_modez").checked)
+{
+	$("zlevel_default").disabled = ($("enable_modez").checked ? false : true);
+	$("zlevel_min").disabled = ($("enable_modez").checked ? false : true);
+	$("zlevel_max").disabled = ($("enable_modez").checked ? false : true);
+}
+
+<%
+local nType = c_GetLicenseInfo()
+if nType == LICENSE_FREE then
+%>
+$("enable_uploadlink").onclick = $("enable_weblink").onclick = function()
+{
+	if($("enable_uploadlink").checked || $("enable_weblink").checked)
+	{
+		$("enable_uploadlink").checked = false;
+		$("enable_weblink").checked = false;
+		alert("<%=LANG['str_notsupport_feature8']%>");
+	}
+}
+<% 
+end
+%>
+
+function ChangePasvMethod(value)
+{
+	$("pasv_fixed_ip").disabled = true;
+	$("pasv_web_ip").disabled = true;
+	$("pasv_dns_ip").disabled = true;
+
+	if(value == 1)
+		$("pasv_fixed_ip").disabled = false;
+	else if(value == 2)
+		$("pasv_web_ip").disabled = false;
+	else if(value == 3)
+		$("pasv_dns_ip").disabled = false;
+}
+
+ChangePasvMethod(<%=pasv_method%>);
+
+
+function switchTag(tagContent,obj)
+{
+
+	for(var i=1; i<$("tags").getElementsByTagName("li").length; i++)
+	{
+		$("tags").getElementsByTagName("li")[i].className="normalTag";
+	}
+	obj.parentNode.className="selectedTag";
+	
+	for(var j=0; j<$("tagContent").getElementsByTagName("div").length; j++)
+	{
+		$("tagContent").getElementsByTagName("div")[j].style.display="none";
+	}
+	$(tagContent).style.display="block";
+	selectedRow = null;
+	lastsortcol = -1;
+}
+
+
+$("enable_domain_logo").onclick = function()
+{
+	if($("enable_domain_logo").checked == true)
+		makeLogo();
+}
+
+$("enable_welcome_message").onclick = function()
+{
+	if($("enable_welcome_message").checked == true)
+		welcomeMessage();
+}
+
+$("enable_salting").onclick = function()
+{
+	$("salting_string").disabled = ($("enable_salting").checked ? false : true);
+}
+
+if($("enable_salting").checked)
+{
+	$("salting_string").disabled = ($("enable_salting").checked ? false : true);
+}
+
+
+</script>
+</body>
+</html>
+<% end %>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>alert('"..LANG["session_expire"].."');top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

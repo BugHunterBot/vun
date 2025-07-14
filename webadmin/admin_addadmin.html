@@ -1,0 +1,18 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local admin = _POST["admin"]
+	if admin ~= nil then
+		admin = json.decode(admin)
+
+		local result = c_AdminExist(admin.username)
+		if result == true then
+			print("0")
+		else
+			admin.username = string.gsub(admin.username,"%[","")
+			admin.username = string.gsub(admin.username,"%]","")
+			AddAdmin(admin)
+			print("1")
+		end
+	end
+end
+%>

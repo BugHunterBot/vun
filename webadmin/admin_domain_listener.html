@@ -1,0 +1,616 @@
+<%
+include("language.html")
+if _SESSION["logined"] ~= nil then
+
+local domain = _GET["domain"] or _POST["domain"]
+local IpList = c_GetLocalIpList()
+
+local GatewayList = ""
+for _,gateway in pairs(c_GetGatewayList()) do
+	if type(gateway) == "table" then
+		GatewayList = GatewayList..","..gateway["gateway_host"]
+	end
+end
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Domain Listeners</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html, body {height: 100%;margin:0;padding:0;}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+body,td,span {font:12px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%else%>
+body,td,span {font:11px/20px Verdana, Geneva, Arial, Helvetica, sans-serif;}
+<%end%>
+img {border:0px;}
+input,select,textarea{margin:4px;}
+input,textarea{background-color:expression((this.disabled && this.disabled==true)?"#D4D0C8":"")}
+
+button{
+border:none;background:none;padding:0;
+margin:0;width:auto;overflow:visible;text-align:center;
+white-space:nowrap;height:24px;line-height:24px;
+cursor:pointer;
+color:#000;
+margin-left:2px;
+margin-top:2px;
+}
+button span, button em{
+display:block;height:24px;line-height:22px;margin:0;
+}	
+button span{
+font-size:8pt;
+padding-left:12px;
+background:url("images/button_left.gif") no-repeat 0 0;
+}
+<%if _COOKIE["admin_lang"] == "schinese" or _COOKIE["admin_lang"] == "tchinese" or _COOKIE["admin_lang"] == "japanese" then%>
+button em{
+font-style:normal;padding-right:14px;
+background:url("images/button.gif") no-repeat 101% 0;
+}
+<%else%>
+button em{
+font-style:normal;padding-right:10px;
+background:url("images/button.gif") no-repeat 100% 0;
+}
+<%end%>
+button:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+button span:hover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+.buttonhover{
+filter:alpha(opacity=60);
+opacity:0.60;
+color:#5488C9;
+}
+
+
+.listhead
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #E1E2E3;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #EFEFEF; overflow:hidden; height:18px;
+}
+
+.listhead2
+{
+		border-top: 1px solid white; border-right: 1px solid #ACA899; border-left: 1px solid white; border-bottom: 2px solid #FCC247;
+		font: 12px/22px arial; cursor: hand; text-align: center; background-color: #FAF9F4; overflow:hidden; height:18px;
+}
+
+.listtr01
+{
+		background-color: #FFFFFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.listtr02
+{
+		background-color: #3366CC;
+		color: #FFF;
+		text-align: left;
+		padding: 3px;
+}
+
+.resizeblock{
+	background-color:transparent;
+	width:2px;
+	float:right;
+	cursor:e-resize;
+}
+
+</style>
+
+<script language="javascript" src="include/common.js"></script>
+<script language="javascript">
+var domain = "<%=domain%>";
+var IpList = "<%=IpList%>";
+var IpListArray = IpList.split(",");
+var GatewayList = "<%=GatewayList%>";
+var GatewayListArray = GatewayList.split(",");
+var listenerTypes = [<%=LANG['listener_types']%>];
+var last_type = 0;
+var last_address = "";
+var last_port = 0;
+var last_gateway = "";
+var last_gatewayport = 0;
+var last_fastudp = 0;
+var ajaxlock = false;
+var selectedRow = null;
+var lastObj = null;
+var lastObjIndex = -1;
+var _TIMER_REFRESH = null;
+
+var xmlhttp,page,post;
+xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+function ajaxRequest(pagename,poststring,method)
+{
+	if(ajaxlock == false)
+	{	
+		delete xmlhttp;
+		xmlhttp = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+
+		ajaxlock = true;
+		page = pagename;
+		post = poststring;
+
+		if(method == "GET")
+			xmlhttp.open("GET",page+".html"+post);
+		else
+			xmlhttp.open("POST",page+".html");
+
+		xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xmlhttp.onreadystatechange = ajaxResponse;
+		if(method != "GET")
+			xmlhttp.send(post);
+		else
+			xmlhttp.send("");
+
+		$("waitingdiv").style.display = "";
+	}
+}
+
+function ajaxResponse()
+{
+	ajaxlock = false;
+	$("waitingdiv").style.display = "none";
+	if (xmlhttp.readyState == 4)
+	{
+		if (xmlhttp.status == 200)
+		{
+			try
+			{
+				switch(page)
+				{
+					case 'admin_delete_listener':	deletelistener_result();break;
+					case 'admin_add_listener':	addlistener_result();break;
+				}
+			}
+			catch(e)
+			{
+			}
+		}
+		else
+		{
+		}
+	}
+}
+
+var httpObj = isIE ? new ActiveXObject('Microsoft.XMLHTTP'):new XMLHttpRequest();
+var xmlDoc = null;
+
+function getlistenerlist_req()
+{
+	httpObj.open("POST","admin_get_listenerlist.html");
+	httpObj.onreadystatechange = function(){getlistenerlist_result(httpObj); };
+	httpObj.send("domain="+domain+"&r=" + Math.random());
+}
+
+function getlistenerlist_result(httpObject)
+{
+	try
+	{
+		if(httpObject.readyState != 4 || httpObject.status != 200)
+			return;
+
+		if(xmlDoc == httpObject.responseXML)
+		{
+			return;
+		}
+
+		xmlDoc = httpObject.responseXML;
+		var row = xmlDoc.getElementsByTagName("listenerlist");
+		var rownum = row.length;
+
+		var htmltext = "<table id='listtable' width='100%' border='0' cellpadding='2' cellspacing='0' style='table-layout:fixed;'><thead><tr height='0'><td width='180'></td><td width='150'></td><td width='100'></td><td width='90'></td></tr></thead><tbody id='maintable'>";
+		for(var i=0; i < rownum; i++)
+		{
+			var myrow = row[i];
+			var f_id = xmlFieldValue(myrow,"ID");
+			var f_type = xmlFieldValue(myrow,"Type");
+			var f_address = xmlFieldValue(myrow,"Ip_Address");
+			var f_port = xmlFieldValue(myrow,"Port");
+			var f_gateway = xmlFieldValue(myrow,"Gateway_Host");
+			var f_gatewayport = xmlFieldValue(myrow,"Gateway_Port");
+			var f_fastudp = xmlFieldValue(myrow,"Enable_FastUDP");
+			var f_listening = xmlFieldValue(myrow,"Is_Listening");
+			var f_address_str = f_address;
+			if(trim(f_address) == "")
+				f_address_str = "all available address";
+			var f_icon = "<img src='images/ico_listeners.png'>";
+			if(f_listening == "false")
+				f_icon = "<img src='images/ico_listeners2.png'>";
+			htmltext += "<tr class='listtr01' onmouseup='do_list_click(this);'><td f_id='"+f_id+"' f_type='"+f_type+"' f_address='"+f_address+"' f_port='"+f_port+"' f_gateway='"+f_gateway+"' f_gatewayport='"+f_gatewayport+"' f_fastudp='"+f_fastudp+"'>&nbsp;"+f_icon+"&nbsp;&nbsp;"+listenerTypes[parseInt(f_type)-1]+"</td></td><td>"+f_address_str+"</td><td>"+f_port+"</td><td><img src='images/"+f_listening+".png'></td></tr>";
+		}
+		htmltext += "</tbody></table>";
+		clear("listview_div");
+		write("listview_div",htmltext);
+		selectedRow = null;
+		autoSortTable("listtable");
+
+		nowrows = rownum;
+		if(lastObjIndex >= 0)
+		{
+			for(var i=0; i < rownum; i++)
+			{
+				var tempID = parseInt($("maintable").rows[i].cells[0].getAttribute("f_id"));
+				if(tempID == lastObjIndex)
+				{
+					$("maintable").rows[i].className = "listtr02";
+					lastObj = $("maintable").rows[i];
+					selectedRow = lastObj;
+				}
+			}
+		}
+	}
+	catch(e){}
+}
+
+
+function do_list_click(obj)
+{
+	var row_index = obj.rowIndex-1;
+	if(selectedRow != $("maintable").rows[row_index])
+	{
+		if(lastObj != null)
+			lastObj.className = "listtr01";
+
+		selectedRow = $("maintable").rows[row_index];
+		obj.className = "listtr02";
+		lastObj = obj;
+		try{
+			lastObjIndex = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+		}catch(e){
+			lastObjIndex = -1;
+		}
+	}
+	else
+	{
+		ModifyListener();
+	}
+
+	return false;
+}
+
+
+function AddListener()
+{
+	var strIpList = "";
+	for(var i=0;i<IpListArray.length;i++)
+	{
+		var nowIpaddr = trim(IpListArray[i]);
+		strIpList += "<option value='"+nowIpaddr+"'>"+nowIpaddr+"</option>";
+	}
+
+	var strGatewayList = "";
+	for(var i=0;i<GatewayListArray.length;i++)
+	{
+		var nowGateway = trim(GatewayListArray[i]);
+		strGatewayList += "<option value='"+nowGateway+"'>"+nowGateway+"</option>";
+	}
+
+	var strDisplay = "";
+	if(trim(GatewayList) == "")
+	{
+		strDisplay = "none";
+	}
+
+	showMessagebox("<%=LANG['str_addlistener']%>","<br><table width='100%' border='0' cellpadding='0' cellspacing='0' style='padding-left:10px; height:200px;'><tr><td height=30 width=110 align=right><%=LANG['str_listenertype']%>:</td><td align=left><select id='listener_type' style='width:180px'><option value='1'>"+listenerTypes[0]+"</option><option value='2'>"+listenerTypes[1]+"</option><option value='3'>"+listenerTypes[2]+"</option><option value='4'>"+listenerTypes[3]+"</option><option value='5'>"+listenerTypes[4]+"</option></select></td></tr><tr><td height=30 width=100 align=right><%=LANG['str_listeneraddr']%>:</td><td align=left><select id='listener_address' style='width:180px'>"+strIpList+"</select>(<%=LANG['str_listeneraddr_tip']%>)</td></tr><tr><td height=30 width=100 align=right><%=LANG['str_listenerport']%>:</td><td align=left><input type='text' style='width:130px' id='listener_port' autocomplete='off'></td></tr><tr style='display:"+strDisplay+"'><td height=50 width=100 align='right' valign='center'>Gateway:</td><td align='left' valign='center'><select id='gateway_host' style='width:120px'>"+strGatewayList+"</select> => <%=LANG['str_listenerport']%>:<input type='text' style='width:50px' id='gateway_port'></td></tr><tr style='display:"+strDisplay+"'><td></td><td align='left'><input type='checkbox' id='fastudp' disabled> <%=LANG['str_fastudp']%> <img src='images/ico_question.gif' title='<%=LANG['str_fastudp_tip']%>'></td></tr><tr><td height=45 colspan=2 valign='bottom'><button id='btn_submit' type='submit' onclick='return AddListener_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",callback_return,430,255);
+	top.$("listener_port").focus();
+
+	top.$("listener_type").onchange = function(){
+		top.$("fastudp").disabled = true;
+		if(top.$("listener_type").value == "4") 
+			top.$("fastudp").disabled = false;
+	};
+
+	top.$("btn_submit").onclick = function(){return AddListener_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function AddListener_submit()
+{
+	var type = parseInt(top.$("listener_type").value);
+	var address = top.$("listener_address").value;
+	var port = parseInt(top.$("listener_port").value);
+	var gateway_host = top.$("gateway_host").value;
+	var gateway_port = parseInt(top.$("gateway_port").value);
+	var fastudp = top.$("fastudp").checked ? 1:0;
+
+	if(isNaN(port) || port <= 0 || port > 65535)
+	{
+		alert("<%=LANG['str_invalid_listener']%>");
+		return false;
+	}
+
+	if(gateway_host != "" && (isNaN(gateway_port) || gateway_port <= 0 || gateway_port > 65535) )
+	{
+		alert("<%=LANG['str_invalid_port']%>");
+		return false;
+	}
+
+	if(fastudp == 1 && gateway_host == "" )
+	{
+		alert("<%=LANG['str_no_gateway']%>");
+		return false;
+	}
+
+	<%
+	local nType = c_GetLicenseInfo()
+	if nType == LICENSE_STANDARD or nType == LICENSE_FREE then
+	%>
+	if(type == 2 || type == 4 || type == 5)
+	{
+		alert("<%=LANG['str_notsupport_feature4']%>");
+		return false;
+	}
+	<%
+	end
+	%>
+
+	clearInterval(_TIMER_REFRESH);
+	ajaxRequest("admin_add_listener","domain="+domain+"&type="+type+"&address="+address+"&port="+port+"&gateway_host="+gateway_host+"&gateway_port="+gateway_port+"&fastudp="+fastudp+"&r=" + Math.random());
+}
+
+function ModifyListener()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_nolistener_tip']%>");
+		return;
+	}
+	var index = parseInt(selectedRow.cells[0].getAttribute("f_id"));
+	var type = parseInt(selectedRow.cells[0].getAttribute("f_type"));
+	var address = trim(selectedRow.cells[0].getAttribute("f_address"));
+	var port = parseInt(selectedRow.cells[0].getAttribute("f_port"));
+	var gateway = trim(selectedRow.cells[0].getAttribute("f_gateway"));
+	var gatewayport = parseInt(selectedRow.cells[0].getAttribute("f_gatewayport"));
+	var fastudp = selectedRow.cells[0].getAttribute("f_fastudp");
+	last_type = type;
+	last_address = address;
+	last_port = port;
+	last_gateway = gateway;
+	last_gatewayport = gatewayport;
+	last_fastudp = (fastudp=="true"?1:0);
+
+	var strIpList = "";
+	for(var i=0;i<IpListArray.length;i++)
+	{
+		var nowIpaddr = trim(IpListArray[i]);
+		if(nowIpaddr == address)
+			strIpList += "<option value='"+nowIpaddr+"' selected>"+nowIpaddr+"</option>";
+		else
+			strIpList += "<option value='"+nowIpaddr+"'>"+nowIpaddr+"</option>";
+	}
+
+	var strGatewayList = "";
+	for(var i=0;i<GatewayListArray.length;i++)
+	{
+		var nowGateway = trim(GatewayListArray[i]);
+		if(nowGateway == gateway)
+			strGatewayList += "<option value='"+nowGateway+"' selected>"+nowGateway+"</option>";
+		else
+			strGatewayList += "<option value='"+nowGateway+"'>"+nowGateway+"</option>";
+	}
+
+	var strDisplay = "";
+	if(trim(GatewayList) == "")
+	{
+		strDisplay = "none";
+	}
+
+	showMessagebox("<%=LANG['str_modifylistener']%>","<br><table width='100%' border='0' cellpadding='0' cellspacing='0' style='padding-left:10px; height:200px;'><input type='hidden' id='listener_index' value='"+index+"'><tr><td height=30 width=110 align=right><%=LANG['str_listenertype']%>:</td><td align=left><select id='listener_type' style='width:180px'><option value='1' "+(type==1?"selected":"")+">"+listenerTypes[0]+"</option><option value='2' "+(type==2?"selected":"")+">"+listenerTypes[1]+"</option><option value='3' "+(type==3?"selected":"")+">"+listenerTypes[2]+"</option><option value='4' "+(type==4?"selected":"")+">"+listenerTypes[3]+"</option><option value='5' "+(type==5?"selected":"")+">"+listenerTypes[4]+"</option></select></td></tr><tr><td height=30  width=100 align=right><%=LANG['str_listeneraddr']%>:</td><td align=left><select id='listener_address' style='width:180px'>"+strIpList+"</select>(<%=LANG['str_listeneraddr_tip']%>)</td></tr><tr><td height=30  width=100 align=right><%=LANG['str_listenerport']%>:</td><td align=left><input type='text' style='width:130px' id='listener_port' value='"+port+"' autocomplete='off'></td></tr><tr style='display:"+strDisplay+"'><td height=50 width=100 align='right' valign='center'>Gateway:</td><td align='left' valign='center'><select id='gateway_host' style='width:120px'>"+strGatewayList+"</select> => <%=LANG['str_listenerport']%>:<input type='text' style='width:50px' id='gateway_port' value='"+gatewayport+"'></td></tr><tr style='display:"+strDisplay+"'><td></td><td align='left'><input type='checkbox' id='fastudp' "+(fastudp=="true"?"checked":"")+" "+(type==4?"":"disabled")+"> <%=LANG['str_fastudp']%> <img src='images/ico_question.gif' title='<%=LANG['str_fastudp_tip']%>'></td></tr><tr><td height=45 colspan=2 valign='bottom'><button id='btn_submit' type='submit' onclick='return ModifyListener_submit()'><span><em><%=LANG['button_submit']%></em></span></button>&nbsp;<button id='btn_cancel' onclick='top.closewindow();'><span><em><%=LANG['button_cancel']%></em></span></button></td></tr></table>",callback_return,430,255);
+	top.$("listener_port").focus();
+
+	top.$("listener_type").onchange = function(){
+		top.$("fastudp").disabled = true;
+		if(top.$("listener_type").value == "4") 
+			top.$("fastudp").disabled = false;
+	};
+
+	top.$("btn_submit").onclick = function(){return ModifyListener_submit();};
+	top.$("btn_cancel").onclick = function(){top.closewindow();};
+}
+
+function ModifyListener_submit()
+{
+	var index = top.$("listener_index").value;
+	var type = parseInt(top.$("listener_type").value);
+	var address = top.$("listener_address").value;
+	var port = parseInt(top.$("listener_port").value);
+	var gateway_host = top.$("gateway_host").value;
+	var gateway_port = parseInt(top.$("gateway_port").value);
+	var fastudp = top.$("fastudp").checked ? 1:0;
+
+	if(type == last_type && address == last_address && port == last_port && gateway_host == last_gateway && gateway_port == last_gatewayport && fastudp == last_fastudp)
+	{
+		top.closewindow();
+		return false;
+	}
+
+	if(isNaN(port) || port <= 0 || port > 65535)
+	{
+		alert("<%=LANG['str_invalid_listener']%>");
+		return false;
+	}
+
+	if(gateway_host != "" && (isNaN(gateway_port) || gateway_port <= 0 || gateway_port > 65535) )
+	{
+		alert("<%=LANG['str_invalid_port']%>");
+		return false;
+	}
+
+	if(fastudp == 1 && gateway_host == "" )
+	{
+		alert("<%=LANG['str_no_gateway']%>");
+		return false;
+	}
+
+	<%
+	local nType = c_GetLicenseInfo()
+	if nType == LICENSE_STANDARD or nType == LICENSE_FREE then
+	%>
+	if(type == 2 || type == 4 || type == 5)
+	{
+		alert("<%=LANG['str_notsupport_feature4']%>");
+		return false;
+	}
+	<%
+	end
+	%>
+
+	clearInterval(_TIMER_REFRESH);
+	ajaxRequest("admin_add_listener","domain="+domain+"&index="+index+"&type="+type+"&address="+address+"&port="+port+"&gateway_host="+gateway_host+"&gateway_port="+gateway_port+"&fastudp="+fastudp+"&r=" + Math.random());
+}
+
+function addlistener_result()
+{
+	var result = trim(xmlhttp.responseText);
+	if(result == "<%=PORT_LISTENERS_ERR_SUCCESS%>")
+	{
+		getlistenerlist_req();
+	}
+	else
+	{
+		<% if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then %>
+		<% else %>
+		alert("<%=LANG['str_addlistener_fail']%>");
+		<% end %>
+	}
+	clearInterval(_TIMER_REFRESH);
+	_TIMER_REFRESH = setInterval("getlistenerlist_req()",1000);
+	top.closewindow();
+}
+
+function DeleteListener()
+{
+	if(selectedRow == null)
+	{
+		alert("<%=LANG['str_nolistener_tip']%>");
+		return;
+	}
+
+	var f_id = selectedRow.cells[0].getAttribute("f_id");
+	if(confirm("<%=LANG['str_deletelistener_tip']%>"))
+	{
+		clearInterval(_TIMER_REFRESH);
+		ajaxRequest("admin_delete_listener","domain="+domain+"&index="+f_id+"&r=" + Math.random());
+	}
+}
+
+function deletelistener_result()
+{
+	var result = trim(xmlhttp.responseText);
+	if(result == "<%=PORT_LISTENERS_ERR_SUCCESS%>")
+	{
+		getlistenerlist_req();
+	}
+	else
+	{
+		<% if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then %>
+		<% else %>
+		alert("<%=LANG['str_deletelistener_fail']%>");
+		<% end %>
+	}
+	clearInterval(_TIMER_REFRESH);
+	_TIMER_REFRESH = setInterval("getlistenerlist_req()",1000);
+}
+
+function Refresh()
+{
+	getlistenerlist_req();
+}
+
+
+top.cancelTimerCallback = function()
+{
+	clearInterval(_TIMER_REFRESH);
+}
+
+function callback_return(value)
+{
+	clearInterval(_TIMER_REFRESH);
+	_TIMER_REFRESH = setInterval("getlistenerlist_req()",1000);
+	return true;
+}
+</script>
+</head>
+<body style="background-color:#E6E6E6;padding:4px;">
+
+<div id="waitingdiv" style="position:absolute; z-index:100; top:0px; left:0px; width:100%; height:100%; background:#777; filter:alpha(opacity=60); opacity:0.60; display:none;" align="center">
+<div style="position:absolute; top:20%; left:20%; width:250px; height:100px;"><img src="images/loading2.gif" border="0">
+<H2><b><%=LANG["title_updating"]%></b></H2></div></div>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="table-layout:fixed;">
+	<tr>
+	<td>
+		<table cellSpacing="0" cellPadding="0" border="0">
+		<tr>
+		<td><img src="images/vista_ethernet.gif">&nbsp;&nbsp;&nbsp;</td><td><%=LANG["str_listeners_tip"]%></td>
+		</tr>
+		</table>
+	</td>
+	</tr>
+
+	<tr>
+	<td>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #919B9C;">
+		<tr>
+		<td class="listhead" width="180" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable',  0);"><%=LANG["title_listenertype"]%></td>
+		<td class="listhead" width="150" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable', 1)"><%=LANG["title_listeneraddr"]%></td>
+		<td class="listhead" width="100" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable',  2);"><%=LANG["title_listenerport"]%></td>
+		<td class="listhead" width="90" onmouseover="className='listhead2';" onmouseout="className='listhead';" onmousedown="sortTable(this,'listtable',  3);"><%=LANG["title_islistening"]%></td>
+		</tr>
+		<tr>
+		<td colspan="4">
+		<div id="listview_div" style="height: 250px; width:100%; background-color:#FFF; overflow:auto; overflow-x:hidden;">
+		<table id="listtable" width="100%" border="0" cellpadding="2" cellspacing="0" style="table-layout:fixed;">
+		<thead><tr height="0">
+		<td width="180"></td>
+		<td width="150"></td>
+		<td width="100"></td>
+		<td width="90"></td>
+		</tr></thead>
+		<tbody id="maintable">
+		</tbody>
+		</table>
+		</div>
+		</td></tr>
+	</table>
+	</td></tr>
+
+	<tr>
+	<td align="center" style="padding-top:10px;">
+		<button onclick="AddListener();"><span><em><%=LANG["button_addlistener"]%></em></span></button>
+		<button onclick="ModifyListener();"><span><em><%=LANG["button_modifylistener"]%></em></span></button>
+		<button onclick="DeleteListener();"><span><em><%=LANG["button_deletelistener"]%></em></span></button>
+	</td>
+	</tr>
+</table>
+
+
+<script>
+clearInterval(_TIMER_REFRESH);
+_TIMER_REFRESH = setInterval("getlistenerlist_req()",1000);
+getlistenerlist_req();
+</script>
+</body>
+</html>
+
+<% 
+else
+	print("<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>")
+	print("<script>top.location='admin_login.html';</script>")
+end 
+%>
+
+<noscript><center><H2><%=LANG["error_nojavascript"]%></H2></center></noscript>

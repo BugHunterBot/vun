@@ -1,0 +1,34 @@
+<%
+include("language.html")
+
+if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
+	local nowdir = _POST["nowpath"] or _GET["nowpath"] or nil
+	local nowfile = _POST["nowfile"] or _GET["nowfile"] or nil
+	if nowdir ~= nil and nowfile ~= nil then
+		nowdir = string.gsub(nowdir,":{{","%[")
+		nowdir = string.gsub(nowdir,"}}:","%]")
+
+		local fileext = string.sub(nowfile,-4,-1)
+		fileext = string.lower(fileext)
+		if fileext == ".png" or fileext == ".gif" or fileext == ".jpg" or fileext == "jpeg" then 
+			c_DeleteThumb(_SESSION["username"],nowfile,nowdir)
+		end
+
+		local status = 1
+		status = c_RemoveDirectory(_SESSION["username"],nowfile,nowdir,false,_SESSION_ID)
+		if status == 1 then
+			c_AddWebLog("Removed file '"..nowdir.."/"..nowfile.."' successfully",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+			c_DoWebEvent(WEB_FILE_DELETE_EVENT,_SESSION_ID)
+			print("1")
+		else
+			c_AddWebLog("Removed file '"..nowdir.."/"..nowfile.."' failed",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+			print(RESULT_STR[tonumber(status)])
+		end
+	else
+		print(LANG["error_no_filename"])
+	end
+else
+	print("session expired")
+end
+
+%>

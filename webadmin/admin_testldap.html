@@ -1,0 +1,20 @@
+<%
+if _SESSION["logined"] ~= nil then
+
+	local domain = _POST["domain"]
+	local ldap_host = _POST["ldap_host"]
+	local ldap_port = _POST["ldap_port"]
+	local ldap_version = _POST["ldap_version"]
+	local ldap_usessl = _POST["ldap_usessl"]
+	local ldap_binddn = _POST["ldap_binddn"]
+	local ldap_bindpass = _POST["ldap_bindpass"]
+
+	local retval,errmsg = c_TestLDAP(domain,ldap_host,ldap_port,ldap_version,ldap_usessl,ldap_binddn,ldap_bindpass)
+	if retval == true then
+		print("1")
+	else
+		print(errmsg or "")
+	end
+
+end
+%>

@@ -1,0 +1,32 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local index = _POST["index"]
+	local type = _POST["type"]
+	local address = _POST["address"]
+	local port = _POST["port"]
+	local gateway_host = _POST["gateway_host"]
+	local gateway_port = _POST["gateway_port"]
+	local fastudp = _POST["fastudp"]
+	local result
+
+	if domain ~= nil then
+		if index == nil then
+			result = c_AddListener(domain, type, address, port, gateway_host, gateway_port, fastudp)
+			if result == 0 then
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' added domain listener ["..unescape(domain).."]",ADMIN_LOG_OK)
+			else
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' added domain listener failed. error code:"..result.." ["..unescape(domain).."]",ADMIN_LOG_ERROR)
+			end
+		else
+			result = c_UpdateListener(domain, index, type, address, port, gateway_host, gateway_port, fastudp)
+			if result == 0 then
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' changed domain listener ["..unescape(domain).."]",ADMIN_LOG_OK)
+			else
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' changed domain listener failed. error code:"..result.." ["..unescape(domain).."]",ADMIN_LOG_ERROR)
+			end
+		end
+		print(result)
+	end
+end
+%>

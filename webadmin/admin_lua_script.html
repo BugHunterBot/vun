@@ -1,0 +1,81 @@
+<%
+include("language.html")
+
+
+COMMAND_STR = {}
+COMMAND_STR["^%s*help%s*$"] = "print(LANG['admin_help'])"
+COMMAND_STR["^%s*version%s*$"] = "print(_VERSION)"
+COMMAND_STR["^%s*date%s*$"] = "print(os.date())"
+COMMAND_STR["^%s*viewserver%s*$"] = "print(cmdServerStatistic())"
+COMMAND_STR["^%s*viewdomain%s+(%S+)%s*$"] = "print(cmdDomainStatistic('%1'))"
+COMMAND_STR["^%s*viewsession%s+(%S+)%s+(%S+)%s*$"] = "print(cmdSessionStatistic('%1',%2))"
+COMMAND_STR["^%s*domainlist%s*$"] = "print(cmdDomainList())"
+COMMAND_STR["^%s*shutdown%s*$"] = "c_ExitServer()"
+COMMAND_STR["^%s*startserver%s*$"] = "c_StartServer()"
+COMMAND_STR["^%s*stopserver%s*$"] = "c_StopServer()"
+COMMAND_STR["^%s*startdomain%s+(%S+)%s*$"] = "c_StartDomain('%1')"
+COMMAND_STR["^%s*stopdomain%s+(%S+)%s*$"] = "c_StopDomain('%1')"
+COMMAND_STR["^%s*adddomain%s+(%S+)%s*$"] = "c_AddDomain('%1','*',-1,-1,-1,-1,-1)"
+COMMAND_STR["^%s*adddomain%s+(%S+)%s+(%S+)%s*$"] = "c_AddDomain('%1','*',%2,-1,-1,-1,-1)"
+COMMAND_STR["^%s*adddomain%s+(%S+)%s+(%S+)%s+(%S+)%s*$"] = "c_AddDomain('%1','*',%2,%3,-1,-1,-1)"
+COMMAND_STR["^%s*adddomain%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s*$"] = "c_AddDomain('%1','*',%2,%3,%4,-1,-1)"
+COMMAND_STR["^%s*adddomain%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s*$"] = "c_AddDomain('%1','*',%2,%3,%4,%5,-1)"
+COMMAND_STR["^%s*adddomain%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s*$"] = "c_AddDomain('%1','*',%2,%3,%4,%5,%6)"
+COMMAND_STR["^%s*deldomain%s+(%S+)%s*$"] = "c_DeleteDomain('%1')"
+COMMAND_STR["^%s*userlist%s+(%S+)%s*$"] = "print(cmdUserList('%1'))"
+COMMAND_STR["^%s*grouplist%s+(%S+)%s*$"] = "print(cmdGroupList('%1'))"
+COMMAND_STR["^%s*userlistpage%s+(%S+)%s+(%S+)%s*$"] = "print(cmdUserListPage('%1',%2))"
+COMMAND_STR["^%s*grouplistpage%s+(%S+)%s+(%S+)%s*$"] = "print(cmdGroupListPage('%1',%2))"
+COMMAND_STR["^%s*sessionlist%s+(%S+)%s*$"] = "print(cmdConnectionList('%1'))"
+COMMAND_STR["^%s*adduser%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s*$"] = "c_AddUser('%1','%2',md5('%3'),63,1,1) c_AddUserDirectory('%1','%2','%4','/',true,true,false,false,false,true,false,false,false)"
+COMMAND_STR["^%s*addgroup%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s*$"] = "c_AddGroup('%1','%2') c_AddGroupDirectory('%1','%2','%3','%4',false,true,false,false,false,true,false,false,false)"
+COMMAND_STR["^%s*deluser%s+(%S+)%s+(%S+)%s*$"] = "c_DeleteUser('%1','%2')"
+COMMAND_STR["^%s*delgroup%s+(%S+)%s+(%S+)%s*$"] = "c_DeleteGroup('%1','%2')"
+COMMAND_STR["^%s*kick%s+(%S+)%s+(%S+)%s*$"] = "if c_KickSession('%1',%2) == 1 then print('kicked session successfully!') end"
+COMMAND_STR["^%s*kickbyname%s+(%S+)%s+(%S+)%s*$"] = "if c_KickSessionByName('%1','%2') == 1 then print('kicked session successfully!') end"
+COMMAND_STR["^%s*kickall%s+(%S+)%s*$"] = "if c_KickAllSessions('%1') == 1 then print('kicked session successfully!') end"
+COMMAND_STR["^%s*listeners%s+(%S+)%s*$"] = "print(cmdListenerList('%1'))"
+COMMAND_STR["^%s*guess%s*(%S+)%s*$"] = "GuessGame('%1')"
+
+
+function parse_command(command)
+
+	for key,value in pairs(COMMAND_STR) do
+		if string.find(command, key) then
+			return string.gsub(command,key,value)
+		end
+	end
+	return nil
+end
+
+
+
+if _SESSION["logined"] ~= nil then
+	if (_SESSION["admin_readonly"] ~= nil and _SESSION["admin_readonly"] == 1) or (_SESSION["admin_domainadmin"] ~= nil and _SESSION["admin_domainadmin"] == 1) then
+		print("Lua scripts can not be executed by Read-Only Administrator or Domain Administrator.")
+	else
+		local command = _POST["command"]
+		if command ~= nil then
+			command = c_ReplaceGlobalVar(command)
+			local newcmd
+			local tempcmd = parse_command(command)
+			if  tempcmd ~= nil then
+				command = tempcmd
+				newcmd = command
+			else
+				newcmd = string.gsub(command, "[%s\r\n]do[%s\r\n]+"," do if tonumber(page_loadtime()) >= 600 then print('lua execution timeout!') return end ")
+			end
+			 
+			local status,err = loadstring(command)
+			if not status then
+				if type(err) == "string" then
+					print(string.format("Error occurs: %s!",err))
+				end
+			else
+				assert(loadstring(newcmd))()
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' (IP:".._REMOTE_IP..") executed the following Lua scripts via console: "..command,ADMIN_LOG_OK)
+			end
+		end
+	end
+end
+%>

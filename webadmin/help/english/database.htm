@@ -1,0 +1,3261 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Advanced Features &gt; Database Schema</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="Database,Database Schemas">
+   <meta name="description" content="Database Schema">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?database.htm"; }
+  else { parent.quicksync('a6.4'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Advanced Features&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Database Schema</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="administration.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="uoeoeia.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><img src="btn_next_d.gif" border="0">
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold; color: #ff0000;">Note:</span><span style="font-size: 12pt; font-weight: bold;"> </span><span style="font-size: 12pt; font-style: italic; font-weight: bold;">There is no need to create database schemas or tables by yourself, Wing FTP Server will create them automatically when configuring ODBC/Mysql settings(if you use Mysql, </span><span style="font-size: 12pt; font-weight: bold;">please create a mysql database first, the default database name is "wftp_database"</span><span style="font-size: 12pt; font-style: italic; font-weight: bold;">)</span><span style="font-size: 12pt; font-style: italic;">.</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 16pt; font-weight: bold;">Schemas for ODBC database</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">1) </span><span style="font-size: 11pt;">table for mapping relations of user and group(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_user_group</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">2) </span><span style="font-size: 11pt;">table for user information(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_user</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableAccount</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable account?,1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnablePassword</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable password?,1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Password</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user password</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ProtocolType</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enabled protocols mask, FTP=1,FTP(TLS)=2,FTP(SSL)=4,HTTP=8,HTTP(SSL)=16,SSH=32,if only allow FTP and HTTP, the mask number is 1+8 = 9</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableExpire</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable account expire?,1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ExpireTime</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the account expire time,such as "2009-09-09 00:00:00"</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxDownloadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session download speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxUploadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session upload speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxConnection</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoCommandTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp connection timeout value </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoTransferTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp idle timeout value</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ConnectionPerIp</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections per Ip</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>PasswordLength</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max password length</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ShowHiddenFile</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>show the hidden file?, 1=show,0=hide</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CanChangePassword</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>user can change password?, 1=allow,0=deny</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CanSendMessageToServer</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>send chat message?, 1=allow,0=deny</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurrentCredit</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current ratio credit</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>RatioDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ratio download</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; height:14px; border: solid 1px #000000;"><p>RatioUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; height:14px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; height:14px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; height:14px; border: solid 1px #000000;"><p>ratio upload</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>RatioCountMethod</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ratio count method,0=count for files,1=count for bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableRatio</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable ratio?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxQuota</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max quota size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurrentQuota</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current quota size </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableQuota</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable quota?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesName</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note name text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesAddress</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note address text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesZipCode</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note zipcode text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesPhone</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note phone number text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesFax</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note fax number text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesEmail</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note email text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesMemo</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note memo text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalReceivedBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total received bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalSentBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total sent bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LoginCount</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>login count</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total downloaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total uploaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total download failed files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total upload failed files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LastLoginIp</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the last login IP</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LastLoginTime</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the last login time</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableGroup</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable group?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableSchedule</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable access schedule?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LimitResetTime</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>transfer limit reset time</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LimitResetType</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>transfer limit reset type, 0=reset never,1=reset hourly,2=reset daily,3=reset weekly,4=reset monthly</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableUploadLimit</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable transfer limit upload?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurLimitUploadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current upload size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxLimitUploadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max upload size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableDownloadLimit</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable transfer limit download?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurLimitDownLoadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current download size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxLimitDownloadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max download size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SSHPublicKeyPath</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ssh public key path (optional)</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableSSHPubKeyAuth</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable ssh public key authentication, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SSHAuthMethod</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ssh authentication method, 1=use both public key and password authentication,0=only use public key authentication</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableWeblink</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable web download link, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableUplink</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable web request (upload) link, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableTwoFactor</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable two-factor authentication (TOTP) for Web Client, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TwoFactorCode</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>TOTP secret code</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ExtraInfo</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>extra information for user account</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">3) </span><span style="font-size: 11pt;">table for user's directory(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_dir</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirPath</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory real path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirAlias</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory virtual path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Home_Dir</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>is home directory?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Read</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file read?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Write</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file write?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Append</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file append?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_List</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory list?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Rename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory/file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Make</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory create?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p><span style="font-size: 9pt;">File_Rename</span></p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p><span style="font-size: 9pt;">Zip_File</span></p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable zip files?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p><span style="font-size: 9pt;">Unzip_File</span></p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable unzip files?, 1=yes,0=no</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">4) </span><span style="font-size: 11pt;">table for user's filemask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_filemask</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Filename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the file mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">5) </span><span style="font-size: 11pt;">table for user's ipmask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_ipmask</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Ip</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the ip mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">6) </span><span style="font-size: 11pt;">table for user's access schedule(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_schedule</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Weekday</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the day for access schedule. 0=Sunday,1=Monday,2=Tuesday,3=Wednesday,4=Thursday,5=Friday,6=Saturday</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TimeFrom</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>start time for access</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TimeTo</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>end time for access</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">7) </span><span style="font-size: 11pt;">table for group information(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_group</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxDownloadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session download speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxUploadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session upload speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxConnection</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoCommandTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp connection timeout value </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoTransferTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp idle timeout value</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ConnectionPerIp</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections per Ip</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ShowHiddenFile</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>show the hidden file?, 1=show,0=hide</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CanSendMessageToServer</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>send chat message?, 1=allow,0=deny</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalReceivedBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total received bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalSentBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total sent bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LoginCount</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>login count</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total downloaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total uploaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total download failed files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total upload failed files</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">8) </span><span style="font-size: 11pt;">table for group's directory(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_dir2</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirPath</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory real path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirAlias</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory virtual path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Home_Dir</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>is home directory?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Read</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file read?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Write</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file write?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Append</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file append?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_List</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory list?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Rename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory/file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Make</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory create?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p><span style="font-size: 9pt;">File_Rename</span></p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Zip_File</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable zip files?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Unzip_File</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable unzip files?, 1=yes,0=no</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">9) </span><span style="font-size: 11pt;">table for group's filemask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_filemask2</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Filename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the file mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">10) </span><span style="font-size: 11pt;">table for group's ipmask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_table_ipmask2</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Ip</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the ip mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 16pt; font-weight: bold;">Schemas for Mysql database</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 11pt;">1) </span><span style="font-size: 11pt;">table for mapping relations of user and group(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_user_group</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">2) </span><span style="font-size: 11pt;">table for user information(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_user</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableAccount</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable account?,1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnablePassword</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable password?,1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Password</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user password</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ProtocolType</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enabled protocols mask, FTP=1,FTP(TLS)=2,FTP(SSL)=4,HTTP=8,HTTP(SSL)=16,SSH=32,if only allow FTP and HTTP, the mask number is 1+8 = 9</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableExpire</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable account expire?,1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ExpireTime</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the account expire time,such as "2009-09-09 00:00:00"</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxDownloadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session download speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxUploadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session upload speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxConnection</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoCommandTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp connection timeout value </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoTransferTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp idle timeout value</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ConnectionPerIp</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections per Ip</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>PasswordLength</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max password length</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ShowHiddenFile</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>show the hidden file?, 1=show,0=hide</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CanChangePassword</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>user can change password?, 1=allow,0=deny</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CanSendMessageToServer</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>send chat message?, 1=allow,0=deny</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurrentCredit</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current ratio credit</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>RatioDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ratio download</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>RatioUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ratio upload</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>RatioCountMethod</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ratio count method,0=count for files,1=count for bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableRatio</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable ratio?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxQuota</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max quota size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurrentQuota</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current quota size </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableQuota</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable quota?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesName</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note name text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesAddress</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note address text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesZipCode</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note zipcode text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesPhone</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note phone number text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesFax</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note fax number text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesEmail</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note email text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>NotesMemo</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>note memo text</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalReceivedBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total received bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalSentBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total sent bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LoginCount</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>login count</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total downloaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total uploaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total download failed files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total upload failed files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LastLoginIp</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the last login IP</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LastLoginTime</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the last login time</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableGroup</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable group?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableSchedule</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable access schedule?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LimitResetTime</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>transfer limit reset time</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LimitResetType</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>transfer limit reset type, 0=reset never,1=reset hourly,2=reset daily,3=reset weekly,4=reset monthly</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableUploadLimit</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable transfer limit upload?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurLimitUploadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current upload size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxLimitUploadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max upload size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableDownloadLimit</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable transfer limit download?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CurLimitDownLoadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>current download size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxLimitDownloadSize</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max download size</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p><span style="font-size: 9pt;">SSHPublicKeyPath</span></p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>SSH public key path (optional)</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableSSHPubKeyAuth</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable ssh public key authentication, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SSHAuthMethod</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ssh authentication method, 1=use both public key and password authentication,0=only use public key authentication</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableWeblink</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable web download link, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableUplink</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable web request (upload) link, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>EnableTwoFactor</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable two-factor authentication (TOTP) for Web Client, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TwoFactorCode</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>TOTP secret code</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ExtraInfo</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>extra information for user account</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">3) </span><span style="font-size: 11pt;">table for user's directory(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_dir</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirPath</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory real path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirAlias</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory virtual path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Home_Dir</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>is home directory?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Read</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file read?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Write</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file write?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Append</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file append?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_List</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory list?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Rename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory/file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Make</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory create?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p><span style="font-size: 9pt;">File_Rename</span></p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Zip_File</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable zip files?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Unzip_File</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable unzip files?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">4) </span><span style="font-size: 11pt;">table for user's filemask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_filemask</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Filename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the file mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">5) </span><span style="font-size: 11pt;">table for user's ipmask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_ipmask</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Ip</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the ip mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">6) </span><span style="font-size: 11pt;">table for user's access schedule(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_schedule</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>User_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the user name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Weekday</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the day for access schedule. 0=Sunday,1=Monday,2=Tuesday,3=Wednesday,4=Thursday,5=Friday,6=Saturday</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TimeFrom</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>start time for access</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TimeTo</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (32)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>end time for access</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">7) </span><span style="font-size: 11pt;">table for group information(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_group</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxDownloadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session download speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxUploadSpeed</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max session upload speed </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>MaxConnection</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoCommandTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp connection timeout value </p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>SessionNoTransferTimeOut</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>ftp idle timeout value</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ConnectionPerIp</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>max number of connections per Ip</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ShowHiddenFile</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>show the hidden file?, 1=show,0=hide</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>CanSendMessageToServer</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>send chat message?, 1=allow,0=deny</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalReceivedBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total received bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>TotalSentBytes</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total sent bytes</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>LoginCount</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>login count</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total downloaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FileUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total uploaded files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedDownload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total download failed files</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>FailedUpload</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>total upload failed files</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">8) </span><span style="font-size: 11pt;">table for group's directory(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_dir2</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirPath</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (255)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory real path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>DirAlias</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the directory virtual path</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Home_Dir</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>is home directory?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Read</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file read?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Write</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file write?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Append</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file append?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>File_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_List</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory list?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Rename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory/file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Make</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory create?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Directory_Delete</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable directory delete?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p><span style="font-size: 9pt;">File_Rename</span></p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable file rename?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Zip_File</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable zip files?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Unzip_File</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>enable unzip files?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">9) </span><span style="font-size: 11pt;">table for group's filemask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_filemask2</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<th valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</th>
+<th valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</th>
+<th valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</th>
+<th valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</th>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Filename</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the file mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<p><span style="font-size: 11pt;">10) </span><span style="font-size: 11pt;">table for group's ipmask(</span><span style="font-size: 11pt; color: #0000ff;">wftp_mysqltable_ipmask2</span><span style="font-size: 11pt;">)</span></p>
+<p><span style="color: #000000;">&nbsp;</span></p>
+<div style="text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table cellspacing="0" cellpadding="3" border="0" style="border: none; border-spacing:0px; border-collapse: collapse;">
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" bgcolor="#999999" style="width:181px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Field Name</span></p>
+</td>
+<td valign="top" width="100" bgcolor="#999999" style="width:100px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Type</span></p>
+</td>
+<td valign="top" width="73" bgcolor="#999999" style="width:73px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">NULL</span></p>
+</td>
+<td valign="top" width="354" bgcolor="#999999" style="width:354px; background-color:#999999; border: solid 1px #000000;"><p><span style="font-weight: bold;">Description</span></p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Domain</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the domain name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Group_Name</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (64)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the group name</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Ip</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>varchar (128)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL</p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>the ip mask</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>Refuse</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>int(11)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><br>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>refuse access?, 1=yes,0=no</p>
+</td>
+</tr>
+<tr style="text-align:left;vertical-align:top;">
+<td valign="top" width="181" style="width:181px; border: solid 1px #000000;"><p>ID</p>
+</td>
+<td valign="top" width="100" style="width:100px; border: solid 1px #000000;"><p>bigint(20)</p>
+</td>
+<td valign="top" width="73" style="width:73px; border: solid 1px #000000;"><p>NOT NULL </p>
+</td>
+<td valign="top" width="354" style="width:354px; border: solid 1px #000000;"><p>PRIMARY KEY, AUTO_INCREMENT</p>
+</td>
+</tr>
+</table>
+</div>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

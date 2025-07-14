@@ -1,0 +1,19 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local filemask = _POST["filemask"]
+	local filemasks = json.decode(filemask)
+
+	local domain_filemasks = {}
+	if type(filemasks) == "table" then
+		for _,filemask in pairs(filemasks) do
+			local temp = {}
+			table.insert(temp,filemask.filename)
+			table.insert(temp,filemask.refuse)
+			table.insert(domain_filemasks,temp)
+		end
+	end
+
+	c_SetFileMaskList(domain,domain_filemasks)
+end
+%>

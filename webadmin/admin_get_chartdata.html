@@ -1,0 +1,11 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local timetype = _POST["timetype"]
+	local datatype = _POST["datatype"]
+
+	local strResult = ""
+	strResult = strResult..datatype.."||"..timetype.."||"..os.date("%Y-%m-%d-%H-%M-%S").."||"..c_GetChartData(domain,timetype,datatype)
+	print(strResult)
+end
+%>

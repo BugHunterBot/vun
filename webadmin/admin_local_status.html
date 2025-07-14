@@ -1,0 +1,73 @@
+<%
+if _REMOTE_IP == "127.0.0.1" or _REMOTE_IP == "localhost" then
+	setContentType("text/xml; charset=UTF-8")
+	local domain = ""
+	local listener_error = 0
+	for _,domain in pairs(c_GetDomainList()) do
+		local listenerlist = c_GetListenerList(domain)
+		if listenerlist ~= nil then
+			for _,listener in pairs(listenerlist) do
+				if listener["Is_Listening"] == false then
+					listener_error = listener_error + 1
+				end
+			end
+		end
+	end
+	local statistic = c_GetServerStatistic()
+	local xml = ""
+	xml = xml.."<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n"
+	xml = xml.."<alldata>\r\n"
+	xml = xml.."<statistic>\r\n"
+	xml = xml.."<running_time>"
+	xml = xml..formatTime(statistic["running_time"])
+	xml = xml.."</running_time>"
+	xml = xml.."<current_session>"
+	xml = xml..statistic["current_session"]
+	xml = xml.."</current_session>"
+	xml = xml.."<max_session>"
+	xml = xml..statistic["max_session"]
+	xml = xml.."</max_session>"
+	xml = xml.."<last24hour_session>"
+	xml = xml..statistic["last24hour_session"]
+	xml = xml.."</last24hour_session>"
+	xml = xml.."<session_averagesec>"
+	xml = xml..formatTime(statistic["session_averagesec"])
+	xml = xml.."</session_averagesec>"
+	xml = xml.."<session_maxsec>"
+	xml = xml..formatTime(statistic["session_maxsec"])
+	xml = xml.."</session_maxsec>"
+	xml = xml.."<total_session>"
+	xml = xml..statistic["total_session"]
+	xml = xml.."</total_session>"
+	xml = xml.."<down_speed>"
+	xml = xml..formatSpeed(statistic["down_speed"])
+	xml = xml.."</down_speed>"
+	xml = xml.."<down_averagespeed>"
+	xml = xml..formatSpeed(statistic["down_averagespeed"])
+	xml = xml.."</down_averagespeed>"
+	xml = xml.."<down_bytes>"
+	xml = xml..formatSize(statistic["down_bytes"])
+	xml = xml.."</down_bytes>"
+	xml = xml.."<down_files>"
+	xml = xml..statistic["down_files"]
+	xml = xml.."</down_files>"
+	xml = xml.."<up_speed>"
+	xml = xml..formatSpeed(statistic["up_speed"])
+	xml = xml.."</up_speed>"
+	xml = xml.."<up_averagespeed>"
+	xml = xml..formatSpeed(statistic["up_averagespeed"])
+	xml = xml.."</up_averagespeed>"
+	xml = xml.."<up_bytes>"
+	xml = xml..formatSize(statistic["up_bytes"])
+	xml = xml.."</up_bytes>"
+	xml = xml.."<up_files>"
+	xml = xml..statistic["up_files"]
+	xml = xml.."</up_files>"
+	xml = xml.."<listener_error>"
+	xml = xml..listener_error
+	xml = xml.."</listener_error>\r\n"
+	xml = xml.."</statistic>\r\n"
+	xml = xml.."</alldata>\r\n"
+	print(xml)
+end
+%>

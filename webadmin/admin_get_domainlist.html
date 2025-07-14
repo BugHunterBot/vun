@@ -1,0 +1,50 @@
+<%
+function in_array(domain,domainArray)
+	for _,tempdomain in pairs(domainArray) do
+		if tempdomain == domain then
+			return true
+		end
+	end
+	return false
+end
+
+function GetOwnDomainList()
+	local xml = ""
+	xml = xml.."<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\r\n"
+	xml = xml.."<alldata>\r\n"
+	local id = 1
+	local domainArray = Split(_SESSION["admin_domainlist"],",")
+	local bContinue = false
+	for _,domain in pairs(c_GetDomainList()) do
+		bContinue = false
+		if _SESSION["admin_domainadmin"] == 1 and in_array(domain,domainArray) == false then
+			bContinue = true
+		end
+		if bContinue == false then
+			xml = xml.."<domainlist>\r\n"
+			xml = xml.."<id>"
+			xml = xml..id
+			xml = xml.."</id>"
+			xml = xml.."<domain><![CDATA["
+			xml = xml..specialhtml_encode(urldecode(domain))
+			xml = xml.."]]></domain>"
+			xml = xml.."<connections>"
+			xml = xml..c_GetSessionCount(domain)
+			xml = xml.."</connections>"
+			xml = xml.."<status>"
+			xml = xml..tostring(c_IsDomainOnline(domain))
+			xml = xml.."</status>\r\n"
+			xml = xml.."</domainlist>\r\n"
+			id = id+1
+		end
+	end
+	xml = xml.."</alldata>\r\n"
+	return xml
+end
+
+if _SESSION["logined"] ~= nil then
+	setContentType("text/xml; charset=UTF-8")
+	local liststr = GetOwnDomainList()
+	print(liststr)
+end
+%>

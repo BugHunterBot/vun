@@ -1,0 +1,47 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local limit = _POST["limit"]
+	limit = json.decode(limit)
+
+	local limit_table = {}
+	if type(limit) == "table" then
+		table.insert(limit_table,limit.enable_upload_never)
+		table.insert(limit_table,limit.cur_upload_size_never)
+		table.insert(limit_table,limit.max_upload_size_never)
+		table.insert(limit_table,limit.enable_download_never)
+		table.insert(limit_table,limit.cur_download_size_never)
+		table.insert(limit_table,limit.max_download_size_never)
+
+		table.insert(limit_table,limit.enable_upload_hourly)
+		table.insert(limit_table,limit.cur_upload_size_hourly)
+		table.insert(limit_table,limit.max_upload_size_hourly)
+		table.insert(limit_table,limit.enable_download_hourly)
+		table.insert(limit_table,limit.cur_download_size_hourly)
+		table.insert(limit_table,limit.max_download_size_hourly)
+
+		table.insert(limit_table,limit.enable_upload_daily)
+		table.insert(limit_table,limit.cur_upload_size_daily)
+		table.insert(limit_table,limit.max_upload_size_daily)
+		table.insert(limit_table,limit.enable_download_daily)
+		table.insert(limit_table,limit.cur_download_size_daily)
+		table.insert(limit_table,limit.max_download_size_daily)
+
+		table.insert(limit_table,limit.enable_upload_weekly)
+		table.insert(limit_table,limit.cur_upload_size_weekly)
+		table.insert(limit_table,limit.max_upload_size_weekly)
+		table.insert(limit_table,limit.enable_download_weekly)
+		table.insert(limit_table,limit.cur_download_size_weekly)
+		table.insert(limit_table,limit.max_download_size_weekly)
+
+		table.insert(limit_table,limit.enable_upload_monthly)
+		table.insert(limit_table,limit.cur_upload_size_monthly)
+		table.insert(limit_table,limit.max_upload_size_monthly)
+		table.insert(limit_table,limit.enable_download_monthly)
+		table.insert(limit_table,limit.cur_download_size_monthly)
+		table.insert(limit_table,limit.max_download_size_monthly)
+	end
+
+	c_SetTransferLimit(domain,limit_table)
+end
+%>

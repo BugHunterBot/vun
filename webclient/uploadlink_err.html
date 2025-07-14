@@ -1,0 +1,7 @@
+<%
+
+if _GET["linkid"] ~= nil and _GET["linkid"] ~= "" and _GET["filename"] ~= nil and _GET["filename"] ~= "" and _GET["filesize"] ~= nil and _GET["filesize"] ~= "" then
+	print(c_CheckUploadLink(_GET["linkid"], _GET["filename"], _GET["filesize"]))
+end
+
+%>

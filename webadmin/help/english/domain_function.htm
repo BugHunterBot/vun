@@ -1,0 +1,780 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- saved from url=(0029)http://www.helpandmanual.com/ -->
+<head>
+   <title>Advanced Features &gt; Server Lua API &gt; Domain Function</title>
+   <meta name="generator" content="Help & Manual">
+   <meta name="keywords" content="">
+   <meta name="description" content="Domain Function">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+   <!-- This line forces IE8 into IE7 mode, safer until IE8 is better known -->
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+   <link type="text/css" href="default.css" rel="stylesheet">
+   <link type="text/css" href="custom.css" rel="stylesheet">
+   <script type="text/javascript" src="nsh.js"></script>
+
+<script type="text/javascript">   
+// Toggle Toggler 
+
+var toggleCount=false;
+var switchState;
+
+function toggleToggles() {
+
+    if (!toggleCount) {
+     toggleCount = true;
+     HMToggleExpandAll(true);
+     switchState = true;
+     }
+   
+     else if (switchState) {
+        HMToggleExpandAll(false);
+        switchState = false;
+        }
+        
+     else  {
+        HMToggleExpandAll(true);
+        switchState = true;
+        } 
+    }
+</script>
+   
+<!-- non-scrolling headers for CHM and browser-based help, local styles-->
+<style TYPE="text/css" media="screen"> 
+   body {    
+      margin:0; 
+      padding:0; 
+      overflow: auto; 
+      background: #FFFFFF; 
+   } 
+   #idheader { 
+      width:100%; 
+      height:auto; 
+      padding: 0; 
+      margin: 0; 
+} 
+    #idheaderbg  {
+    background: #6F6F6F; 
+}
+
+   #callout-table, #overview-table {display:block; position:relative; top:0; left:0;}
+   #callout-icon {display:block; position:absolute; top:-11px; left:-11px;}
+   #callout-icon-flag {display:block; position:absolute; top:-11px; left:-8px;}
+   #callout-table a {text-decoration: none; color: blue;}
+   #callout-table a:visited {text-decoration: none; color: blue;}
+   #overview-table a {text-decoration: none; color: black;}
+   #overview-table a:visited {text-decoration: none; color: black;}
+   #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
+   </style>
+   
+<style TYPE="text/css" MEDIA="print">
+<!--
+/* Hide navigation links and add space between header
+     and text in the printed version. Not valid for eBooks. */
+#idnav { display:none;	 }
+.topichead { padding: 5px 5px 20px 5px; }
+-->
+</style>   
+<script type="text/javascript" src="helpman_topicinit.js"></script>
+<!-- Redirect browser to frame page if page is not in the content frame. -->
+<script type="text/javascript">
+<!--
+if (location.search.lastIndexOf("toc=0")<=0) {
+  if (parent.frames.length==0) { parent.location.href="index.html?domain_function.htm"; }
+  else { parent.quicksync('a6.3.2'); }
+}
+//-->
+</script>
+<script type="text/javascript" src="highlight.js"></script></head>
+<body onload="highlight();">
+<div id="hmpopupDiv" style="visibility:hidden; position:absolute; z-index:1000; "></div>
+<!--ZOOMSTOP-->
+
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Advanced Features &gt; <a href="server_lua_api.htm">Server Lua API</a>&nbsp;&gt;</p>
+   <p class="p_Heading1"><span class="f_Heading1">Domain Function</span></p>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="user__group.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="server_lua_api.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="global_function.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
+
+
+<div id="idcontent"><div id="innerdiv"> 
+<!--ZOOMRESTART-->
+<p>&nbsp;</p>
+<p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AccessDataWay</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp; the storage method for user data, 1=XML file, 2=Mysql, 3=ODBC</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Returns the storage method for user data, 1=XML file, 2=Mysql, 3=ODBC </p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ResetUserData</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Reset all the user/group data in the specified domain.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_ReconnectDB</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Reconnects the database.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_TestMysql</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if Mysql connection is successful, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Test Mysql connection.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_TestODBC</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if ODBC connection is successful, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Test ODBC connection.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_KickSession</span>(string strDomain,int nId,int nKickWay,int nBlockMin,int nAddToUser,int nAddToGroup,int nAddToDomain,int nDisableAccount,string strSendMsg)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the session ID</p>
+<p>[3]int &nbsp;the kick way,0=disconnect,1=disconnect and ban IP for minutes, 2=disconnect and block IP permanently</p>
+<p>[4]int &nbsp;the minutes number for banning IP.</p>
+<p>[5]int &nbsp;add this IP to user's IP-block list, 1=yes, 0=no.</p>
+<p>[6]int &nbsp;add this IP to group's IP-block list, 1=yes, 0=no.</p>
+<p>[7]int &nbsp;add this IP to domain's IP-block list, 1=yes, 0=no.</p>
+<p>[8]int &nbsp;disable user account, 1=yes, 0=no.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the result code,1=success, 0=failure</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Kill the specified session with full options.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_KickSessionByName</span>(string strDomain, string strName)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the user name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the result code,1=success, 0=failure</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Kill the online sessions by the user name.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_KickAllSessions</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the result code,1=success, 0=failure</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Kill all the online sessions.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetConnectionsList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; an online session (formatted as <span style="font-weight: bold;">{id, username, protocol, ip, lastcommand,directory}</span>) list table.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return a table list of all the online sessions.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetDomainLog</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp;domain log text</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the domain logs.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetFTPEvent</span>(string strDomain,int nEventType,int bExecute,string strExeFilePath,string strParameter,int bLogFile,string strLogFilePath,string strLogText,int bSendMail,string strMailTo,string strSubject,string strPlainText,string strAttachFile,int nPriority,int bLuaScript,string strLuaScriptText)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the event type, see the bottom description.</p>
+<p>[3]int &nbsp;execute a program? 1=yes, 0=no.</p>
+<p>[4]string &nbsp;the physical path of third party program.</p>
+<p>[5]string &nbsp;the parameters of third party program.</p>
+<p>[6]int &nbsp; write something to a log file? 1=yes, 0=no.</p>
+<p>[7]string &nbsp;the path of log file.</p>
+<p>[8]string &nbsp;the log text.</p>
+<p>[9]int &nbsp;send an email? 1=yes, 0=no.</p>
+<p>[10]string &nbsp;the receiver's email address.</p>
+<p>[11]string &nbsp;the email's subject.</p>
+<p>[12]string &nbsp;the email's plain text.</p>
+<p>[13]string &nbsp;the email's attachment file path.</p>
+<p>[14]int &nbsp;the priority for sending email,1=normal, 2=high, 3=low</p>
+<p>[15]int &nbsp;execute lua script? 1=yes, 0=no.</p>
+<p>[16]string &nbsp;the lua script.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is used for configuring the FTP event's settings.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetFTPEvent</span>(string strDomain,int nEventType)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the FTP event type, see the bottom description.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;execute a program,1=yes,0=no.</p>
+<p>[2]string &nbsp;the physical path of third-party program.</p>
+<p>[3]string &nbsp;the parameters of third-party program.</p>
+<p>[4]int &nbsp;write something to a log file? 1=yes, 0=no.</p>
+<p>[5]string &nbsp;the path of log file.</p>
+<p>[6]string &nbsp;the log text.</p>
+<p>[7]int &nbsp;send an email? 1=yes, 0=no.</p>
+<p>[8]string &nbsp;the receiver's email address.</p>
+<p>[9]string &nbsp;the email's subject.</p>
+<p>[10]string &nbsp;the email's plain text.</p>
+<p>[11]string &nbsp;the email's attachment file path.</p>
+<p>[12]int &nbsp;the priority for sending email,1=normal, 2=high, 3=low</p>
+<p>[13]int &nbsp;execute lua script? 1=yes, 0=no.</p>
+<p>[14]string &nbsp;the lua script.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get specified FTP event's settings.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetSSHEvent</span>(string strDomain,int nEventType,int bExecute,string strExeFilePath,string strParameter,int bLogFile,string strLogFilePath,string strLogText,int bSendMail,string strMailTo,string strSubject,string strPlainText,string strAttachFile,int nPriority,int bLuaScript,string strLuaScriptText)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>similar to c_SetFTPEvent()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is used for configuring the SSH event's settings.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSSHEvent</span>(string strDomain, int nEventType)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the SSH event type, see the bottom description.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>similar to c_SetFTPEvent()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get specified SSH event's settings.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetHTTPEvent</span>(string strDomain,int nEventType,int bExecute,string strExeFilePath,string strParameter,int bLogFile,string strLogFilePath,string strLogText,int bSendMail,string strMailTo,string strSubject,string strPlainText,string strAttachFile,int nPriority,int bLuaScript,string strLuaScriptText)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>similar to c_SetFTPEvent()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is used for configuring HTTP event's settings.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetHTTPEvent</span>(string strDomain,int nEventType)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the HTTP event type, see the bottom description.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>same as c_SetFTPEvent()</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get specified HTTP event's settings.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetListenerList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; a domain listener(formatted as {ID,Type,Ip_Address,Port,Gateway_Host,Gateway_Port,Is_Listening}) list table.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return a table list of domain listeners.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddListener</span>(string strDomain,int nListenerType,string strListenerIp,int nListenerPort,strGatewayHost,nGatewayPort)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;listener type,1=FTP, 2=FTPS, 3=HTTP, 4=HTTPS, 5=SFTP.</p>
+<p>[3]string &nbsp; listener's IP address, * for all local addresses.</p>
+<p>[4]int &nbsp;listener port</p>
+<p>[5]string &nbsp; gateway host</p>
+<p>[6]int &nbsp;gateway port</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the result code, 0=success, 1=invalid IP, 2=invalid port, 3=invalid index, 4=listener exists, 99=unknown error.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add a domain listener.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DeleteListener</span>(string strDomain,int nIndex)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;listener index</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the result code, 0=success, 1=invalid IP, 2=invalid port, 3=invalid index, 4=listener exists, 99=unknown error.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Delete a domain listener.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_UpdateListener</span>(string strDomain,int nIndex,int nListenerType,string strListenerIp,int nListenerPort,strGatewayHost,nGatewayPort)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the listener's index</p>
+<p>[3]int &nbsp;listener type,1=FTP, 2=FTPS, 3=HTTP, 4=HTTPS, 5=SFTP.</p>
+<p>[4]string &nbsp; listener's IP address, * for all local addresses.</p>
+<p>[5]int &nbsp;listener port</p>
+<p>[6]string &nbsp; gateway host</p>
+<p>[7]int &nbsp;gateway port</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the result code, 0=success, 1=invalid IP, 2=invalid port, 3=invalid index, 4=listener exists, 99=unknown error.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Modify a domain listener.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSfvDirList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the SFV directory list table.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return SFV directory list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetIPMaskList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the domain's IP mask (formatted as <span style="font-style: italic;">{ip,refuse}</span>) list table.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return domain's IPmask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetFileMaskList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the domain's file mask(formatted as <span style="font-style: italic;">{filename,refuse}</span>) list table.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return domain's filemask list. </p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetSfvDirList</span>(string strDomain,table tabSfvDir)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]table &nbsp; the SFV directory list table</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set SFV directory list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetIPMaskList</span>(string strDomain,table tabIpMask)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]table &nbsp; the IP mask list table (formatted as <span style="font-style: italic;">{ip,refuse}</span>)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set domain's IP mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetFileMaskList</span>(string strDomain,table tabFileMask)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]table &nbsp; the filemask list table (formatted as <span style="font-style: italic;">{filename,refuse}</span>)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set domain's file mask list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetTransferLimit</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; the transfer limit table formatted as {enable_upload_never,cur_upload_size_never,max_upload_size_never,enable_download_never,cur_download_size_never,</p>
+<p>max_download_size_never,enable_upload_hourly,cur_upload_size_hourly,max_upload_size_hourly,enable_download_hourly,cur_download_size_hourly,max_download_size_hourly,</p>
+<p>enable_upload_daily,cur_upload_size_daily,max_upload_size_daily,enable_download_daily,cur_download_size_daily,max_download_size_daily,enable_upload_weekly,</p>
+<p>cur_upload_size_weekly,max_upload_size_weekly,enable_download_weekly,cur_download_size_weekly,max_download_size_weekly,enable_upload_monthly,</p>
+<p>cur_upload_size_monthly,max_upload_size_monthly,enable_download_monthly,cur_download_size_monthly,max_download_size_monthly}.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return a table of transfer limit settings.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetTransferLimit</span>(string strDomain,table tabTransferLimit)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]table &nbsp; the transfer limit table (like the return value format of c_GetTransferLimit() ).</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Set domain's transfer limit.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_StartDomain</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Put the domain online.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_StopDomain</span>(string strDomain,int nStopMode)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the options, 0=disconnect all clients, 1=wait for clients to disconnect, 2=wait for clients to terminate their transfer.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Put the domain offline.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_IsDomainOnline</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp;return true if the domain is online, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Check whether the domain is online.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSessionCount</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the current online session number</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return the current online session number in the specified domain.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSessionLiveTime</span>(string strDomain,int nSessionID)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the session ID</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]int &nbsp;the up time of current session</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Return current session's up time.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetSessionStatistic</span>(string strDomain,int nSessionID)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the session ID</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; session statistics table formatted as <span style="font-style: italic;">{down_speed,down_averagespeed,down_bytes,down_files,up_speed,up_averagespeed,up_bytes,up_files}</span>.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the session statistics.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetDomainStatistic</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table &nbsp; domain statistics table formatted as <span style="font-style: italic;">{running_time,current_session,max_session,last24hour_session,session_averagesec,session_maxsec,total_session,</span></p>
+<p><span style="font-style: italic;">down_speed,down_averagespeed,down_bytes,down_files,up_speed,up_averagespeed,up_bytes,up_files}</span>.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the domain statistics.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_CreateDomainLogo</span>(string strDomain,string strLogoPath)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the file path of your logo image.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add a customized logo for the specified domain.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_GetTempBlockIpList</span>(string strDomain)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]table temporary banned IP(formatted as <span style="font-style: italic;">{ip,sec}</span>) list table </p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the temporary banned IP list.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_AddTempBlockIp</span>(string strDomain,string strBanIP,int nBanSec)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the banned IP address</p>
+<p>[3]int &nbsp; &nbsp; &nbsp; &nbsp;the banned seconds</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp; &nbsp; &nbsp; &nbsp;return true if the temp banned IP is added successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Add a temporary banned IP.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_DelTempBlockIp</span>(string strDomain,string strBanIP)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the banned IP address</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]bool &nbsp; &nbsp; &nbsp; &nbsp;return true if the temp banned IP is removed successfully, otherwise return false</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Remove a temporary banned IP.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span class="f_ImageCaption" style="font-size: 12pt; color: #0000ff;">c_GetUserAbsolutePath</span>(string strDomain,string strUsername,string strNowDir)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]string &nbsp; the user name</p>
+<p>[3]string &nbsp; the current user directory</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; return the physical path of current user directory</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the physical path of current user directory.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span class="f_ImageCaption" style="font-size: 12pt; color: #0000ff;">c_GetChartData</span>(string strDomain,int nTimeType,int nTrafficType)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp; time period type &nbsp; <span style="font-size: 9pt; font-family: '新宋体'; color: #008000;">0:last 5minutes, 1:last 5hours, 2:last 10days</span></p>
+<p>[3]int &nbsp; traffic type &nbsp; <span style="font-size: 9pt; font-family: '新宋体'; color: #008000;">0:download speed, 1:upload speed, 2:session number</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>[1]string &nbsp; return the input data for graphs chart of real-time server traffics.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>Get the input data for graphs chart of real-time server traffics.</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p><span style="font-size: 12pt; font-weight: bold; color: #0000ff;">c_SetDomainPasvOption</span>(string strDomain,int nPasvModeWay,string strPasvFixIp,string strPasvWebIp,string strPasvDnsIp,int nPasvRefIntval,int nEnableUPnP,int nMinPasvPort,int nMaxPasvPort)</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Parameters</span></p>
+<p>[1]string &nbsp; the domain name</p>
+<p>[2]int &nbsp;the way to get the IP address of your FTP server</p>
+<p>[3]string &nbsp;a fixed IP address</p>
+<p>[4]string &nbsp;specify a web URL that will resolve your internet IP.</p>
+<p>[5]string &nbsp;specify a dynamic DNS that will resolve your internet IP.</p>
+<p>[6]int &nbsp;the interval time for resolving the server IP.</p>
+<p>[7]int &nbsp;enable auto-forwarding passive ports? 1=yes, 0=no.</p>
+<p>[8]int &nbsp;the min passive port number.</p>
+<p>[9]int &nbsp;the max passive port number.</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Return Values</span></p>
+<p>nil</p>
+<p>&nbsp;</p>
+<p><span style="font-weight: bold;">Remarks</span></p>
+<p>This function is used to change domain's FTP passive mode options.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<hr noshade size=1 style="color : #000000"><p>&nbsp;</p>
+<p>//<span style="font-weight: bold;">FTP Event Type(</span><span class="f_ImageCaption" style="color: #008080;">for c_SetFTPEvent, c_GetFTPEvent</span><span style="font-weight: bold;">)</span></p>
+<p>FTP_USER_LOGIN_EVENT = 0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user has successfully logged in</span></p>
+<p>FTP_USER_DISCONNECT_EVENT = 1 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user leaves the server</span></p>
+<p>FTP_USER_CONNECT_TIMEOUT_EVENT = 2 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user has been disconnected for no command sending</span></p>
+<p>FTP_DIR_CREATE_EVENT = 3 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a directory has been created</span></p>
+<p>FTP_DIR_DELETE_EVENT = 4 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a directory has been deleted</span></p>
+<p>FTP_EXCEED_USERPASS_EVENT = 5 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a user failed to authenticate(exceed limit USER/PASS)</span></p>
+<p>FTP_FILE_BANNED_EVENT = 6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When users attempt to upload a banned file</span></p>
+<p>FTP_FILE_DELETE_EVENT = 7 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has just been deleted</span></p>
+<p>FTP_FILE_DOWNLOAD_EVENT = 8 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has just been downloaded</span></p>
+<p>FTP_FILE_RENAME_EVENT = 9 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has been renamed</span></p>
+<p>FTP_FILE_UPLOAD_EVENT = 10 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file was just uploaded</span></p>
+<p>FTP_QUOTA_EXCEED_EVENT = 11 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When quota has reached maximum quota allowed</span></p>
+<p>FTP_TOOMANY_CONNECTION_PERIP_EVENT = 12 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When too many connections have logged in with same IP</span></p>
+<p>FTP_TOOMANY_CONNECTION_PERACCOUT_EVENT = 13 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When too many connections have logged in with same account</span></p>
+<p>FTP_IP_BANNED_EVENT = 14 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a banned IP try to login on this server</span></p>
+<p>FTP_SITE_COMMAND_MESSAGE = 15 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user use site command to send a message to the server</span></p>
+<p>FTP_SITE_COMMAND_CHANGE_PASSWORD = 16 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user use site command to change password</span></p>
+<p>FTP_EXCEED_LIMIT = 17 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user exceeds transfer limit</span></p>
+<p>FTP_EXCEED_MAX_SESSION_ON_GROUP = 18 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum number of sessions for group</span></p>
+<p>FTP_EXCEED_MAX_SESSION_PER_IP_ON_GROUP = 19 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum sessions per IP address for group</span></p>
+<p>FTP_EXCEED_MAX_SESSION_ON_DOMAIN = 20 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum number of sessions on domain</span></p>
+<p>FTP_EXCEED_MAX_SESSION_PER_IP_ON_DOMAIN = 21 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum sessions per IP address on domain</span></p>
+<p>FTP_BEFORE_LOGIN_EVENT = 22</p>
+<p>FTP_BEFORE_DOWNLOAD_EVENT = 23</p>
+<p>FTP_BEFORE_UPLOAD_EVENT = 24</p>
+<p>FTP_BEFORE_DELETE_EVENT = 25</p>
+<p>FTP_BEFORE_DIR_DELETE_EVENT = 26</p>
+<p>&nbsp;</p>
+<p>//<span style="font-weight: bold;">SSH Event Type(</span><span class="f_ImageCaption" style="color: #008080;">for c_SetSSHEvent,c_GetSSHEvent</span><span style="font-weight: bold;">)</span></p>
+<p>SSH_USER_LOGIN_EVENT = 0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user has successfully logged in</span></p>
+<p>SSH_USER_DISCONNECT_EVENT = 1 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user leaves the server</span></p>
+<p>SSH_USER_CONNECT_TIMEOUT_EVENT = 2 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user has been disconnected for no command sending</span></p>
+<p>SSH_DIR_CREATE_EVENT = 3 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a directory has been created</span></p>
+<p>SSH_DIR_DELETE_EVENT = 4 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a directory has been deleted</span></p>
+<p>SSH_EXCEED_USERPASS_EVENT = 5 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a user failed to authenticate(exceed limit USER/PASS)</span></p>
+<p>SSH_FILE_BANNED_EVENT = 6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When users attempt to upload a banned file</span></p>
+<p>SSH_FILE_DELETE_EVENT = 7 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has just been deleted</span></p>
+<p>SSH_FILE_DOWNLOAD_EVENT = 8 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has just been downloaded</span></p>
+<p>SSH_FILE_RENAME_EVENT = 9 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has been renamed</span></p>
+<p>SSH_FILE_UPLOAD_EVENT = 10 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file was just uploaded</span></p>
+<p>SSH_QUOTA_EXCEED_EVENT = 11 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When quota has reached maximum quota allowed</span></p>
+<p>SSH_TOOMANY_CONNECTION_PERIP_EVENT = 12 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When too many connections have logged in with same IP</span></p>
+<p>SSH_TOOMANY_CONNECTION_PERACCOUT_EVENT = 13 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When too many connections have logged in with same account</span></p>
+<p>SSH_IP_BANNED_EVENT = 14 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a banned IP try to login on this server</span></p>
+<p>SSH_EXCEED_LIMIT = 15 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user exceed transfer limit</span></p>
+<p>SSH_EXCEED_MAX_SESSION_ON_GROUP = 16 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum number of sessions for group</span></p>
+<p>SSH_EXCEED_MAX_SESSION_PER_IP_ON_GROUP = 17 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum sessions per IP address for group</span></p>
+<p>SSH_EXCEED_MAX_SESSION_ON_DOMAIN = 18 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum number of sessions on domain</span></p>
+<p>SSH_EXCEED_MAX_SESSION_PER_IP_ON_DOMAIN = 19 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum sessions per IP address on domain</span></p>
+<p>SSH_BEFORE_LOGIN_EVENT = 20</p>
+<p>SSH_BEFORE_DOWNLOAD_EVENT = 21</p>
+<p>SSH_BEFORE_UPLOAD_EVENT = 22</p>
+<p>SSH_BEFORE_DELETE_EVENT = 23</p>
+<p>SSH_BEFORE_DIR_DELETE_EVENT = 24</p>
+<p>&nbsp;</p>
+<p>//<span style="font-weight: bold;">HTTP Event Type(</span><span class="f_ImageCaption" style="color: #008080;">for c_SetHTTPEvent,c_GetHTTPEvent</span><span style="font-weight: bold;">)</span></p>
+<p>WEB_USER_LOGIN_EVENT = 0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user has successfully logged in</span></p>
+<p>WEB_DIR_CREATE_EVENT = 1 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a directory has been created</span></p>
+<p>WEB_DIR_DELETE_EVENT = 2 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a directory has been deleted</span></p>
+<p>WEB_EXCEED_USERPASS_EVENT = 3 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a user failed to authenticate(exceed limit USER/PASS)</span></p>
+<p>WEB_FILE_BANNED_EVENT = 4 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When users attempt to upload a banned file</span></p>
+<p>WEB_FILE_DELETE_EVENT = 5 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has just been deleted</span></p>
+<p>WEB_FILE_DOWNLOAD_EVENT = 6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has just been downloaded</span></p>
+<p>WEB_FILE_RENAME_EVENT = 7 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file has been renamed</span></p>
+<p>WEB_FILE_UPLOAD_EVENT = 8 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a file was just uploaded</span></p>
+<p>WEB_QUOTA_EXCEED_EVENT = 9 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When quota has reached maximum quota allowed</span></p>
+<p>WEB_TOOMANY_CONNECTION_PERIP_EVENT = 10 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When too many connections have logged in with same IP</span></p>
+<p>WEB_TOOMANY_CONNECTION_PERACCOUT_EVENT = 11 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When too many connections have logged in with same account</span></p>
+<p>WEB_IP_BANNED_EVENT = 12 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When a banned IP try to login on this server</span></p>
+<p>WEB_CHANGE_PASSWORD = 13 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user changes his password</span></p>
+<p>WEB_EXCEED_LIMIT = 14 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user exceeds transfer limit</span></p>
+<p>WEB_EXCEED_MAX_SESSION_ON_GROUP = 15 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum number of sessions for group</span></p>
+<p>WEB_EXCEED_MAX_SESSION_PER_IP_ON_GROUP = 16 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum sessions per IP address for group</span></p>
+<p>WEB_EXCEED_MAX_SESSION_ON_DOMAIN = 17 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum number of sessions on domain</span></p>
+<p>WEB_EXCEED_MAX_SESSION_PER_IP_ON_DOMAIN = 18 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When exceed Maximum sessions per IP address on domain</span></p>
+<p>WEB_USER_DISCONNECT_EVENT = 19 &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: #0000ff;">//When user leaves the server</span></p>
+<p>WEB_BEFORE_LOGIN_EVENT = 20</p>
+<p>WEB_BEFORE_DOWNLOAD_EVENT = 21</p>
+<p>WEB_BEFORE_UPLOAD_EVENT = 22</p>
+<p>WEB_BEFORE_DELETE_EVENT = 23</p>
+<p>WEB_BEFORE_DIR_DELETE_EVENT = 24</p>
+<p>&nbsp;</p>
+
+<!--ZOOMSTOP-->
+</div></div>
+<script type="text/javascript"> 
+<!-- 
+var lastSlashPos = document.URL.lastIndexOf("/") >
+document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") :
+document.URL.lastIndexOf("\\");
+if( document.URL.substring( lastSlashPos + 1, lastSlashPos + 4
+).toLowerCase() != "~hh" )
+{
+    nsrInit();
+}
+--> 
+</script> 
+</body>
+</html>

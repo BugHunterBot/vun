@@ -1,0 +1,30 @@
+<%
+
+if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
+	local operation = _GET["operation"] or _POST["operation"] or "get"
+	local nowdir = _GET["nowdir"] or _POST["nowdir"] or nil
+	local folder = _GET["filename"] or _POST["filename"] or ""
+
+	if nowdir == nil then
+		nowdir = string.gsub(_SESSION["currentpath"],":{{","%[")
+		nowdir = string.gsub(nowdir,"}}:","%]")
+	end
+
+	local result = ""
+	if operation == "get" then
+		result = c_GetUploadLink(_SESSION["username"],folder,nowdir)
+	elseif operation == "del" then
+		result = c_RemoveUploadLink(_SESSION["username"],folder,nowdir)
+		if result == "deleted" then
+			c_AddWebLog("User '".._SESSION["username"].."' removed Upload-Link for the folder '"..nowdir..folder.."'",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+		end
+	elseif operation == "add" then
+		result = c_MakeUploadLink(_SESSION["username"],folder,nowdir)
+		if result ~= "" and result ~= "noperm" then
+			c_AddWebLog("User '".._SESSION["username"].."' created Upload-Link for the folder '"..nowdir..folder.."'",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+		end
+	end
+	print(result)
+end
+
+%>

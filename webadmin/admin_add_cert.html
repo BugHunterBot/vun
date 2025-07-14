@@ -1,0 +1,33 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local name = _POST["name"]
+	local ssl_cert_path = _POST["ssl_cert_path"]
+	local ssl_key_path = _POST["ssl_key_path"]
+	local ssl_password = _POST["ssl_password"]
+	local modify = _POST["modify"]
+	if modify == nil then
+		local result = c_GetSSLCertificate(name)
+		if result ~= nil then
+			print("0")
+		else
+			local retval = c_AddSSLCertificate(name,ssl_cert_path,ssl_key_path,ssl_password)
+			if retval == false then
+				print("-1")
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' added ssl certificate config ["..name.."] failed.",ADMIN_LOG_ERROR)
+			else
+				print("1")
+				c_AddAdminLog("administrator '".._SESSION["admin"].."' added ssl certificate config ["..name.."].",ADMIN_LOG_OK)
+			end
+		end
+	else
+		local retval = c_AddSSLCertificate(name,ssl_cert_path,ssl_key_path,ssl_password)
+		if retval == false then
+			print("-1")
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' modified ssl certificate config ["..name.."] failed.",ADMIN_LOG_ERROR)
+		else
+			print("1")
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' modified ssl certificate config ["..name.."].",ADMIN_LOG_OK)
+		end
+	end
+end
+%>

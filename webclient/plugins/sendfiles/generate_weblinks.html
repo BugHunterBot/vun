@@ -1,0 +1,189 @@
+<%
+include("language.html")
+
+
+function Split(fullstring, separator)
+	local findstartindex = 1
+	local splitindex = 1
+	local splitarray = {}
+	while true do
+	   local findlastindex = string.find(fullstring, separator, findstartindex)
+	   if not findlastindex then
+		splitarray[splitindex] = string.sub(fullstring, findstartindex, string.len(fullstring))
+		break
+	   end
+	   splitarray[splitindex] = string.sub(fullstring, findstartindex, findlastindex-1)
+	   findstartindex = findlastindex+string.len(separator)
+	   splitindex = splitindex+1
+	end
+	return splitarray
+end
+
+function urlencode_special(s)
+	s = s.gsub (s, "\n", "\r\n")
+	s = s.gsub (s, "([^%w ])",
+		function (c) return s.format ("%%%02X", s.byte(c)) end)
+	return s
+end
+
+
+local file_list = _POST["filelist"] or ""
+local dir_list = _POST["dirlist"] or ""
+local expiretime = _POST["expiretime"] or ""
+local downloadlimit = _POST["downloadlimit"] or ""
+local downloadpass = _POST["downloadpass"] or ""
+local mailaddress = _POST["mailaddress"] or ""
+local sender_mailaddress = _POST["sender_mailaddress"] or ""
+local mail_message = _POST["mail_message"] or ""
+local localaddress = _POST["localaddress"] or ""
+
+if _SESSION["username"] == nil or _SESSION["currentpath"] == nil then
+	print("")
+	exit()
+end
+
+if string.find(file_list, "../") or string.find(file_list, "..\\") then
+	print("")
+	exit()
+end
+
+if string.find(dir_list, "../") or string.find(dir_list, "..\\") then
+	print("")
+	exit()
+end
+
+
+local currentpath = string.gsub(_SESSION["currentpath"],":{{","%[")
+currentpath = string.gsub(currentpath,"}}:","%]")
+
+local strPassword = ""
+local outputHTML = ""
+if file_list ~= "" or dir_list ~= "" then
+
+	if downloadlimit == "" then
+		downloadlimit = "-1"
+	end
+
+	if mail_message ~= "" then
+		local msg = specialhtml_encode(mail_message)
+		msg = msg.gsub(msg, "\n", "<br>")
+		strPassword = strPassword.."<tr><td><h3><b>"..LANG["str_field_message"]..":</b></h3><br><i>"..msg.."</i><br><br></td></tr>"
+	end
+
+	if downloadpass ~= "" then
+		strPassword = strPassword.."<tr><td height='80'><h3><b>"..LANG["password"].."</b> <span style='color:#FF0000;'><b>"..specialhtml_encode(downloadpass).."</b></span></h3></td></tr>"
+	end
+
+	local files = Split(file_list, "||")
+	for _,filename in pairs(files) do
+			if filename ~= "" then
+				result = c_UpdateWebLink(_SESSION["username"],filename,currentpath,expiretime,downloadlimit,downloadpass,mailaddress,sender_mailaddress)
+				if result ~= "" and result ~= "noperm" then
+					local url = localaddress.."?download&weblink="..result.."&realfilename="..urlencode_special(filename).."\n"
+					outputHTML = outputHTML.."<tr><td height='30'>"..specialhtml_encode(filename).."</td><td><a href='"..url.."' style='border-radius:5px; background-color:#007BFF; color:#FFF; padding:8 20px; text-decoration:none;'>&nbsp;&nbsp;"..LANG["button_downpicture"].."&nbsp;&nbsp;</a></td></tr>"
+					c_AddWebLog("User '".._SESSION["username"].."' created Web-Link for '"..filename.."'",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+				else
+					if result == "noperm" then
+						print(LANG["make_weblink_error"])
+						exit()
+					end
+				end
+			end
+	end
+
+	local dirs = Split(dir_list, "||")
+	for _,filename in pairs(dirs) do
+			if filename ~= "" then
+				result = c_UpdateWebLink(_SESSION["username"],filename,currentpath,expiretime,downloadlimit,downloadpass,mailaddress,sender_mailaddress)
+				if result ~= "" and result ~= "noperm" then
+					local url = localaddress.."?download&weblink="..result.."\n"
+					outputHTML = outputHTML.."<tr><td height='30'>"..specialhtml_encode(filename).."</td><td><a href='"..url.."' style='border-radius:5px; background-color:#007BFF; color:#FFF; padding:8 20px; text-decoration:none;'>&nbsp;&nbsp;"..LANG["button_downpicture"].."&nbsp;&nbsp;</a></td></tr>"
+					c_AddWebLog("User '".._SESSION["username"].."' created Web-Link for '"..filename.."'",_SESSION_ID,DOMAIN_LOG_WEB_RESPOND)
+				else
+					if result == "noperm" then
+						print(LANG["make_weblink_error"])
+						exit()
+					end
+				end
+			end
+	end
+
+
+	if mailaddress ~= "" and localaddress ~= "" and outputHTML ~= "" then
+		local subject = LANG["send_file_tip"].." (Wing FTP Server)"
+		if sender_mailaddress == "" then
+			subject = _SESSION["username"].." "..subject
+		else
+			subject = specialhtml_encode(sender_mailaddress).." "..subject
+		end
+		local content = [[
+							<html>
+							<head>
+							<title>Wing FTP Server - Weblink</title>
+							<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+							<style type='text/css'>
+							<!--
+							body{
+							font-family: Tahoma, sans-serif;
+							text-align: center;
+							font-size:11px;
+							font-weight:bold;
+							color:#000000;
+							overflow: auto;
+							}
+							#filelist{ border-collapse:collapse; margin:0px;}
+							#filelist td{ border:solid 1px #eaeaea; padding:11px 20px;}
+							#footer a:link,#footer a:visited,#footer a:active,#footer a:hover{color: #000;text-decoration:none;}
+							-->
+							</style>
+
+							</head>
+							<body>
+							<table width='100%' border='0' cellpadding='0' cellspacing='0'>
+							  <tr> 
+								<td align='center' valign='top' style='padding-top:30px;'> 
+								<table width='100%' border='0' align='center' cellpadding='0' cellspacing='0' style='max-width: 980px; _width: 980px;'>
+									<tr>
+										<td style='background:#FFF;' height='88'>
+											<a href='https://www.wftpserver.com/' target='_blank'><img src='https://www.wftpserver.com/images/logo_s.png' border='0'></a>
+											<hr />
+										</td>
+									</tr>
+									]]..strPassword..[[
+									<tr> 
+									  <td style='background:#FFF;' valign='top'>
+											<table width='100%' border='0' align='center' cellpadding='0' cellspacing='3' id='filelist' style='padding-top:20px;'>
+												<tr> 
+												  <td height='30' width='75%' style='background:#DDD;'>]]..LANG["thread_name"]..[[</td><td height='30' style='background:#DDD;'>]]..LANG["geturl_title"]..[[</td>
+												</tr>
+												]]..outputHTML..[[
+											</table>
+										</td>
+									</tr>
+								  </table></td>
+							  </tr>
+							<tr> 
+								<td height='50'></td>
+							</tr>
+							</table>
+							</body>
+							</html>
+		]]
+		local result = c_SendMessage(mailaddress, subject, content, true, sender_mailaddress)
+		if result == false then
+			print(LANG["send_email_error"])
+		else
+			print(RESULT_STR[1])
+		end
+	else
+		if outputHTML == "" then
+			print(LANG["make_weblink_error"])
+		else
+			print(LANG["str_invalid_email"])
+		end
+	end
+else
+	print(LANG["no_checkbox"])
+end
+
+%>

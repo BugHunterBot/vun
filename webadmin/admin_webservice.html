@@ -1,0 +1,41 @@
+<%
+local username = _GET["admin"] or _POST["admin"]
+local password = _GET["pass"] or _POST["pass"]
+local command = _GET["cmd"] or _POST["cmd"]
+
+if username == nil or password == nil or command == nil then
+	print("[ERROR RESULT] invalid parameters!")
+else	
+	if c_CheckAdmin(username,password) == false or c_CheckAdminIp(username,_REMOTE_IP) == false then
+		c_AddAdminFailedIp(_REMOTE_IP)
+		c_AddAdminLog("Web service authentication failed! (IP: ".._REMOTE_IP..")",ADMIN_LOG_ERROR)
+		print("[ERROR RESULT] no permission!")
+	else
+		if c_GetAdminType(username) == false and c_GetDomainAdminType(username) == 0 then
+			local admin = c_GetAdmin(username)
+			if admin.enable_two_factor == true then
+				c_AddAdminFailedIp(_REMOTE_IP)
+				c_AddAdminLog("Web service failed due to 2-factor authentication! (admin: "..username..", IP: ".._REMOTE_IP..")",ADMIN_LOG_ERROR)
+				print("[ERROR RESULT] no permission!")
+				exit()
+			end
+			command = c_ReplaceGlobalVar(command)
+			local newcmd = string.gsub(command, "[%s\r\n]do[%s\r\n]+"," do if tonumber(page_loadtime()) >= 600 then print('lua execution timeout!') return end ")
+			local status,err = loadstring(command)
+			if not status then
+				if type(err) == "string" then
+					print(string.format("[ERROR RESULT] lua error in %s!",err))
+				end
+			else
+				assert(loadstring(newcmd))()
+				c_AddAdminLog("administrator '"..username.."' (IP:".._REMOTE_IP..") executed the following Lua scripts via web service: "..command,ADMIN_LOG_OK)
+			end
+			c_RemoveAdminFailedIp(_REMOTE_IP)
+		else
+			c_AddAdminFailedIp(_REMOTE_IP)
+			c_AddAdminLog("Web service failed due to readonly (or domain) admin! (admin: "..username..", IP: ".._REMOTE_IP..")",ADMIN_LOG_ERROR)
+			print("[ERROR RESULT] no permission!")
+		end
+	end
+end
+%>

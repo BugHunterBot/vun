@@ -1,0 +1,163 @@
+<%
+if _SESSION["logined"] ~= nil then
+
+	local domain = _POST["domain"]
+	local method = _POST["method"]
+	local mysqlserver = _POST["mysqlserver"]
+	local mysqlport = _POST["mysqlport"]
+	local mysqlusername = _POST["mysqlusername"]
+	local mysqlpassword = _POST["mysqlpassword"]
+	local mysqldatabase = _POST["mysqldatabase"]
+	local mysqlsocket = _POST["mysqlsocket"]
+	local mysql_utf8 = _POST["mysql_utf8"]
+	local odbcsource = _POST["odbcsource"]
+	local odbcusername = _POST["odbcusername"]
+	local odbcpassword = _POST["odbcpassword"]
+
+	local enable_aduser = _POST["enable_aduser"]
+	local aduser_domain = _POST["aduser_domain"]
+	local aduser_dir = _POST["aduser_dir"]
+	local aduser_ntfs = _POST["aduser_ntfs"]
+	local aduser_owndir = _POST["aduser_owndir"]
+	local fileread = _POST["fileread"]
+	local filewrite = _POST["filewrite"]
+	local fileappend = _POST["fileappend"]
+	local filedelete = _POST["filedelete"]
+	local dirlist = _POST["dirlist"]
+	local dirmake = _POST["dirmake"]
+	local dirdelete = _POST["dirdelete"]
+	local dirrename = _POST["dirrename"]
+	local filerename = _POST["filerename"]
+	local zipfile = _POST["zipfile"]
+	local unzipfile = _POST["unzipfile"]
+	local ad_mapping = _POST["ad_mapping"]
+
+	local enable_ldap = _POST["enable_ldap"]
+	local ldap_host = _POST["ldap_host"]
+	local ldap_port = _POST["ldap_port"]
+	local ldap_timeout = _POST["ldap_timeout"]
+	local ldap_basedn = _POST["ldap_basedn"]
+	local ldap_version = _POST["ldap_version"]
+	local ldap_usessl = _POST["ldap_usessl"]
+	local ldap_binddn = _POST["ldap_binddn"]
+	local ldap_bindpass = _POST["ldap_bindpass"]
+	local ldap_filter = _POST["ldap_filter"]
+	local ldap_dir = _POST["ldap_dir"]
+	local ldap_owndir = _POST["ldap_owndir"]
+	local ldap_dir_lowercase = _POST["ldap_dir_lowercase"]
+	local ldap_fileread = _POST["ldap_fileread"]
+	local ldap_filewrite = _POST["ldap_filewrite"]
+	local ldap_fileappend = _POST["ldap_fileappend"]
+	local ldap_filedelete = _POST["ldap_filedelete"]
+	local ldap_dirlist = _POST["ldap_dirlist"]
+	local ldap_dirmake = _POST["ldap_dirmake"]
+	local ldap_dirdelete = _POST["ldap_dirdelete"]
+	local ldap_dirrename = _POST["ldap_dirrename"]
+	local ldap_filerename = _POST["ldap_filerename"]
+	local ldap_zipfile = _POST["ldap_zipfile"]
+	local ldap_unzipfile = _POST["ldap_unzipfile"]
+	local ldap_mapping = _POST["ldap_mapping"]
+	local mapping_case_insensitive = _POST["mapping_case_insensitive"]
+	local ldap_groupmapping = _POST["ldap_groupmapping"]
+
+	method = tonumber(method)
+	if method < 1 or method > 3 then
+		method = 1
+	end
+	local nType = c_GetLicenseInfo()
+	if nType == LICENSE_STANDARD or nType == LICENSE_SECURE then
+		method = 1
+	end
+
+	local retval = true
+	local errmsg = ""
+	local changed = false
+	local oldmethod = c_GetOptionInt(domain,DOPTION_DATA_ACCESS_INTERFACE_INT)
+	if oldmethod ~= method then
+		changed = true
+	else
+		if method == 2 and mysqlserver ~= c_GetOptionStr(domain,DOPTION_MYSQL_ADDRESS_STR) then
+			changed = true
+		elseif method == 2 and mysqldatabase ~= c_GetOptionStr(domain,DOPTION_MYSQL_DBNAME_STR) then
+			changed = true
+		elseif method == 3 and odbcsource ~= c_GetOptionStr(domain,DOPTION_DSN_ADDRESS_STR) then
+			changed = true
+		end
+	end
+
+	if method == 2 then
+		retval,errmsg = c_TestMysql(mysqlserver,mysqlport,mysqlusername,mysqlpassword,mysqldatabase,mysqlsocket)
+	elseif method == 3 then
+		retval,errmsg = c_TestODBC(odbcsource,odbcusername,odbcpassword)
+	end
+
+	if retval == true then
+		c_SetOptionInt(domain,DOPTION_DATA_ACCESS_INTERFACE_INT,method)
+		c_SetOptionStr(domain,DOPTION_MYSQL_ADDRESS_STR,mysqlserver)
+		c_SetOptionInt(domain,DOPTION_MYSQL_PORT_INT,mysqlport)
+		c_SetOptionStr(domain,DOPTION_MYSQL_USERNAME_STR,mysqlusername)
+		c_SetOptionStr(domain,DOPTION_MYSQL_PASSWORD_STR,mysqlpassword)
+		c_SetOptionStr(domain,DOPTION_MYSQL_DBNAME_STR,mysqldatabase)
+		c_SetOptionStr(domain,DOPTION_MYSQL_UNIXSOCKET_STR,mysqlsocket)
+		c_SetOptionInt(domain,DOPTION_MYSQL_SET_UTF8,mysql_utf8)
+
+		c_SetOptionStr(domain,DOPTION_DSN_ADDRESS_STR,odbcsource)
+		c_SetOptionStr(domain,DOPTION_DSN_USERNAME_STR,odbcusername)
+		c_SetOptionStr(domain,DOPTION_DSN_PASSWORD_STR,odbcpassword)
+
+		c_SetOptionInt(domain,DOPTION_ENABLE_ADUSER_INT,enable_aduser)
+		c_SetOptionInt(domain,DOPTION_ENABLE_NTFS_PERMISSION,aduser_ntfs)
+		c_SetOptionInt(domain,DOPTION_ADUSER_OWNDIR_INT,aduser_owndir)
+		c_SetOptionStr(domain,DOPTION_ADUSER_DOMAIN_STR,aduser_domain)
+		c_SetOptionStr(domain,DOPTION_ADUSER_DIRPATH_STR,aduser_dir)
+		c_SetOptionInt(domain,DOPTION_ADUSER_FILEREAD_INT,fileread)
+		c_SetOptionInt(domain,DOPTION_ADUSER_FILEWRITE_INT,filewrite)
+		c_SetOptionInt(domain,DOPTION_ADUSER_FILEAPPEND_INT,fileappend)
+		c_SetOptionInt(domain,DOPTION_ADUSER_FILEDELETE_INT,filedelete)
+		c_SetOptionInt(domain,DOPTION_ADUSER_DIRLIST_INT,dirlist)
+		c_SetOptionInt(domain,DOPTION_ADUSER_DIRCREATE_INT,dirmake)
+		c_SetOptionInt(domain,DOPTION_ADUSER_DIRDELETE_INT,dirdelete)
+		c_SetOptionInt(domain,DOPTION_ADUSER_DIRRENAME_INT,dirrename)
+		c_SetOptionInt(domain,DOPTION_ADUSER_FILERENAME_INT,filerename)
+		c_SetOptionInt(domain,DOPTION_ADUSER_ZIPFILE_INT,zipfile)
+		c_SetOptionInt(domain,DOPTION_ADUSER_UNZIPFILE_INT,unzipfile)
+		c_SetOptionStr(domain,DOPTION_ADUSER_MAPPING_STR,ad_mapping)
+
+		c_SetOptionInt(domain,DOPTION_ENABLE_LDAP_INT,enable_ldap)
+		c_SetOptionInt(domain,DOPTION_LDAP_OWNDIR_INT,ldap_owndir)
+		c_SetOptionInt(domain,DOPTION_LDAP_DIR_LOWERCASE_INT,ldap_dir_lowercase)
+		c_SetOptionStr(domain,DOPTION_LDAP_DIRPATH_STR,ldap_dir)
+		c_SetOptionStr(domain,DOPTION_LDAP_HOST_STR,ldap_host)
+		c_SetOptionInt(domain,DOPTION_LDAP_PORT_INT,ldap_port)
+		c_SetOptionInt(domain,DOPTION_LDAP_TIMEOUT_INT,ldap_timeout)
+		c_SetOptionInt(domain,DOPTION_LDAP_USESSL_INT,ldap_usessl)
+		c_SetOptionStr(domain,DOPTION_LDAP_BINDDN_STR,ldap_binddn)
+		c_SetOptionStr(domain,DOPTION_LDAP_BINDPASS_STR,ldap_bindpass)
+		c_SetOptionStr(domain,DOPTION_LDAP_BASEDN_STR,ldap_basedn)
+		c_SetOptionStr(domain,DOPTION_LDAP_FILTER_STR,ldap_filter)
+		c_SetOptionInt(domain,DOPTION_LDAP_FILEREAD_INT,ldap_fileread)
+		c_SetOptionInt(domain,DOPTION_LDAP_FILEWRITE_INT,ldap_filewrite)
+		c_SetOptionInt(domain,DOPTION_LDAP_FILEAPPEND_INT,ldap_fileappend)
+		c_SetOptionInt(domain,DOPTION_LDAP_FILEDELETE_INT,ldap_filedelete)
+		c_SetOptionInt(domain,DOPTION_LDAP_DIRLIST_INT,ldap_dirlist)
+		c_SetOptionInt(domain,DOPTION_LDAP_DIRCREATE_INT,ldap_dirmake)
+		c_SetOptionInt(domain,DOPTION_LDAP_DIRDELETE_INT,ldap_dirdelete)
+		c_SetOptionInt(domain,DOPTION_LDAP_DIRRENAME_INT,ldap_dirrename)
+		c_SetOptionInt(domain,DOPTION_LDAP_FILERENAME_INT,ldap_filerename)
+		c_SetOptionInt(domain,DOPTION_LDAP_ZIPFILE_INT,ldap_zipfile)
+		c_SetOptionInt(domain,DOPTION_LDAP_UNZIPFILE_INT,ldap_unzipfile)
+		c_SetOptionStr(domain,DOPTION_LDAP_MAPPING_STR,ldap_mapping)
+		c_SetOptionInt(domain,DOPTION_LDAPMAP_CASE_INSENSITIVE,mapping_case_insensitive)
+		c_SetOptionStr(domain,DOPTION_LDAP_GROUP_MAPPING_STR,ldap_groupmapping)
+		c_SetOptionInt(domain,DOPTION_LDAP_VERSION_INT,ldap_version)
+
+		if changed == true then
+			c_ResetUserData(domain)
+		end
+		print("1")
+	else
+		print(errmsg)
+	end
+
+end
+%>

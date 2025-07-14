@@ -1,0 +1,20 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local killall = _POST["killall"]
+	local userID = _POST["ID"]
+	local domain = _POST["domain"]
+	local kickway = _POST["kickway"]
+	local ip_block_min = _POST["ip_block_min"]
+	local add_blockip_to_user = _POST["add_blockip_to_user"]
+	local add_blockip_to_group = _POST["add_blockip_to_group"]
+	local add_blockip_to_domain = _POST["add_blockip_to_domain"]
+	local disable_user_account = _POST["disable_user_account"]
+	local disconnect_same_ip = _POST["disconnect_same_ip"]
+	local send_user_msg = _POST["send_user_msg"] or ""
+	if killall ~= nil then
+		c_KickAllSessions(domain)
+	else
+		c_KickSession(domain,userID,kickway,ip_block_min,add_blockip_to_user,add_blockip_to_group,add_blockip_to_domain,disable_user_account,disconnect_same_ip,send_user_msg)
+	end
+end
+%>

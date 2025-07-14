@@ -1,0 +1,16 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local filename = _POST["filename"]
+	local filepath = _POST["filepath"]
+	local password = _POST["password"]
+
+	local retval = c_CreateSSHKey(filename,filepath,password)
+	if retval == true then
+		print("1")
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' created ssh key ["..filename.."].",ADMIN_LOG_OK)
+	else
+		print("0")
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' created ssh key ["..filename.."] failed.",ADMIN_LOG_ERROR)
+	end
+end
+%>

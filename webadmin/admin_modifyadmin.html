@@ -1,0 +1,16 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local admin = _POST["admin"]
+	if admin ~= nil then
+		local oldname = _POST["oldname"]
+		admin = json.decode(admin)
+		if oldname ~= admin.username then
+			c_DeleteAdmin(oldname)
+		end
+		if _SESSION["admin"] == admin.username then
+			admin.readonly = false 
+		end
+		AddAdmin(admin)
+	end
+end
+%>

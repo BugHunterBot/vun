@@ -1,0 +1,17 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local domain = _POST["domain"]
+	local index = _POST["index"]
+	local result
+
+	if domain ~= nil then
+		result = c_DeleteListener(domain, index)
+		if result == 0 then
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted domain listener ["..unescape(domain).."]",ADMIN_LOG_OK)
+		else
+			c_AddAdminLog("administrator '".._SESSION["admin"].."' deleted domain listener failed. error code:"..result.." ["..unescape(domain).."]",ADMIN_LOG_ERROR)
+		end
+		print(result)
+	end
+end
+%>

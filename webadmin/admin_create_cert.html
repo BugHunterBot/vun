@@ -1,0 +1,22 @@
+<%
+if _SESSION["logined"] ~= nil then
+	local filename = _POST["filename"]
+	local filepath = _POST["filepath"]
+	local bits = _POST["bits"]
+	local country = _POST["country"]
+	local state = _POST["state"]
+	local locality = _POST["locality"]
+	local organization = _POST["organization"]
+	local domainName = _POST["domainName"]
+	local password = _POST["password"]
+
+	local retval = c_CreateSSLCertificate(filename,filepath,bits,country,state,locality,organization,domainName,password)
+	if retval == true then
+		print("1")
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' created ssl certificate ["..filename.."].",ADMIN_LOG_OK)
+	else
+		print("0")
+		c_AddAdminLog("administrator '".._SESSION["admin"].."' created ssl certificate ["..filename.."] failed.",ADMIN_LOG_ERROR)
+	end
+end
+%>
