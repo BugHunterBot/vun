@@ -1,6 +1,0 @@
-<%
-if _SESSION["username"] ~= nil and _SESSION["currentpath"] ~= nil then
-	rawset(_SESSION,"keeplive",1)
-	SessionModule.save(_SESSION_ID)
-end
-%>

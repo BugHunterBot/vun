@@ -1,7 +1,0 @@
-<%
-if _SESSION["logined"] ~= nil then
-	local domain = _POST["domain"]
-	local ip = _POST["ip"]
-	c_DelTempBlockIp(domain, ip)
-end
-%>

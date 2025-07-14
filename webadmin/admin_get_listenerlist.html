@@ -1,8 +1,0 @@
-<%
-if _SESSION["logined"] ~= nil then
-	setContentType("text/xml; charset=UTF-8")
-	local domain = _POST["domain"]
-	local liststr = GetListenerList(domain)
-	print(liststr)
-end
-%>

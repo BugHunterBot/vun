@@ -1,7 +1,0 @@
-<%
-if _SESSION["logined"] ~= nil then
-	setContentType("text/xml; charset=UTF-8")
-	local liststr = GetSSHKeyList()
-	print(liststr)
-end
-%>

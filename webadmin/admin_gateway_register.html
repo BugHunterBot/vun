@@ -1,9 +1,0 @@
-<%
-local msg = {}
-if _SESSION["logined"] ~= nil then
-	local host = _GET["host"] or _POST["host"]
-	local regcode = _GET["regcode"] or _POST["regcode"]
-	local result = c_GatewayRegister(host, regcode)
-	print(tostring(result))
-end
-%>
